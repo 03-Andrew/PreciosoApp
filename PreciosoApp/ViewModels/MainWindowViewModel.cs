@@ -1,4 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
 using MySql.Data.MySqlClient;
 using PreciosoApp.Models;
 using System;
@@ -11,19 +14,10 @@ public partial class MainWindowViewModel : ViewModelBase
     public string Greeting => setString();
     public string setString()
     {
-        try
-        {
-            Database connection = new Database();
-            MySqlConnection conn = connection.getCon();
-            return "Success";
-        }
-        catch (Exception ex)
-        {
-            return ex.Message;
-        }
-    }
+        Database db = new Database();
+        return db.TestConnection() + "Yes";
 
-    
+    }
 
     [ObservableProperty]
     private ViewModelBase _currentPage = new DashboardViewModel();
@@ -41,23 +35,29 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public ObservableCollection<ListItemTemplate> Items { get; } = new()
     {
-        new ListItemTemplate(typeof(DashboardViewModel)),
-        new ListItemTemplate(typeof(InventoryViewModel)),
-        new ListItemTemplate(typeof(AppointmentViewModel)),
-        new ListItemTemplate(typeof(POSViewModel)),
-        new ListItemTemplate(typeof(SalesReportViewModel)),
-        new ListItemTemplate(typeof(HistoryViewModel))
+        new ListItemTemplate(typeof(DashboardViewModel), "desktop_regular"),
+        new ListItemTemplate(typeof(InventoryViewModel), "desktop_regular"),
+        new ListItemTemplate(typeof(AppointmentViewModel), "desktop_regular"),
+        new ListItemTemplate(typeof(POSViewModel), "desktop_regular"),
+        new ListItemTemplate(typeof(SalesReportViewModel), "desktop_regular"),
+        new ListItemTemplate(typeof(HistoryViewModel), "desktop_regular")
     };
+
+
 }
 
 
 public class ListItemTemplate
 {
-    public ListItemTemplate(Type type)
+    public ListItemTemplate(Type type, string icon)
     {
         ModelType = type;
         Label = type.Name.Replace("ViewModel","");
+
+        Application.Current!.TryFindResource(icon, out var res);
+        ListItemIcon = (StreamGeometry)res!;
     }
     public string Label { get; } 
     public Type ModelType { get; }
+    public StreamGeometry ListItemIcon { get; }
 }

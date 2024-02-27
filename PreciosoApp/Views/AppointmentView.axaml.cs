@@ -10,4 +10,8 @@ public partial class AppointmentView : UserControl
     {
         InitializeComponent();
     }
+
+    private void Binding(object? sender, Avalonia.Controls.TextChangedEventArgs e)
+    {
+    }
 }

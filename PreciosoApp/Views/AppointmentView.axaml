@@ -2,7 +2,64 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="PreciosoApp.Views.AppointmentView">
-  Welcome to Avalonia!
+             mc:Ignorable="d" d:DesignWidth="1080" d:DesignHeight="720"
+             x:Class="PreciosoApp.Views.AppointmentView"
+			 xmlns:vm="using:PreciosoApp.ViewModels"
+			 x:DataType="vm:AppointmentViewModel">
+	<Grid RowDefinitions="Auto,*">
+		<Border Grid.Row="0" Background="#f3f3f3f3" Margin="20 20 20 20" CornerRadius="10">
+			<Border.Effect>
+				<DropShadowEffect Opacity="0.1"/>
+			</Border.Effect>
+			<StackPanel >
+				<StackPanel Orientation="Horizontal">
+					<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
+						<TextBlock Text="Search Name: " Padding="0 10 0 10"/>
+					</Grid>
+					<TextBox Text="{Binding SearchText, Mode=TwoWay}"
+							 Margin="10 20 0 0" HorizontalAlignment="Left" Padding="10" Width="300"/>
+				</StackPanel>
+
+				<DataGrid Margin="20" ItemsSource="{Binding Client}"
+			  AutoGenerateColumns="True" IsReadOnly="True" CanUserResizeColumns="True"
+			  GridLinesVisibility="All" Height="150"
+			  />
+			</StackPanel>
+		</Border>
+
+		<Border Grid.Row="1" Background="#efefef" Margin="20 0 20 20" CornerRadius="10">
+			<Border.Effect>
+				<DropShadowEffect Opacity="0.1"/>
+			</Border.Effect>
+			<StackPanel>
+				<TextBlock Text="Add Customer" Margin="20 20 20 10"/>
+				<StackPanel Orientation="Horizontal">
+					<StackPanel>
+						<TextBlock Text="Name" Margin="20 0 20 0"/>
+						<StackPanel Orientation="Horizontal" Margin="20 5 20 20">
+							<TextBox Text="Last Name" Padding="10" Width="200" Margin="0 0 10 0"/>
+							<TextBox Text="First Name" Padding="10" Width="200"  Margin="0 0 10 0"/>
+							<TextBox Text="MI" Padding="10" Width="50" Margin="0 0 0 0"/>
+						</StackPanel>
+					</StackPanel>
+
+					<StackPanel>
+						<TextBlock Text="Contact" Margin="10 0 0 0"/>
+						<StackPanel Orientation="Horizontal" Margin="10 5 0 0">
+							<TextBox Text="Last Name" Padding="10" Width="200" Margin="0 0 10 0"/>
+						</StackPanel>
+					</StackPanel>
+				</StackPanel>
+				<StackPanel Margin="20 0 0 0">
+					<TextBlock Text="Date of Birth"/>	
+					<DatePicker Height="30"></DatePicker>	
+					<TextBlock Text="Gender" Margin="0 20 0 0"/>
+					<ComboBox/>
+					<Button Margin="0 20 0 0">Add new Customer</Button>
+				</StackPanel>
+			</StackPanel>
+			
+		</Border>
+		
+	</Grid>
 </UserControl>

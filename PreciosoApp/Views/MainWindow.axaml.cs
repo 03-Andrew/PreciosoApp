@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 
 namespace PreciosoApp.Views
 {
@@ -8,5 +9,6 @@ namespace PreciosoApp.Views
         {
             InitializeComponent();
         }
+       
     }
 }

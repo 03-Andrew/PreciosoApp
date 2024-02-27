@@ -7,13 +7,31 @@ using System.Threading.Tasks;
 
 namespace PreciosoApp.Models
 {
-    internal class Database
+    public class Database
     {
-        public MySqlConnection getCon()
+        public MySqlConnection GetCon()
         {
-            string mysqlCon = "server=127.0.0.1 user=root; database=db_preciosospa2";
+            string mysqlCon = "server=localhost; user=root; database=db_preciosospa2; password=";
             MySqlConnection conn = new MySqlConnection(mysqlCon);
             return conn;
+        }
+
+        public bool TestConnection()
+        {
+            MySqlConnection conn = GetCon();
+
+            try
+            {
+                conn.Open();
+                conn.Close(); // Close the connection if opened successfully
+                return true;
+            }
+            catch (MySqlException ex)
+            {
+                // Handle exception or log error message
+                Console.WriteLine($"Error: {ex.Message}");
+                return false;
+            }
         }
     }
 }
