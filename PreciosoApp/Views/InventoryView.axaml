@@ -36,7 +36,7 @@
 				<StackPanel Orientation="Horizontal">
 					<StackPanel>
 						<TextBlock Text="Date" Margin="20 0 20 5"/>
-						<ComboBox Margin="20 0 0 0"></ComboBox>
+						<DatePicker Margin="20 0 0 0"></DatePicker>
 					</StackPanel>
 					<StackPanel>
 						<TextBlock Text="Supplier" Margin="20 0 20 5"/>
@@ -44,7 +44,9 @@
 					</StackPanel>
 					<StackPanel>
 						<TextBlock Text="Product" Margin="20 0 20 5"/>
-						<ComboBox Width="150" Margin="20 0 0 0"></ComboBox>
+						<ComboBox x:Name="prodComboBox" ItemsSource="{Binding ProdNames}"
+								  SelectedIndex="1"
+								  Width="150" Margin="20 0 0 0"></ComboBox>
 					</StackPanel>
 					<StackPanel>
 						<TextBlock Text="Qty" Margin="20 0 20 5"/>

@@ -15,6 +15,7 @@ namespace PreciosoApp.Models
         public float prodComm { get; set; }
         public string prodType { get; set; }
         public int prodLevel { get; set; }
+        public int prodStock { get; set; }
 
         public Inventory() { }
 
@@ -27,8 +28,10 @@ namespace PreciosoApp.Models
             {
                 conn.Open();
 
-                string query = "SELECT p.product_id, p.product_name, p.product_cost, p.commission, t.type, p.critical_level " +
-                    "FROM tbl_product p JOIN tbl_product_type t ON p.product_type = t.type_id;";
+                string query = "SELECT p.product_id, p.product_name, p.product_cost, p.commission, t.type, p.critical_level, " +
+                    "( SELECT SUM(quantity) FROM tbl_stockin_product t1 WHERE t1.product_id = p.product_id ) - " +
+                    "( SELECT SUM(quantity) FROM tbl_products_sold t2 WHERE t2.product_id = p.product_id ) AS stock_level " +
+                    "FROM tbl_product p JOIN tbl_product_type t ON p.product_type = t.type_id; ";
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
                     using (MySqlDataReader reader = cmd.ExecuteReader())
@@ -42,12 +45,40 @@ namespace PreciosoApp.Models
                             inv.prodComm = reader.GetFloat("commission");
                             inv.prodType = reader.GetString("type");
                             inv.prodLevel = reader.GetInt32("critical_level");
+                            inv.prodStock = reader.GetInt32("stock_level");
                             inventory.Add(inv);
                         }
                     }
                 }
 
             }
+            return inventory;
+        }
+
+        public List<string> GetProductName()
+        {
+            Database db = new Database();
+            List<string> inventory = new List<string>();
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+
+                string query = "SELECT product_name FROM tbl_product;";
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            String productName = reader.GetString("product_name");
+                            inventory.Add(productName);
+                        }
+                    }
+                }
+
+            }
+            Console.WriteLine(inventory);
             return inventory;
         }
         public static List<Inventory> SearchInventory(List<Inventory> allInv, string searchText)

@@ -1,4 +1,5 @@
-﻿using PreciosoApp.Models;
+﻿using Avalonia.Collections;
+using PreciosoApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,7 +14,7 @@ namespace PreciosoApp.ViewModels
         private ObservableCollection<Inventory> inventory;
         private ObservableCollection<Inventory> allInventory;
         private string searchProd;
-
+        private List<string> prodNames;
         public ObservableCollection<Inventory> Inventory
         {
             get { return inventory; }
@@ -35,11 +36,31 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        public List<string> ProdNames
+        {
+            get { return prodNames; }
+            set
+            {
+                prodNames = value;
+                OnPropertyChanged(nameof(ProdNames));
+            }
+        }
+
         public InventoryViewModel()
         {
             var inv = new Inventory();
             allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
             Inventory = allInventory;
+            LoadProductNames();
+
+        }
+
+        private void LoadProductNames()
+        {
+            var inv = new Inventory();
+            List<string> productNames = inv.GetProductName();
+
+            ProdNames = new List<string>(productNames);
         }
 
         private void FilterInventory()
