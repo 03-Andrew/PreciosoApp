@@ -24,6 +24,15 @@ namespace PreciosoApp.ViewModels
                 OnPropertyChanged(nameof(Inventory));
             }
         }
+        public InventoryViewModel()
+        {
+            var inv = new Inventory();
+            allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
+            Inventory = allInventory;
+            LoadProductNames();
+
+        }
+        
 
         public string SearchProd
         {
@@ -44,15 +53,6 @@ namespace PreciosoApp.ViewModels
                 prodNames = value;
                 OnPropertyChanged(nameof(ProdNames));
             }
-        }
-
-        public InventoryViewModel()
-        {
-            var inv = new Inventory();
-            allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
-            Inventory = allInventory;
-            LoadProductNames();
-
         }
 
         private void LoadProductNames()

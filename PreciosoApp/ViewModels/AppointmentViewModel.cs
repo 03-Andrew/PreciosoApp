@@ -11,7 +11,6 @@ namespace PreciosoApp.ViewModels
         private ObservableCollection<Client> clients;
         private ObservableCollection<Client> allClients;
         private string searchText;
-
         public ObservableCollection<Client> Client
         {
             get { return clients; }
@@ -22,6 +21,14 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        public AppointmentViewModel()
+        {
+            var client = new Client();
+            allClients = new ObservableCollection<Client>(client.GetAllClients());
+            Client = allClients;
+        }
+
+        
         public string SearchText
         {
             get { return searchText; }
@@ -31,13 +38,6 @@ namespace PreciosoApp.ViewModels
                 OnPropertyChanged(nameof(SearchText));
                 FilterClients();
             }
-        }
-
-        public AppointmentViewModel()
-        {
-            var client = new Client();
-            allClients = new ObservableCollection<Client>(client.GetAllClients());
-            Client = allClients;
         }
 
         private void FilterClients()

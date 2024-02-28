@@ -6,26 +6,27 @@
              x:Class="PreciosoApp.Views.AppointmentView"
 			 xmlns:vm="using:PreciosoApp.ViewModels"
 			 x:DataType="vm:AppointmentViewModel">
+	
 	<Grid RowDefinitions="Auto,*">
-		<Border Grid.Row="0" Background="#f3f3f3f3" Margin="20 20 20 20" CornerRadius="10">
-			<Border.Effect>
-				<DropShadowEffect Opacity="0.1"/>
-			</Border.Effect>
-			<StackPanel >
-				<StackPanel Orientation="Horizontal">
-					<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
-						<TextBlock Text="Search Name: " Padding="0 10 0 10"/>
-					</Grid>
-					<TextBox Text="{Binding SearchText, Mode=TwoWay}"
-							 Margin="10 20 0 0" HorizontalAlignment="Left" Padding="10" Width="300"/>
-				</StackPanel>
+			<Border Grid.Row="0" Background="#f3f3f3f3" Margin="20 20 20 20" CornerRadius="10">
+				<Border.Effect>
+					<DropShadowEffect Opacity="0.1"/>
+				</Border.Effect>
+				<StackPanel >
+					<StackPanel Orientation="Horizontal">
+						<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
+							<TextBlock Text="Search Name: " Padding="0 10 0 10"/>
+						</Grid>
+						<TextBox Text="{Binding SearchText, Mode=TwoWay}"
+								 Margin="10 20 0 0" HorizontalAlignment="Left" Padding="10" Width="300"/>
+					</StackPanel>
 
-				<DataGrid Margin="20" ItemsSource="{Binding Client}"
-			  AutoGenerateColumns="True" IsReadOnly="True" CanUserResizeColumns="True"
-			  GridLinesVisibility="All" Height="150"
-			  />
-			</StackPanel>
-		</Border>
+					<DataGrid Margin="20" ItemsSource="{Binding Client}"
+				  AutoGenerateColumns="True" IsReadOnly="True" CanUserResizeColumns="True"
+				  GridLinesVisibility="All" Height="150"
+				  />
+				</StackPanel>
+			</Border>
 
 		<Border Grid.Row="1" Background="#efefef" Margin="20 0 20 20" CornerRadius="10">
 			<Border.Effect>

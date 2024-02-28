@@ -4,6 +4,7 @@ using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MySql.Data.MySqlClient;
 using PreciosoApp.Models;
+using PreciosoApp.Views;
 using System;
 using System.Collections.ObjectModel;
 
@@ -29,7 +30,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         if (value is null) return;
         var instance = Activator.CreateInstance(value.ModelType);
-        if (instance == null) return;
+        if (instance == null) return;   
         CurrentPage = (ViewModelBase)instance;
     }
 
@@ -40,7 +41,8 @@ public partial class MainWindowViewModel : ViewModelBase
         new ListItemTemplate(typeof(AppointmentViewModel), "desktop_regular"),
         new ListItemTemplate(typeof(POSViewModel), "desktop_regular"),
         new ListItemTemplate(typeof(SalesReportViewModel), "desktop_regular"),
-        new ListItemTemplate(typeof(HistoryViewModel), "desktop_regular")
+        new ListItemTemplate(typeof(HistoryViewModel), "desktop_regular"),
+        new ListItemTemplate(typeof(TherapistViewModel), "desktop_regular")
     };
 
 
