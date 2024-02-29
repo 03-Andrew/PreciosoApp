@@ -6,5 +6,25 @@
              x:Class="PreciosoApp.Views.TherapistView"
 			 xmlns:vm="using:PreciosoApp.ViewModels"
 			 x:DataType="vm:TherapistViewModel">
-  Welcome to Avalonia!
+	<Grid RowDefinitions="Auto,*">
+		<Border Grid.Row="0" Background="#f3f3f3f3" Margin="20 20 20 20" CornerRadius="10">
+			<Border.Effect>
+				<DropShadowEffect Opacity="0.1"/>
+			</Border.Effect>
+			<StackPanel >
+				<StackPanel Orientation="Horizontal">
+					<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
+						<TextBlock Text="Search Name: " Padding="0 10 0 10"/>
+					</Grid>
+					<TextBox Text="{Binding SearchText, Mode=TwoWay}"
+							 Margin="10 20 0 0" HorizontalAlignment="Left" Padding="10" Width="300"/>
+				</StackPanel>
+
+				<DataGrid Margin="20" ItemsSource="{Binding Therapist}"
+			  AutoGenerateColumns="True" IsReadOnly="True" CanUserResizeColumns="True"
+			  GridLinesVisibility="All" Height="150"
+				  />
+			</StackPanel>
+		</Border>
+	</Grid>
 </UserControl>
