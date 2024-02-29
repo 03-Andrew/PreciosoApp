@@ -21,7 +21,7 @@ namespace PreciosoApp.Models
 
         public Therapist() { }
 
-        public List<Therapist> getAllTheraist() 
+        public List<Therapist> GetAllTherapist() 
         {
             Database db = new Database();
             List<Therapist> therapists = new List<Therapist>();
@@ -30,11 +30,13 @@ namespace PreciosoApp.Models
             {
                 conn.Open();
 
-                string query = "select t.therapist_id, t.name, t.dob, t.contactinfo, t.schedule, g.gender, s.status, ty.type" +
-                    "from tbl_therapist t left join tbl_gender g on t.gender = g.gender_id left join tbl_therapist_status s on " +
-                    "t.status = s.status_id left join tbl_therapist_type ty on t.type = ty.type_id;";
+                string query = "select t.therapist_id, t.name, t.dob, t.contactinfo, t.schedule, g.gender, s.status, ty.type " +
+                                 "from tbl_therapist t " +
+                                 "left join tbl_gender g on t.gender = g.gender_id " +
+                                 "left join tbl_therapist_status s on t.status = s.status_id " +
+                                 "left join tbl_therapist_type ty on t.type = ty.type_id;";
 
-                using(MySqlCommand cmd = new MySqlCommand(query, conn))
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
                     using(MySqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -43,7 +45,7 @@ namespace PreciosoApp.Models
                             Therapist therapist = new Therapist();
                             therapist.Id = reader.GetInt32("therapist_id");
                             therapist.Name = reader.GetString("name");
-                            therapist.DOB = reader.GetString("DOB");
+                            therapist.DOB = reader.GetString("dob");
                             therapist.ContactInfo = reader.GetString("contactinfo");
                             therapist.Sched = reader.GetString("schedule");
                             therapist.Gender = reader.GetString("gender");

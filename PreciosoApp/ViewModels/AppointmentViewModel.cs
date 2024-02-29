@@ -1,13 +1,84 @@
-﻿using PreciosoApp.Models;
+﻿using CommunityToolkit.Mvvm.Input;
+using PreciosoApp.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Sockets;
+using System.Windows.Input;
 
 namespace PreciosoApp.ViewModels
 {
     public class AppointmentViewModel : ViewModelBase
     {
+        private string _lastName;
+        public string LastName
+        {
+            get { return _lastName; }
+            set
+            {
+                _lastName = value;
+                OnPropertyChanged(nameof(LastName));
+            }
+        }
+
+        private string _firstName;
+        public string FirstName
+        {
+            get { return _firstName; }
+            set
+            {
+                _firstName = value;
+                OnPropertyChanged(nameof(FirstName));
+            }
+        }
+
+        private string _middleInitial;
+        public string MiddleInitial
+        {
+            get { return _middleInitial; }
+            set
+            {
+                _middleInitial = value;
+                OnPropertyChanged(nameof(MiddleInitial));
+            }
+        }
+
+        private string _contactInfo;
+        public string ContactInfo
+        {
+            get { return _contactInfo; }
+            set
+            {
+                _contactInfo = value;
+                OnPropertyChanged(nameof(ContactInfo));
+            }
+        }
+
+        private DateTimeOffset _dob = DateTimeOffset.Now;
+        public DateTimeOffset DOB
+        {
+            get { return _dob; }
+            set
+            {
+                _dob = value;
+                OnPropertyChanged(nameof(DOB));
+            }
+        }
+
+        private string _selectedGender;
+        public string SelectedGender
+        {
+            get { return _selectedGender; }
+            set
+            {
+                _selectedGender = value;
+                OnPropertyChanged(nameof(SelectedGender));
+            }
+        }
+
+        public ObservableCollection<string> Genders { get; } = new ObservableCollection<string> { "Male", "Female", "Other"};
+
         private ObservableCollection<Client> clients;
         private ObservableCollection<Client> allClients;
         private string searchText;
@@ -21,11 +92,14 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        public ICommand AddClientCommand { get; }
+
         public AppointmentViewModel()
         {
             var client = new Client();
             allClients = new ObservableCollection<Client>(client.GetAllClients());
             Client = allClients;
+            AddClientCommand = new RelayCommand(AddClient);
         }
 
         
@@ -51,6 +125,34 @@ namespace PreciosoApp.ViewModels
                 string searchTextLower = SearchText.ToLower().Trim();
                 Client = new ObservableCollection<Client>(allClients.Where(c => c.Name.ToLower().Contains(searchTextLower)));
             }
+        }
+
+
+        
+        private void AddClient()
+        {
+            var client = new ClientQueries();
+            // Retrieve values from bound properties
+            string lastName = LastName;
+            string firstName = FirstName;
+            string middleInitial = MiddleInitial;
+            string contactInfo = ContactInfo;
+            DateTime dob = DOB.Date;
+            string gender = SelectedGender;
+
+            // Call method to add client to database
+            client.addClient(lastName, firstName, dob, contactInfo, gender);
+
+            allClients = new ObservableCollection<Client>(client.GetAllClients());
+            FilterClients();
+
+            // Optionally, clear input fields after adding client
+            LastName = "";
+            FirstName = "";
+            MiddleInitial = "";
+            ContactInfo = "";
+            DOB = DateTimeOffset.Now;
+            SelectedGender = null;
         }
     }
 }
