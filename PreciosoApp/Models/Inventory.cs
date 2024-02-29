@@ -64,14 +64,15 @@ namespace PreciosoApp.Models
             {
                 conn.Open();
 
-                string query = "SELECT product_name FROM tbl_product;";
+                string query = "SELECT product_name, product_cost FROM tbl_product;";
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            String productName = reader.GetString("product_name");
+                            string productName = reader.GetString("product_name");
+                            float prodCost = reader.GetFloat("product_cost");
                             inventory.Add(productName);
                         }
                     }

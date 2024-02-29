@@ -3,6 +3,33 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="PreciosoApp.Views.POSView">
-  POS
+             x:Class="PreciosoApp.Views.POSView"
+			 xmlns:vm="using:PreciosoApp.ViewModels"
+			 x:DataType="vm:POSViewModel">
+	<Grid RowDefinitions="Auto, *">
+		<StackPanel>
+			<ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}"></ComboBox>
+			<ListBox Background="#ffffff" 
+					 HorizontalAlignment="Left"
+					 ItemsSource="{Binding ProdNames}" 
+					 Width="490" Height="500">
+				<ListBox.Styles>
+					<Style Selector="ListBoxItem">
+						<Setter Property="Width" Value="223"/>
+						<Setter Property="Height" Value="223"/>
+						<Setter Property="HorizontalContentAlignment" Value="Center"/>
+						<Setter Property="VerticalContentAlignment" Value="Center"/>
+						<Setter Property="Margin" Value="10"/>
+						<Setter Property="Background" Value="#f2f2f2"/>
+					</Style>
+				</ListBox.Styles>
+				<ListBox.ItemsPanel>
+					<ItemsPanelTemplate>
+						<WrapPanel Orientation="Horizontal">
+						</WrapPanel>
+					</ItemsPanelTemplate>
+				</ListBox.ItemsPanel>
+			</ListBox>
+		</StackPanel>
+	</Grid>
   </UserControl>
