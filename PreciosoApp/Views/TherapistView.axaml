@@ -2,29 +2,176 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1080" d:DesignHeight="720"
              x:Class="PreciosoApp.Views.TherapistView"
 			 xmlns:vm="using:PreciosoApp.ViewModels"
 			 x:DataType="vm:TherapistViewModel">
-	<Grid RowDefinitions="Auto,*">
-		<Border Grid.Row="0" Background="#f3f3f3f3" Margin="20 20 20 20" CornerRadius="10">
-			<Border.Effect>
-				<DropShadowEffect Opacity="0.1"/>
-			</Border.Effect>
-			<StackPanel >
-				<StackPanel Orientation="Horizontal">
-					<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
-						<TextBlock Text="Search Name: " Padding="0 10 0 10"/>
-					</Grid>
-					<TextBox Text="{Binding SearchText, Mode=TwoWay}"
-							 Margin="10 20 0 0" HorizontalAlignment="Left" Padding="10" Width="300"/>
-				</StackPanel>
+	<Grid RowDefinitions="Auto, *">
+		<DataGrid Margin="20" Height="200" ItemsSource="{Binding Therapist}"
+            AutoGenerateColumns="False" IsReadOnly="False"
+            GridLinesVisibility="All" BorderThickness="1" BorderBrush="Gray"
+			SelectedItem="{Binding SelectedTherapist, Mode=TwoWay}">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}"/>
+				<DataGridTextColumn Header="DOB" Width="*" Binding="{Binding DOB_date}"/>
+				<DataGridTextColumn Header="Contact Number" Width="*" Binding="{Binding ContactInfo}"/>
+				<DataGridTextColumn Header="Schedule" Width="Auto" Binding="{Binding Sched}"/>
+				<DataGridTextColumn Header="Gender" Width="Auto" Binding="{Binding Gender}"/>
+				<DataGridTextColumn Header="Type" Width="Auto" Binding="{Binding Type}"/>
+				<DataGridTextColumn Header="Status" Width="Auto" Binding="{Binding Status}"/>
+			</DataGrid.Columns>
+		</DataGrid>
+		<Border Grid.Row="1" Margin="0" Background="#efefef">
+			<TabControl>
+				<TabItem Header="Add New Therapist"
+						 Background="Beige"
+						 TabItem.BorderThickness="0">
 
-				<DataGrid Margin="20" ItemsSource="{Binding Therapist}"
-			  AutoGenerateColumns="True" IsReadOnly="True" CanUserResizeColumns="True"
-			  GridLinesVisibility="All" Height="150"
-				  />
-			</StackPanel>
+					<StackPanel>
+						<StackPanel Orientation="Horizontal" Height="30"  Margin="20 0 0 40">
+							<StackPanel  Margin="0 0 10 0">
+								<Label Content="Name:" HorizontalAlignment="Left"/>
+								<TextBox Width="150" Text="{Binding NewTherapistName}"/>
+							</StackPanel>
+
+							<StackPanel  Margin="0 0 10 0">
+								<Label Content="DOB:" Width="50" Margin="0 0 -5 0" HorizontalAlignment="Left"/>
+								<CalendarDatePicker SelectedDate="{Binding NewTherapistDOB, Mode=TwoWay}" Width="150"></CalendarDatePicker>
+								<!--<DatePicker  Height="32" Width="311"/>-->
+							</StackPanel>
+
+							<StackPanel  Margin="0 0 10 0">
+								<Label Content="Contact Number: " Margin="0 0 5 0" VerticalContentAlignment="Center"/>
+								<TextBox Width="150" Text="{Binding NewTherapistContactInfo}"/>
+							</StackPanel>
+
+							<StackPanel>
+								<Label Content="Schedule: " Margin="0 0 5 0" VerticalContentAlignment="Center"/>
+								<TextBox Width="150" Text="{Binding NewTherapistSched}"/>
+							</StackPanel>
+
+						</StackPanel>
+						<StackPanel Orientation="Horizontal" Height="30" Margin="20 0 0 0">
+
+							<StackPanel  Margin="0 0 10 0">
+								<Label Content="Gender: " Margin="0 0 5 0" VerticalContentAlignment="Center"/>
+								<ComboBox PlaceholderText="Select Gender" ItemsSource="{Binding Genders}" Width="150"
+									  SelectedValue="{Binding SelectedGender, Mode=TwoWay}">
+									<ComboBox.ItemTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding GenderType}" />
+										</DataTemplate>
+									</ComboBox.ItemTemplate>
+								</ComboBox>
+							</StackPanel>
+
+							<StackPanel Margin="0 0 10 0">
+								<Label Content="Type: " Margin="0 0 5 0" VerticalContentAlignment="Center"/>
+								<ComboBox PlaceholderText="Select Type" ItemsSource="{Binding TherapistTypes}" Width="150"
+									  SelectedValue="{Binding SelectedTherapistType, Mode=TwoWay}">
+									<ComboBox.ItemTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding TypeName}" />
+										</DataTemplate>
+									</ComboBox.ItemTemplate>
+								</ComboBox>
+							</StackPanel>
+
+							<StackPanel Margin="0 0 10 0">
+								<Label Content="Status: " Margin="0 0 5 0" VerticalContentAlignment="Center"/>
+								<ComboBox PlaceholderText="Select Status" ItemsSource="{Binding TherapistStatuses}" Width="150"
+									  SelectedValue="{Binding SelectedTherapistStatus, Mode=TwoWay}">
+									<ComboBox.ItemTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding StatusName}" />
+										</DataTemplate>
+									</ComboBox.ItemTemplate>
+								</ComboBox>
+							</StackPanel>
+							<StackPanel>
+								<Label Content=""/>
+								<Button Command="{Binding AddTherapistCommand}" Width="150" Margin="0 0 0 0">Add</Button>
+							</StackPanel>
+						</StackPanel>
+
+					</StackPanel>
+				</TabItem>
+				<TabItem Header="Update" Background="Beige">
+					<StackPanel>
+						<StackPanel Orientation="Horizontal" Height="30"  Margin="20 0 0 40">
+							<StackPanel  Margin="0 0 10 0">
+								<Label Content="Name:" HorizontalAlignment="Left"/>
+								<TextBox Width="150" Text="{Binding SelectedTherapist.Name}"/>
+							</StackPanel>
+
+							<StackPanel  Margin="0 0 10 0">
+								<Label Content="DOB:" Width="50" Margin="0 0 -5 0" HorizontalAlignment="Left"/>
+								<CalendarDatePicker Width="150" SelectedDate="{Binding SelectedTherapist.DOB, Mode=TwoWay}"/>
+								<!--<DatePicker SelectedDate="{Binding SelectedTherapist.DOB, Mode=TwoWay}" Height="32" Width="311"/>-->
+							</StackPanel>
+
+							<StackPanel  Margin="0 0 10 0">
+								<Label Content="Contact Number: " Margin="0 0 5 0" VerticalContentAlignment="Center"/>
+								<TextBox Width="150" Text="{Binding SelectedTherapist.ContactInfo}"/>
+							</StackPanel>
+
+							<StackPanel>
+								<Label Content="Schedule: " Margin="0 0 5 0" VerticalContentAlignment="Center"/>
+								<TextBox Width="150" Text="{Binding SelectedTherapist.Sched}"/>
+							</StackPanel>
+
+						</StackPanel>
+						<StackPanel Orientation="Horizontal" Height="30" Margin="20 0 0 0">
+
+							<StackPanel  Margin="0 0 10 0">
+								<Label Content="Gender: " Margin="0 0 5 0" VerticalContentAlignment="Center"/>
+								<ComboBox PlaceholderText="{Binding SelectedTherapist.Gender}" ItemsSource="{Binding Genders}" Width="150"
+									  SelectedValue="{Binding SelectedGender, Mode=TwoWay}">
+									<ComboBox.ItemTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding GenderType}" />
+										</DataTemplate>
+									</ComboBox.ItemTemplate>
+								</ComboBox>
+							</StackPanel>
+
+							<StackPanel Margin="0 0 10 0">
+								<Label Content="Type: " Margin="0 0 5 0" VerticalContentAlignment="Center"/>
+								<ComboBox PlaceholderText="{Binding SelectedTherapist.Type}" ItemsSource="{Binding TherapistTypes}" Width="150"
+									  SelectedValue="{Binding SelectedTherapistType, Mode=TwoWay}">
+									<ComboBox.ItemTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding TypeName}" />
+										</DataTemplate>
+									</ComboBox.ItemTemplate>
+								</ComboBox>
+							</StackPanel>
+
+							<StackPanel Margin="0 0 10 0">
+								<Label Content="Status: " Margin="0 0 5 0" VerticalContentAlignment="Center"/>
+								<ComboBox PlaceholderText="{Binding SelectedTherapist.Status}" ItemsSource="{Binding TherapistStatuses}" Width="150"
+									  SelectedValue="{Binding SelectedTherapistStatus, Mode=TwoWay}">
+									<ComboBox.ItemTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding StatusName}" />
+										</DataTemplate>
+									</ComboBox.ItemTemplate>
+								</ComboBox>
+							</StackPanel>
+							<StackPanel>
+								<Label Content=""/>
+								<Button Command="{Binding UpdateCommand}" Width="150" Margin="0 0 0 0">Update</Button>
+							</StackPanel>
+						</StackPanel>
+
+					</StackPanel>
+
+				</TabItem>
+			</TabControl>
 		</Border>
+
+
+
+
 	</Grid>
 </UserControl>
