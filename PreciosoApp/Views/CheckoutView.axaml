@@ -15,12 +15,13 @@
 						<TextBlock Text="Client Name" Margin="20 0 20 5"/>
 						<ComboBox x:Name="custComboBox"
 								  ItemsSource="{Binding ClientNames}" 
+								  SelectedItem="{Binding SelectedClient}"
 								  SelectedIndex="0"
 								  Width="250" Margin="20 0 0 35"></ComboBox>
 					</StackPanel>
 					<StackPanel>
 						<TextBlock Text="Date" Margin="250 0 20 5"/>
-						<DatePicker Margin="250 0 0 35"></DatePicker>
+						<DatePicker SelectedDate="{Binding SelectedDateTime, Mode = TwoWay}" Margin="250 0 0 35"></DatePicker>
 					</StackPanel>
 
 				</StackPanel>
@@ -29,6 +30,7 @@
 						<TextBlock Text="Therapist Assigned" Margin="20 0 20 5"/>
 						<ComboBox Margin="20 0 0 0" 
 								  ItemsSource="{Binding TherapistNames}"
+								  SelectedItem="{Binding SelectedTherapist}"
 								  SelectedIndex="0"
 								  Width="250"></ComboBox>
 					</StackPanel>
@@ -73,8 +75,9 @@
 								<TextBlock Margin="20 0 0 0">value</TextBlock>
 							</StackPanel>
 						</StackPanel>
-						<ComboBox></ComboBox>
-						<Button Margin="0 20">Checkout</Button>
+						<ComboBox SelectedItem="{Binding SelectedMOP}" 
+								  ItemsSource="{Binding MOPNames}"></ComboBox>
+						<Button Command="{Binding checkOut}" Margin="0 20">Checkout</Button>
 					</StackPanel>
 				</StackPanel>
 			</StackPanel>

@@ -26,7 +26,7 @@ namespace PreciosoApp.Models
                         {
                             Gender gender= new Gender();
                             gender.Id = reader.GetInt32("gender_id");
-                            gender.Gender_name = reader.GetString("gender");
+                            gender.GenderType = reader.GetString("gender");
                             genders.Add(gender);
                         }
                     }

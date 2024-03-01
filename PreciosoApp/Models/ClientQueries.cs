@@ -46,9 +46,10 @@ namespace PreciosoApp.Models
         {
             return allClients.FindAll(client => client.Name.ToLower().Contains(searchText.ToLower()));
         }
-        public void addClient(string lastname, string firstname, DateTime dob, string contactinfo, string gender)
+
+        public void addClient(string lastname, string firstname, DateTime dob, string contactinfo, int gender)
         {
-            int gender_id = String.Equals(gender, "male") ? 1 : 2;
+            
             string name = lastname + ", " + firstname;
             Database db = new Database();
             using (MySqlConnection conn = db.GetCon())
@@ -62,7 +63,7 @@ namespace PreciosoApp.Models
                     cmd.Parameters.AddWithValue("@Name", name);
                     cmd.Parameters.AddWithValue("@DOB", dob.Date);
                     cmd.Parameters.AddWithValue("@ContactInfo", contactinfo);
-                    cmd.Parameters.AddWithValue("@Gender", gender_id);
+                    cmd.Parameters.AddWithValue("@Gender", gender);
 
                     cmd.ExecuteNonQuery();
                 }

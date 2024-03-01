@@ -17,8 +17,9 @@ namespace PreciosoApp.ViewModels
             get { return _lastName; }
             set
             {
-                _lastName = value;
+                _lastName = value;  
                 OnPropertyChanged(nameof(LastName));
+              
             }
         }
 
@@ -66,10 +67,11 @@ namespace PreciosoApp.ViewModels
             }
         }
 
-        private string _selectedGender;
-        public string SelectedGender
+        private Gender _selectedGender;
+
+        public Gender SelectedGender
         {
-            get { return _selectedGender; }
+            get => _selectedGender;
             set
             {
                 _selectedGender = value;
@@ -77,7 +79,21 @@ namespace PreciosoApp.ViewModels
             }
         }
 
-        public ObservableCollection<string> Genders { get; } = new ObservableCollection<string> { "Male", "Female", "Other"};
+        // Access the ID in your code as needed
+        public int GetSelectedGenderId()
+        {
+            if (_selectedGender != null)
+            {
+                return _selectedGender.Id;
+            }
+            else
+            {
+                // Handle the case where no gender is selected (optional)
+                return -1; // Or any placeholder value you prefer
+            }
+        }
+
+        public ObservableCollection<Gender> Genders { get; }
 
         private ObservableCollection<Client> clients;
         private ObservableCollection<Client> allClients;
@@ -98,6 +114,8 @@ namespace PreciosoApp.ViewModels
         {
             var client = new Client();
             allClients = new ObservableCollection<Client>(client.GetAllClients());
+            var genders = new TypesQueries();
+            Genders = new ObservableCollection<Gender>(genders.GetGenders());
             Client = allClients;
             AddClientCommand = new RelayCommand(AddClient);
         }
@@ -138,7 +156,7 @@ namespace PreciosoApp.ViewModels
             string middleInitial = MiddleInitial;
             string contactInfo = ContactInfo;
             DateTime dob = DOB.Date;
-            string gender = SelectedGender;
+            int gender = GetSelectedGenderId();
 
             // Call method to add client to database
             client.addClient(lastName, firstName, dob, contactInfo, gender);
