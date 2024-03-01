@@ -39,7 +39,7 @@
 					</StackPanel>
 				</Grid>
 			</Border>
-			<TransitioningContentControl Grid.Column="1" Content="{Binding CurrentPage}" Margin="10">
+			<TransitioningContentControl Grid.Column="1" Content="{Binding CurrentPage}" Margin="10 20 10 10">
 				
 			</TransitioningContentControl>
 			

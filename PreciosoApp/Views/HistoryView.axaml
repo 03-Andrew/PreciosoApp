@@ -5,8 +5,22 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PreciosoApp.Views.HistoryView"
 			 xmlns:vm="using:PreciosoApp.ViewModels"
-			 x:DataType="vm:HistoryViewModel">
-	<Grid>
-		
-	</Grid>
+			 x:DataType="vm:HistoryViewModel"
+			 Background="Transparent">
+	<Border Background="#eee" CornerRadius="30"  BoxShadow="5 5 10 0 DarkGray" Margin="10">
+		<StackPanel>
+			<TextBlock Margin="15 15 0 10">History</TextBlock>
+			<TabControl>
+				<TabItem Header="Product Sold"  FontSize="16">
+					<StackPanel>
+						<DataGrid Margin="20" ItemsSource="{Binding PTransactions}"
+				  AutoGenerateColumns="True" IsReadOnly="True" CanUserResizeColumns="True"
+				  GridLinesVisibility="All" Height="150"
+				  />
+					</StackPanel>
+				</TabItem>
+			</TabControl>
+		</StackPanel>
+	</Border>
+
 </UserControl>
