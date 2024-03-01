@@ -46,7 +46,7 @@ namespace PreciosoApp.Models
             }
             return transactions;
         }
-
+        
         public int InsertTransaction(DateTimeOffset? Date_Time, int ClientID, int TherapistID, int MOP, string Notes)
         {
             int transactionID = -1; // Initialize with a default value
@@ -71,7 +71,7 @@ namespace PreciosoApp.Models
             }
 
             return transactionID;
-        }
+    }
 
     }
 
