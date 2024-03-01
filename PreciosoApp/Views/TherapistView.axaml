@@ -8,8 +8,7 @@
 			 x:DataType="vm:TherapistViewModel">
 	<Grid RowDefinitions="Auto, *">
 		<DataGrid Margin="20" Height="200" ItemsSource="{Binding Therapist}"
-            AutoGenerateColumns="False" IsReadOnly="False"
-            GridLinesVisibility="All" BorderThickness="1" BorderBrush="Gray"
+            AutoGenerateColumns="False" Background="#efefef"
 			SelectedItem="{Binding SelectedTherapist, Mode=TwoWay}">
 			<DataGrid.Columns>
 				<DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}"/>

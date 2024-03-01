@@ -7,20 +7,36 @@
 			 xmlns:vm="using:PreciosoApp.ViewModels"
 			 x:DataType="vm:HistoryViewModel"
 			 Background="Transparent">
-	<Border Background="#eee" CornerRadius="30"  BoxShadow="5 5 10 0 DarkGray" Margin="10">
+	<Border Background="#fff">
 		<StackPanel>
 			<TextBlock Margin="15 15 0 10">History</TextBlock>
-			<TabControl>
+			<TabControl Background="#efefef">
 				<TabItem Header="Product Sold"  FontSize="16">
-					<StackPanel>
-						<DataGrid Margin="20" ItemsSource="{Binding PTransactions}"
-				  AutoGenerateColumns="True" IsReadOnly="True" CanUserResizeColumns="True"
-				  GridLinesVisibility="All" Height="150"
-				  />
-					</StackPanel>
+					<Grid RowDefinitions="3*,*">
+						<DataGrid Grid.Row="0" ItemsSource="{Binding PTransactions}" IsReadOnly="True"
+								  SelectedItem="{Binding SelectedRow, Mode=TwoWay}">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="ID" Width="Auto" Binding="{Binding Id}"/>
+								<DataGridTextColumn Header="Date" Width="Auto" Binding="{Binding Date_Time}"/>
+								<DataGridTextColumn Header="Client" Width="Auto" Binding="{Binding ClientName}"/>
+								<DataGridTextColumn Header="Therapist" Width="Auto" Binding="{Binding TherapistName}"/>
+								<DataGridTextColumn Header="MOP"  Binding="{Binding MOP}"/>
+								<DataGridTextColumn Header="Total"  Binding="{Binding Total} StringFormat={}{0:C2}}"/>
+								<DataGridTextColumn Header="Comm"  Binding="{Binding Comm} StringFormat={}{0:C2}}"/>
+							</DataGrid.Columns>
+						</DataGrid>
+						<DataGrid  Grid.Row="1" ItemsSource="{Binding PSold}" IsReadOnly="True">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="ID" Binding="{Binding TransactionId}" />
+								<DataGridTextColumn Header="Product Name" Binding="{Binding ProductName}" />
+								<DataGridTextColumn Header="Product Cost" Binding="{Binding ProductCost, StringFormat={}{0:C2}}" />
+								<DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" />
+								<DataGridTextColumn Header="Commission" Binding="{Binding Commission, StringFormat={}{0:C2}}" />
+							</DataGrid.Columns>
+						</DataGrid>
+					</Grid>
 				</TabItem>
 			</TabControl>
 		</StackPanel>
 	</Border>
-
 </UserControl>
