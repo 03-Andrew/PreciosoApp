@@ -52,6 +52,37 @@ namespace PreciosoApp.Models
             }
             return clients;
         }
+
+        public List<string> GetClientName()
+        {
+            Database db = new Database();
+            List<string> client = new List<string>();
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+
+                string query = "SELECT c.client_id, c.client_name,DATE(c.client_dob) AS client_dob, YEAR(CURDATE()) - YEAR(c.client_dob) AS age, " +
+                   "c.client_contactinfo, g.gender FROM tbl_client c LEFT JOIN tbl_gender g ON c.client_gender = g.gender_id;";
+
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            String Name = reader.GetString("client_name");
+                            client.Add(Name);
+                        }
+                    }
+                }
+
+            }
+
+            return client;
+        }
+
         public static List<Client> FilterClientsByName(List<Client> allClients, string searchText)
         {
             return allClients.FindAll(client => client.Name.ToLower().Contains(searchText.ToLower()));

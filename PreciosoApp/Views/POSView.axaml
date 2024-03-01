@@ -5,31 +5,59 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PreciosoApp.Views.POSView"
 			 xmlns:vm="using:PreciosoApp.ViewModels"
-			 x:DataType="vm:POSViewModel">
+			 x:DataType="vm:POSViewModel"
+			 >
 	<Grid RowDefinitions="Auto, *">
-		<StackPanel>
-			<ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}"></ComboBox>
-			<ListBox Background="#ffffff" 
-					 HorizontalAlignment="Left"
-					 ItemsSource="{Binding ProdNames}" 
-					 Width="490" Height="500">
-				<ListBox.Styles>
-					<Style Selector="ListBoxItem">
-						<Setter Property="Width" Value="223"/>
-						<Setter Property="Height" Value="223"/>
-						<Setter Property="HorizontalContentAlignment" Value="Center"/>
-						<Setter Property="VerticalContentAlignment" Value="Center"/>
-						<Setter Property="Margin" Value="10"/>
-						<Setter Property="Background" Value="#f2f2f2"/>
-					</Style>
-				</ListBox.Styles>
-				<ListBox.ItemsPanel>
-					<ItemsPanelTemplate>
-						<WrapPanel Orientation="Horizontal">
-						</WrapPanel>
-					</ItemsPanelTemplate>
-				</ListBox.ItemsPanel>
-			</ListBox>
+		<StackPanel Orientation="Horizontal">
+			<StackPanel>
+				<ComboBox ItemsSource="{Binding Categories}" 
+						  SelectedItem="{Binding SelectedCategory}" 
+					      SelectedIndex="0"></ComboBox>
+				<ListBox Background="#ffffff" Margin="20"
+						 HorizontalAlignment="Left"
+						 ItemsSource="{Binding ProdNames}" 
+						 SelectedItem="{Binding SelectedListItem}"
+						 Width="490" Height="500" >
+					<ListBox.Styles>
+						<Style Selector="ListBoxItem">
+							<Setter Property="Width" Value="223"/>
+							<Setter Property="Height" Value="223"/>
+							<Setter Property="HorizontalContentAlignment" Value="Center"/>
+							<Setter Property="VerticalContentAlignment" Value="Center"/>
+							<Setter Property="Margin" Value="10"/>
+							<Setter Property="Background" Value="#f2f2f2"/>
+						</Style>
+					</ListBox.Styles>
+					<ListBox.ItemsPanel>
+						<ItemsPanelTemplate>
+							<WrapPanel Orientation="Horizontal">
+							</WrapPanel>
+						</ItemsPanelTemplate>
+					</ListBox.ItemsPanel>
+				</ListBox>
+			</StackPanel>
+			<StackPanel Width="269">
+				<Border Grid.Row="0" Background="#f2f2f2" Margin="20 20 20 20" CornerRadius="10">
+					<Border.Effect>
+						<DropShadowEffect Opacity="0.1"/>
+					</Border.Effect>
+					<StackPanel>
+						<TextBlock Text="Order" Margin="20 20 20 10"/>
+						<DataGrid SelectedItem="{Binding SelectedOrderItem}" ItemsSource="{Binding OrderItems}" Height="210">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Name" Binding="{Binding ItemName}" />
+								<DataGridTextColumn Header="Price" Binding="{Binding ItemPrice}" />
+								<DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" />
+							</DataGrid.Columns>
+						</DataGrid>
+						<Button Margin="10" Command="{Binding removeItem}">Delete</Button>
+						<Button Margin="10" Width="200" 
+								HorizontalContentAlignment="Center" 
+								x:CompileBindings="False"
+					            Command="{Binding $parent[Window].DataContext.MoveToCheckoutWindow}">Checkout</Button>
+					</StackPanel>
+				</Border>
+			</StackPanel>
 		</StackPanel>
 	</Grid>
   </UserControl>

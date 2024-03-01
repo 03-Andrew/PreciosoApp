@@ -1,0 +1,86 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1080" d:DesignHeight="720"
+             x:Class="PreciosoApp.Views.CheckoutView"
+             xmlns:vm="using:PreciosoApp.ViewModels"
+			 x:DataType="vm:CheckoutViewModel">
+	<Grid RowDefinitions="Auto,*">
+		<Border Grid.Row="0" Background="#ffffffff" Margin="20 20 20 20" CornerRadius="10">
+			<StackPanel>
+				<TextBlock Text="Checkout" Margin="20 20 20 10"/>
+				<StackPanel Orientation="Horizontal">
+					<StackPanel>
+						<TextBlock Text="Client Name" Margin="20 0 20 5"/>
+						<ComboBox x:Name="custComboBox"
+								  ItemsSource="{Binding ClientNames}" 
+								  SelectedIndex="0"
+								  Width="250" Margin="20 0 0 35"></ComboBox>
+					</StackPanel>
+					<StackPanel>
+						<TextBlock Text="Date" Margin="250 0 20 5"/>
+						<DatePicker Margin="250 0 0 35"></DatePicker>
+					</StackPanel>
+
+				</StackPanel>
+				<StackPanel Orientation="Horizontal">
+					<StackPanel>
+						<TextBlock Text="Therapist Assigned" Margin="20 0 20 5"/>
+						<ComboBox Margin="20 0 0 0" 
+								  ItemsSource="{Binding TherapistNames}"
+								  SelectedIndex="0"
+								  Width="250"></ComboBox>
+					</StackPanel>
+					<StackPanel>
+						<TextBlock Text="Notes" Margin="250 0 20 5"/>
+						<TextBox AcceptsReturn="True" 
+								 Watermark="Enter notes" 
+								 Text="{Binding Notes}" 
+								 Width="150" Margin="250 0 0 0"></TextBox>
+					</StackPanel>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+		<Border Grid.Row="1" Background="#f3f3f3f3" Margin="20 20 20 20" CornerRadius="10">
+			<Border.Effect>
+				<DropShadowEffect Opacity="0.1"/>
+			</Border.Effect>
+			<StackPanel>
+				<TextBlock Text="Order" Margin="20 20 0 0"/>
+				<StackPanel Orientation="Horizontal">
+					<StackPanel Width="350" Margin="20 15 0 0">
+						<DataGrid ItemsSource="{Binding OrderItems}" Height="210">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Name" Binding="{Binding ItemName}" />
+								<DataGridTextColumn Header="Price" Binding="{Binding ItemPrice}" />
+								<DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" />
+							</DataGrid.Columns>
+						</DataGrid>
+					</StackPanel>
+					<StackPanel Margin="160 0 0 0">
+						<StackPanel Orientation="Horizontal" Margin="0 15 0 200">
+							<StackPanel Orientation="Vertical">
+								<TextBlock>Subtotal:</TextBlock>
+								<TextBlock>Taxes:</TextBlock>
+								<TextBlock>Discount:</TextBlock>
+								<TextBlock>Total:</TextBlock>
+							</StackPanel>
+							<StackPanel Orientation="Vertical">
+								<TextBlock Margin="20 0 0 0">value</TextBlock>
+								<TextBlock Margin="20 0 0 0">value</TextBlock>
+								<TextBlock Margin="20 0 0 0">value</TextBlock>
+								<TextBlock Margin="20 0 0 0">value</TextBlock>
+							</StackPanel>
+						</StackPanel>
+						<ComboBox></ComboBox>
+						<Button Margin="0 20">Checkout</Button>
+					</StackPanel>
+				</StackPanel>
+			</StackPanel>
+
+
+		</Border>
+
+	</Grid>
+</UserControl>

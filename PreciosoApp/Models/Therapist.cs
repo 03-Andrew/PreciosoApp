@@ -59,5 +59,34 @@ namespace PreciosoApp.Models
             return therapists;
         }
 
+        public List<string> GetTherapistName()
+        {
+            Database db = new Database();
+            List<string> therapist = new List<string>();
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+
+                string query = "select t.therapist_id, t.name, t.dob, t.contactinfo, t.schedule, g.gender, s.status, ty.type " +
+                               "from tbl_therapist t " +
+                               "left join tbl_gender g on t.gender = g.gender_id " +
+                               "left join tbl_therapist_status s on t.status = s.status_id " +
+                               "left join tbl_therapist_type ty on t.type = ty.type_id;"; 
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            String Name = reader.GetString("name");
+                            therapist.Add(Name);
+                        }
+                    }
+                }
+
+            }
+            return therapist;
+        }
     }
 }
