@@ -108,4 +108,91 @@ namespace PreciosoApp.Models
             }
         }
     }
+
+    public class ModeOfPayment
+    {
+        public int Id { get; set; }
+        public string payMode { get; set; }
+        Database db = new Database();
+
+
+        public List<ModeOfPayment> GetMOP()
+        {
+            List<ModeOfPayment> mops = new List<ModeOfPayment>();
+
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = "select * from tbl_therapist_status";
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ModeOfPayment mopay = new ModeOfPayment();
+                            mopay.Id = reader.GetInt32("status_id");
+                            mopay.payMode = reader.GetString("status");
+
+                            mops.Add(mopay);
+                        }
+                    }
+                }
+                return mops;
+            }
+        }
+
+        public List<int> GetMOPID(string name)
+        {
+            List<int> mops = new List<int>();
+
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = $"select * from tbl_modeofpayment WHERE mode = '{name}'";
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ModeOfPayment mopay = new ModeOfPayment();
+                            int Id = reader.GetInt32("mode_id");
+
+                            mops.Add(Id);
+                        }
+                    }
+                }
+                return mops;
+            }
+        }
+
+        public List<string> GetMOPName()
+        {
+            List<string> mops = new List<string>();
+
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = "select * from tbl_modeofpayment ";
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ModeOfPayment mopay = new ModeOfPayment();
+                            string payMode = reader.GetString("mode");
+
+                            mops.Add(payMode);
+                        }
+                    }
+                }
+                return mops;
+            }
+        }
+    }
 }

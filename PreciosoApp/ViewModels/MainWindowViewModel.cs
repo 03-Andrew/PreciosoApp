@@ -2,16 +2,22 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MySql.Data.MySqlClient;
 using PreciosoApp.Models;
 using PreciosoApp.Views;
 using System;
 using System.Collections.ObjectModel;
+using System.Media;
+using System.Windows.Input;
 
 namespace PreciosoApp.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
+    public ICommand moveToCheckout { get; }
+    public ObservableCollection<OrderItem> orderItems;
+
     public string Greeting => setString();
     public string setString()
     {
@@ -21,7 +27,7 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [ObservableProperty]
-    private ViewModelBase _currentPage = new DashboardViewModel();
+    public ViewModelBase _currentPage = new DashboardViewModel();
 
     [ObservableProperty]
     private ListItemTemplate? _selectedListItem;
@@ -29,8 +35,17 @@ public partial class MainWindowViewModel : ViewModelBase
     partial void OnSelectedListItemChanged(ListItemTemplate? value)
     {
         if (value is null) return;
+
         var instance = Activator.CreateInstance(value.ModelType);
-        if (instance == null) return;   
+        if (instance == null) return;
+        var propertyInfo = instance.GetType().GetProperty("mainWindow");
+
+        if (value.ModelType == typeof(POSViewModel))
+        {
+            System.Diagnostics.Debug.WriteLine("Success");
+            instance = Activator.CreateInstance(value.ModelType, this);
+        }
+
         CurrentPage = (ViewModelBase)instance;
     }
 
@@ -45,7 +60,29 @@ public partial class MainWindowViewModel : ViewModelBase
         new ListItemTemplate(typeof(TherapistViewModel), "desktop_regular")
     };
 
+    public MainWindowViewModel()
+    {
+        moveToCheckout = new RelayCommand(MoveToCheckoutWindow);
+    }
 
+    public ObservableCollection<OrderItem> OrderItems
+    {
+        get { return orderItems; }
+        set
+        {
+            orderItems = value;
+            OnPropertyChanged(nameof(OrderItems));
+        }
+    }
+
+    public void MoveToCheckoutWindow()
+    {
+        System.Diagnostics.Debug.WriteLine("Button Clicked");
+        System.Diagnostics.Debug.WriteLine(OrderItems[0].ItemName);
+
+        var checkoutViewModel = new CheckoutViewModel(OrderItems);
+        CurrentPage = checkoutViewModel;
+    }
 }
 
 

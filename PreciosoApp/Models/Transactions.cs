@@ -47,6 +47,32 @@ namespace PreciosoApp.Models
             return transactions;
         }
         
+        public int InsertTransaction(DateTimeOffset? Date_Time, int ClientID, int TherapistID, int MOP, string Notes)
+        {
+            int transactionID = -1; // Initialize with a default value
+
+            Database db = new Database();
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = @"INSERT INTO  tbl_transaction  (transaction_datetime, client_assigned, therapist_assigned, mode_of_payment, notes) 
+                         VALUES (@Date_Time, @ClientID, @TherapistID, @MOP, @Notes);
+                         SELECT LAST_INSERT_ID();"; // Retrieve the last inserted ID
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Date_Time", Date_Time);
+                cmd.Parameters.AddWithValue("@ClientID", ClientID);
+                cmd.Parameters.AddWithValue("@TherapistID", TherapistID);
+                cmd.Parameters.AddWithValue("@MOP", MOP);
+                cmd.Parameters.AddWithValue("@Notes", Notes);
+
+                // Execute the command and retrieve the last inserted ID
+                transactionID = Convert.ToInt32(cmd.ExecuteScalar());
+            }
+
+            return transactionID;
+    }
+
     }
 
     public class ProductSoldTransactions
@@ -152,8 +178,26 @@ namespace PreciosoApp.Models
                     }
                 }
             }
-
             return Ptransactions;
+        }
+
+        public void InsertProductSold(int trnscID, int productID, int qty)
+        {
+            int transactionID = -1; // Initialize with a default value
+
+            Database db = new Database();
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = @"INSERT INTO tbl_products_sold (transaction_id, product_id, quantity) 
+                         VALUES (@trnscID, @productID, @quantity);";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@trnscID", trnscID);
+                cmd.Parameters.AddWithValue("@productID", productID);
+                cmd.Parameters.AddWithValue("@quantity", qty);
+                cmd.ExecuteNonQuery();
+            }
         }
 
     }

@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using DynamicData;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,6 +83,33 @@ namespace PreciosoApp.Models
             Console.WriteLine(inventory);
             return inventory;
         }
+
+        public List<int> GetProductID(string productName)
+        {
+            Database db = new Database();
+            List<int> inventory = new List<int>();
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+
+                string query = $"SELECT product_id FROM tbl_product WHERE product_name = '{productName}';";
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int productID = reader.GetInt32("product_id");
+                            inventory.Add(productID);
+                        }
+                    }
+                }
+            }
+            return inventory;
+        }
+
+
         public static List<Inventory> SearchInventory(List<Inventory> allInv, string searchText)
         {
             return allInv.FindAll(inv => inv.prodName.ToLower().Contains(searchText.ToLower()));
