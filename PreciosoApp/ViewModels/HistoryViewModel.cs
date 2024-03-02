@@ -1,63 +1,74 @@
-﻿using PreciosoApp.Models;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿    using PreciosoApp.Models;
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Collections.Generic;
 
-namespace PreciosoApp.ViewModels
-{
-    public class HistoryViewModel : ViewModelBase
+    namespace PreciosoApp.ViewModels
     {
-        private readonly ObservableCollection<ProductSoldTransactions> allPTransactions;
-        private ObservableCollection<ProductSoldTransactions> pTransactions;
-        private string searchProd;
-        private List<string> prodNames;
-
-        public ObservableCollection<ProductSoldTransactions> PTransactions
+        public class HistoryViewModel : ViewModelBase
         {
-            get { return pTransactions; }
-            set
-            {
-                pTransactions = value;
-                OnPropertyChanged(nameof(PTransactions));
-            }
-        }
+            private readonly ObservableCollection<ProductSoldTransactions> allPTransactions;
+            private ObservableCollection<ProductSoldTransactions> pTransactions;
+            private string searchProd;
+            private List<string> prodNames;
 
-        public ObservableCollection<ProductSold> PSold { get; set; } // Read-only property
+            public ObservableCollection<ProductSoldTransactions> PTransactions
+            {
+                get { return pTransactions; }
+                set
+                {
+                    pTransactions = value;
+                    OnPropertyChanged(nameof(PTransactions));
+                }
+            }
+
+            private ObservableCollection<ProductSold> pSold;
+            private ObservableCollection<ProductSold> allPSold;
+
+            public ObservableCollection<ProductSold> PSold
+            {
+                get { return new ObservableCollection<ProductSold>(allPSold); }
+                set
+                {
+                    allPSold = new ObservableCollection<ProductSold>(value);
+                    OnPropertyChanged(nameof(PSold));
+                }
+            }
+
 
         public HistoryViewModel()
-        {
-            allPTransactions = new ObservableCollection<ProductSoldTransactions>(
-                new ProductSoldTransactions().GetPTransactions());
-            pTransactions = allPTransactions;
-            PSold = new ObservableCollection<ProductSold>(new ProductSold().GetProductsSold());
-        }
-
-
-        private ProductSoldTransactions _selectedRow;
-        public ProductSoldTransactions SelectedRow
-        {
-            get => _selectedRow;
-            set
             {
-                _selectedRow = value;
-                if (_selectedRow != null)
-                {
-                    // Assuming ProductSold has a property related to ProductSoldTransactions (e.g., Transaction)
-                    PSold = new ObservableCollection<ProductSold>(
-                        PSold.Where(p => p.TransactionId == _selectedRow.Id)); // Filter PSold based on transaction ID
-                }
-                else
-                {
-                    // Reset PSold to all products if no row is selected
-                    PSold = new ObservableCollection<ProductSold>(new ProductSold().GetProductsSold());
-                }
-                OnPropertyChanged(nameof(PSold)); // Notify UI of changes
+                allPTransactions = new ObservableCollection<ProductSoldTransactions>(
+                    new ProductSoldTransactions().GetPTransactions());
+                pTransactions = allPTransactions;
+                PSold = new ObservableCollection<ProductSold>(new ProductSold().GetProductsSold()); // Initialize with all products sold
             }
+
+            private ProductSoldTransactions _selectedRow;
+            public ProductSoldTransactions SelectedRow
+            {
+                get => _selectedRow;
+                set
+                {
+                    _selectedRow = value;
+                    OnPropertyChanged(nameof(SelectedRow)); // Notify UI of changes
+                    FilterPSold(); // Filter PSold based on the selected row
+                }
+            }
+
+            private void FilterPSold()
+            {
+                if (SelectedRow != null)
+                {
+                    string selectedRowIdAsString = SelectedRow.Id.ToString(); // Convert ID to string
+                    PSold = new ObservableCollection<ProductSold>(allPSold.Where(ps => ps.TransactionId.ToString().Contains(selectedRowIdAsString)));
+               
+
+                 }
+           }
+
         }
-
-
     }
-}

@@ -34,9 +34,11 @@
 								<DataGridTextColumn Header="Commission" Binding="{Binding Commission, StringFormat={}{0:C2}}" />
 							</DataGrid.Columns>
 						</DataGrid>
+						
 					</Grid>
 				</TabItem>
 			</TabControl>
+			<TextBox Text="{Binding SelectedRow.Id, Mode=TwoWay}"></TextBox>
 		</StackPanel>
 	</Border>
 </UserControl>

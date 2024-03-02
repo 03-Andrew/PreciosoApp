@@ -129,10 +129,11 @@ namespace PreciosoApp.Models
             using (MySqlConnection conn = db.GetCon())
             {
                 conn.Open();
-                string query = "SELECT * FROM prod_sold;";
+                string query = "SELECT * FROM prod_sold where transaction_id;";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
+
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
