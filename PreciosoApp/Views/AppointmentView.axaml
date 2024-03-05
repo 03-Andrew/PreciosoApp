@@ -51,18 +51,7 @@
 							<TextBox Text="{Binding ContactInfo, Mode=TwoWay}" Padding="10" Width="200" Margin="0 0 10 0"/>
 						</StackPanel>
 					</StackPanel>
-					<Expander Header="Select customer">
-						<StackPanel>
-							<TextBox Text="{Binding SearchText, Mode=TwoWay}" MaxHeight="30"/>
-							<ScrollViewer VerticalScrollBarVisibility="Visible">
-								<DataGrid ItemsSource="{Binding Client}" AutoGenerateColumns="False">
-									<DataGrid.Columns>
-										<DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
-									</DataGrid.Columns>
-								</DataGrid>
-							</ScrollViewer>
-						</StackPanel>
-					</Expander>
+				
 				</StackPanel>
 				<StackPanel Margin="20 0 0 0">
 					<TextBlock Text="Date of Birth"/>	

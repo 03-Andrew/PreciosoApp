@@ -142,10 +142,7 @@ namespace PreciosoApp.Models
     public class ProductSold
     {
         public int TransactionId { get; set; }
-        public string ProductName { get; set; }
-        public double ProductCost { get; set; }
-        public int Quantity { get; set; }
-        public double Commission { get; set; }
+        public string ProdSold { get; set; }
 
         public List<ProductSold> GetProductsSold()
         {
@@ -155,8 +152,8 @@ namespace PreciosoApp.Models
             using (MySqlConnection conn = db.GetCon())
             {
                 conn.Open();
-                string query = "SELECT * FROM prod_sold where transaction_id;";
-
+                //string query = "SELECT * FROM prod_sold where transaction_id = " + id + ";";
+                string query = "SELECT transaction_id, GROUP_CONCAT(\" \", product_name, \" (\",quantity,\") \", product_cost*quantity, \" Comm: \", commission, \"\\n\") AS products_sold FROM prod_sold GROUP BY transaction_id ORDER BY transaction_id;";
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
 
@@ -167,10 +164,12 @@ namespace PreciosoApp.Models
                             ProductSold pst = new ProductSold
                             {
                                 TransactionId = reader.GetInt32(0),
+                                ProdSold = reader.GetString(1).Replace(",", "")
+                                /*
                                 ProductName = reader.GetString(1),
                                 ProductCost = reader.GetDouble(2),
                                 Quantity = reader.GetInt32(3),
-                                Commission = reader.GetDouble(4)
+                                Commission = reader.GetDouble(4)*/
                             };
 
                             Ptransactions.Add(pst);

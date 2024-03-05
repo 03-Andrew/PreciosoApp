@@ -15,6 +15,9 @@ namespace PreciosoApp.ViewModels
         private ObservableCollection<Inventory> allInventory;
         private string searchProd;
         private List<string> prodNames;
+
+        
+
         public ObservableCollection<Inventory> Inventory
         {
             get { return inventory; }
@@ -75,5 +78,19 @@ namespace PreciosoApp.ViewModels
                 Inventory = new ObservableCollection<Inventory>(allInventory.Where(i => i.prodName.ToLower().Contains(searchProdLower)));
             }
         }
+
+        public ObservableCollection<Supplier> Supplier { get; }
+        private Supplier _selectedsupplier;
+        public Supplier SelectedSupplier
+        {
+            get => _selectedsupplier;
+            set
+            {
+                _selectedsupplier = value;
+                OnPropertyChanged(nameof(SelectedSupplier));
+            }
+
+        }
+
     }
 }
