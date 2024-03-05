@@ -38,27 +38,49 @@
 				<StackPanel Orientation="Horizontal">
 					<StackPanel>
 						<TextBlock Text="Date" Margin="20 0 20 5"/>
-						<DatePicker Margin="20 0 0 0"></DatePicker>
+						<DatePicker Margin="20 0 0 0" SelectedDate="{Binding InputDate}"></DatePicker>
 					</StackPanel>
 					<StackPanel>
 						<TextBlock Text="Supplier" Margin="20 0 20 5"/>
-						<ComboBox Margin="20 0 0 0"></ComboBox>
+						<ComboBox PlaceholderText="Supplier" ItemsSource="{Binding Suppliers}"
+								  Margin="20 0 0 0" SelectedValue="{Binding SelectedSupplier, Mode=TwoWay}">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding Name}" />
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
 					</StackPanel>
 					<StackPanel>
 						<TextBlock Text="Product" Margin="20 0 20 5"/>
-						<ComboBox x:Name="prodComboBox"
-								  SelectedIndex="1"
-								  Width="150" Margin="20 0 0 0"></ComboBox>
+						<ComboBox PlaceholderText="Products" Width="150" Margin="20 0 0 0" 
+								  ItemsSource="{Binding Inventory}" SelectedValue="{Binding SelectedProduct, Mode=TwoWay}">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding prodName}" />
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+						<TextBlock Text="Product" Margin="20 0 20 5"/>
+						<ComboBox PlaceholderText="Therapist: " Width="150" Margin="20 0 0 0"
+								  ItemsSource="{Binding Therapist}" SelectedValue="{Binding SelectedTherapist, Mode=TwoWay}">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding Name}" />
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
 					</StackPanel>
 					<StackPanel>
 						<TextBlock Text="Qty" Margin="20 0 20 5"/>
-						<TextBox Margin="20 0 0 0"></TextBox>
+						<TextBox Margin="20 0 0 0" Text="{Binding Quantity}" ></TextBox>
 					</StackPanel>
 					<StackPanel>
 						<TextBlock Text="Cost" Margin="20 0 20 5"/>
-						<TextBox Margin="20 0 0 0"></TextBox>
+						<TextBox Margin="20 0 0 0" Text="{Binding Price}"></TextBox>
 					</StackPanel>
 				</StackPanel>
+				<Button Command="{Binding AddStock}">Add Stock</Button>
 			</StackPanel>
 		</Border>
 	</Grid>

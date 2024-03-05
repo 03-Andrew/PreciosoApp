@@ -56,6 +56,47 @@ namespace PreciosoApp.Models
             return inventory;
         }
 
+
+        public void AddStockInProduct(int prod_id, int quantity, double price)
+        {
+            Database db = new Database();
+            using (MySqlConnection con = db.GetCon())
+            {
+                con.Open();
+                string query = "INSERT INTO tbl_stockin_product (inventory_id, product_id, quantity, purchase_price) VALUES ((SELECT MAX(inventory_id) FROM tbl_stockin), @prod_id, @quan, @price);";  
+
+                using (MySqlCommand cmd = new MySqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@prod_id", prod_id);
+                    cmd.Parameters.AddWithValue("@quan", quantity);
+                    cmd.Parameters.AddWithValue("@price", price);
+
+                    cmd.ExecuteNonQuery();
+                }
+
+            }
+
+        }
+
+        public void StockIn(int Supplier_id, DateTime date, int Therapist_id)
+        {
+            Database db = new Database();
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = "INSERT INTO tbl_stockin (supplier_id, date, therapist_id) values (@supplier, @date, @therapist)"; 
+                
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@supplier", Supplier_id);
+                    cmd.Parameters.AddWithValue("@date", date);
+                    cmd.Parameters.AddWithValue("@therapist", Therapist_id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
         public List<string> GetProductName()
         {
             Database db = new Database();

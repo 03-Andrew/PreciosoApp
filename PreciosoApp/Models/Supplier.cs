@@ -10,7 +10,7 @@ namespace PreciosoApp.Models
 {
     public class Supplier
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Contact {  get; set; }
 
@@ -29,12 +29,10 @@ namespace PreciosoApp.Models
                     {
                         while (reader.Read())
                         {
-                            Supplier supplier = new Supplier
-                            {
-                                Id = reader["Id"].ToString(),
-                                Name = reader["Name"].ToString(),
-                                Contact = reader["Contact"].ToString()
-                            };
+                            Supplier supplier = new Supplier();
+                            supplier.Id = reader.GetInt32(0);
+                            supplier.Name = reader.GetString(1);
+                            supplier.Contact = reader.GetString(2);
                             supp.Add(supplier);
                         }
                     }

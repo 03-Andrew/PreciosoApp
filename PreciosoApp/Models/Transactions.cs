@@ -142,6 +142,10 @@ namespace PreciosoApp.Models
     public class ProductSold
     {
         public int TransactionId { get; set; }
+        public string ProdName {  get; set; }
+        public double ProductCost {  get; set; }
+        public int Quantity { get; set; }
+        public double Commission { get; set; }
         public string ProdSold { get; set; }
 
         public List<ProductSold> GetProductsSold()

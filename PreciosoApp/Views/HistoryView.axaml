@@ -30,6 +30,7 @@
 								<DataGridTextColumn Header="Products Sold" Binding="{Binding ProdSold}"/>
 							</DataGrid.Columns>
 						</DataGrid>
+				
 						
 					</Grid>
 				</TabItem>

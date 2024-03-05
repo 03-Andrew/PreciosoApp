@@ -41,7 +41,7 @@ namespace PreciosoApp.ViewModels
                 new ProductSoldTransactions().GetPTransactions());
             pTransactions = allPTransactions;
             allPSold = new ObservableCollection<ProductSold>((new ProductSold().GetProductsSold()));
-            PSold = allPSold; // Initialize PSold with all products sold
+            
         }
 
         private ProductSoldTransactions _selectedRow;
@@ -52,8 +52,9 @@ namespace PreciosoApp.ViewModels
             {
                 _selectedRow = value;
                 
-                FilterPSold(); // Filter PSold based on the selected row
+                // Filter PSold based on the selected row
                 OnPropertyChanged(nameof(SelectedRow));
+                FilterPSold();
             }
         }
 
@@ -61,8 +62,34 @@ namespace PreciosoApp.ViewModels
         {
             if (SelectedRow != null)
             {
-                PSold = new ObservableCollection<ProductSold>(allPSold.Where(ps => ps.TransactionId == SelectedRow.Id));
+                PSold = new ObservableCollection<ProductSold>(allPSold.Where(ps => ps.TransactionId == SelectedRow.Id)); ;
             }
         }
+
+        /*
+        private string searchText; 
+        public string SearchText
+        {
+            get { return searchText; }
+            set
+            {
+                searchText = value;
+                OnPropertyChanged(nameof(SearchText));
+                FilterSold();
+            }
+        }
+
+        private void FilterSold()
+        {
+            if (string.IsNullOrWhiteSpace(SearchText))
+            {
+                PSold = pSold;
+            } else
+            {
+                PSold = new ObservableCollection<ProductSold>(allPSold.Where(ps => ps.TransactionId.ToString().Equals(SearchText)));
+            }
+        }
+        *
+        */
     }
 }

@@ -3,6 +3,7 @@ using PreciosoApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,6 +34,12 @@ namespace PreciosoApp.ViewModels
             allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
             Inventory = allInventory;
             LoadProductNames();
+
+            var Supp = new Supplier();
+            Suppliers = new ObservableCollection<Supplier>(Supp.GetAllSupplier());
+
+            var ther = new Therapist();
+            Therapist = new ObservableCollection<Therapist>(ther.GetAllTherapist());
 
         }
         
@@ -79,7 +86,20 @@ namespace PreciosoApp.ViewModels
             }
         }
 
-        public ObservableCollection<Supplier> Supplier { get; }
+
+        public ObservableCollection<Therapist> Therapist { get; }
+        private Therapist _selectedTherapist;
+        public Therapist SelectedTherapist
+        {
+            get => _selectedTherapist;
+            set
+            {
+                _selectedTherapist = value;
+                OnPropertyChanged(nameof(SelectedTherapist));
+            }
+        }
+
+        public ObservableCollection<Supplier> Suppliers { get; }
         private Supplier _selectedsupplier;
         public Supplier SelectedSupplier
         {
@@ -91,6 +111,94 @@ namespace PreciosoApp.ViewModels
             }
 
         }
+
+
+        private Inventory _selectedProduct;
+        public Inventory SelectedProduct
+        {
+            get => _selectedProduct;
+            set
+            {
+                _selectedProduct = value;
+                OnPropertyChanged(nameof(SelectedProduct)); 
+            }
+        }
+
+        private DateTimeOffset inputDate = DateTimeOffset.Now;
+        public DateTimeOffset InputDate
+        {
+            get { return inputDate; }
+            set
+            {
+                inputDate = value;
+                OnPropertyChanged(nameof(InputDate));
+            }
+        }
+
+        private int quantity;
+        public int Quantity
+        {
+            get { return quantity; }
+            set
+            {
+                quantity = value;
+                OnPropertyChanged(nameof(Quantity));
+            }
+        }
+        private double price;
+        public double Price
+        {
+            get { return price; }
+            set
+            {
+                price = value;
+                OnPropertyChanged(nameof(Price));
+            }
+        }
+
+
+
+
+        public void AddStock()
+        {
+            try
+            {
+                Inventory inv = new Inventory();
+                inv.StockIn(SelectedSupplier.Id, InputDate.Date, SelectedTherapist.Id);
+                inv.AddStockInProduct(SelectedProduct.invID, Quantity, Price);
+
+                SelectedSupplier = null;
+                InputDate = DateTime.Now;
+                SelectedTherapist = null;
+                SelectedProduct = null;
+                Quantity = 0;
+                Price = 0;
+
+                allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
+                Inventory = allInventory;
+                _errorText = "Added Item";
+
+            }
+            catch (Exception ex) {
+
+                // Display error
+                ErrorText = ex.Message;
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private string _errorText;
+        public string ErrorText
+        {
+            get => _errorText;
+            set
+            {
+                _errorText = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ErrorText)));
+            }
+        }
+
 
     }
 }

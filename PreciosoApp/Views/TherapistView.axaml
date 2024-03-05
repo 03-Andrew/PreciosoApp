@@ -23,7 +23,6 @@
 		<Border Grid.Row="1" Margin="0" Background="#efefef">
 			<TabControl>
 				<TabItem Header="Add New Therapist"
-						 Background="Beige"
 						 TabItem.BorderThickness="0">
 
 					<StackPanel>
@@ -95,7 +94,7 @@
 
 					</StackPanel>
 				</TabItem>
-				<TabItem Header="Update" Background="Beige">
+				<TabItem Header="Update">
 					<StackPanel>
 						<StackPanel Orientation="Horizontal" Height="30"  Margin="20 0 0 40">
 							<StackPanel  Margin="0 0 10 0">
