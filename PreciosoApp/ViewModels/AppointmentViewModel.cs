@@ -17,9 +17,9 @@ namespace PreciosoApp.ViewModels
             get { return _lastName; }
             set
             {
-                _lastName = value;  
+                _lastName = value;
                 OnPropertyChanged(nameof(LastName));
-              
+
             }
         }
 
@@ -79,7 +79,6 @@ namespace PreciosoApp.ViewModels
             }
         }
 
-        // Access the ID in your code as needed
         public int GetSelectedGenderId()
         {
             if (_selectedGender != null)
@@ -88,8 +87,7 @@ namespace PreciosoApp.ViewModels
             }
             else
             {
-                // Handle the case where no gender is selected (optional)
-                return -1; // Or any placeholder value you prefer
+                return -1;
             }
         }
 
@@ -120,7 +118,7 @@ namespace PreciosoApp.ViewModels
             AddClientCommand = new RelayCommand(AddClient);
         }
 
-        
+
         public string SearchText
         {
             get { return searchText; }
@@ -146,7 +144,7 @@ namespace PreciosoApp.ViewModels
         }
 
 
-        
+
         private void AddClient()
         {
             var client = new ClientQueries();
@@ -172,5 +170,18 @@ namespace PreciosoApp.ViewModels
             DOB = DateTimeOffset.Now;
             SelectedGender = null;
         }
+
+        private Client _selectedClient;
+        public Client SelectedClient
+        {
+            get => _selectedClient;
+            set
+            {
+                _selectedClient = value;
+                OnPropertyChanged(nameof(SelectedClient));
+            }
+        }
+
+
     }
 }

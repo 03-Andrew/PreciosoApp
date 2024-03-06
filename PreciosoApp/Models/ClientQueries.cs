@@ -1,4 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,6 +68,29 @@ namespace PreciosoApp.Models
 
                     cmd.ExecuteNonQuery();
                 }
+            }
+        }
+
+        public void updateClient(int id, string name, DateTimeOffset dob, string contactInfo, int genderId)
+        {
+            Database db = new Database();
+            using(MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = "UPDATE tbl_therapist SET name = @Name, dob = @DOB, contactinfo = @ContactInfo, " +
+                              "gender = @GenderID, status = @StatusID, type = @TypeID " +
+                              "WHERE client_id = @ID;";
+
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@Name", name);
+                cmd.Parameters.AddWithValue("@DOB", dob);
+                cmd.Parameters.AddWithValue("@ContactInfo", contactInfo);
+                cmd.Parameters.AddWithValue("@GenderID", genderId);
+                cmd.Parameters.AddWithValue("@ID", id); // Assuming ID is the primary key for therapist
+
+                // Execute the update query
+                cmd.ExecuteNonQuery();
             }
         }
     }

@@ -12,7 +12,6 @@ namespace PreciosoApp.ViewModels
     {
         private ObservableCollection<ProductSoldTransactions> allPTransactions;
         private ObservableCollection<ProductSoldTransactions> pTransactions;
-        private ObservableCollection<ProductSold> pSold;
         private ObservableCollection<ProductSold> allPSold;
 
         public ObservableCollection<ProductSoldTransactions> PTransactions
@@ -25,15 +24,17 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        private ObservableCollection<ProductSold> _pSold;
         public ObservableCollection<ProductSold> PSold
         {
-            get { return pSold; }
+            get { return _pSold; }
             set
             {
-                pSold = value;
+                _pSold = value;
                 OnPropertyChanged(nameof(PSold));
             }
         }
+
 
         public HistoryViewModel()
         {
@@ -51,8 +52,6 @@ namespace PreciosoApp.ViewModels
             set
             {
                 _selectedRow = value;
-                
-                // Filter PSold based on the selected row
                 OnPropertyChanged(nameof(SelectedRow));
                 FilterPSold();
             }

@@ -25,11 +25,28 @@
 								<DataGridTextColumn Header="Comm"  Binding="{Binding Comm} StringFormat={}{0:C2}}"/>
 							</DataGrid.Columns>
 						</DataGrid>
-						<DataGrid  Grid.Row="1" ItemsSource="{Binding PSold}" IsReadOnly="True">
+						<ListBox Grid.Row="1" ItemsSource="{Binding PSold}">
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<Grid ColumnDefinitions="*, *, *, *" RowDefinitions="*, *">
+										<TextBlock Text="{Binding ProdName}" Grid.Column="0" Grid.Row="1" Margin="0,0,5,0"/>
+										<TextBlock Text="{Binding Quantity}" Grid.Column="1" Grid.Row="1" Margin="0,0,5,0"/>
+										<TextBlock Text="{Binding ProductCost}" Grid.Column="2" Grid.Row="1" Margin="0,0,5,0"/>
+										<TextBlock Text="{Binding Commission}" Grid.Column="3" Grid.Row="1" Margin="0,0,5,0"/>
+									</Grid>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+
+
+
+						<!--<DataGrid Grid.Row="2" ItemsSource="{Binding PSold}">
+							--><!-- Define your columns --><!--
 							<DataGrid.Columns>
-								<DataGridTextColumn Header="Products Sold" Binding="{Binding ProdSold}"/>
+								<DataGridTextColumn Header="Product Name" Binding="{Binding ProdName}" />
+								--><!-- Add more columns as needed --><!--
 							</DataGrid.Columns>
-						</DataGrid>
+						</DataGrid>-->
 				
 						
 					</Grid>
