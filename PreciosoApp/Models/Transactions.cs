@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI;
+using ZstdSharp.Unsafe;
 
 namespace PreciosoApp.Models
 {
@@ -258,6 +259,48 @@ namespace PreciosoApp.Models
                 cmd.ExecuteNonQuery();
             }
 
+        }
+    }
+
+    public class AllTransactions
+    {
+        public int ID { get; set; }
+        public DateTime Date { get; set; }
+        public string Client { get; set; }
+        public string Therapist { get; set; }
+        public string ModeOfPayment { get; set; }
+        public string Note { get; set; }
+        public double Prod_rev {  get; set; }
+        public double Prod_comm { get; set; }
+        public double Serv_rev {  get; set; }
+        public double Serv_comm {  get; set; }
+        public double Total_Gross { get; set; }
+        public double Total_comm {  get; set; }
+
+        Database db = new Database();
+
+        public List<AllTransactions> GetTransactions()
+        {
+            Func<MySqlDataReader, AllTransactions> mapRow = reader => new AllTransactions
+            {
+                ID = reader.GetInt32(0),
+                Date = reader.GetDateTime(1),
+                Client = reader.GetString(2),
+                Therapist = reader.GetString(3),
+                ModeOfPayment = reader.GetString(4),
+                Note = reader.GetString(5),
+                Prod_rev = reader.GetDouble(6),
+                Prod_comm = reader.GetDouble(7),
+                Serv_rev = reader.GetDouble(8),
+                Serv_comm = reader.GetDouble(9),
+                Total_Gross = reader.GetDouble(10),
+                Total_comm = reader.GetDouble(11)
+
+            };
+
+            string query = "SELECT * from transactions_view1";
+
+            return db.ExecuteQuery(query, mapRow);
         }
     }
 
