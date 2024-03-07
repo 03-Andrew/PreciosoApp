@@ -16,6 +16,33 @@ namespace PreciosoApp.Models
             return conn;
         }
 
+        public MySqlConnection GetOpenConnection()
+        {
+            Database db = new Database();
+            MySqlConnection conn = db.GetCon();
+            conn.Open();
+            return conn;
+        }
+
+        public List<T> ExecuteQuery<T>(string query, Func<MySqlDataReader, T> mapRow)
+        {
+            using (MySqlConnection conn = GetOpenConnection())
+            {
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        List<T> results = new List<T>();
+                        while (reader.Read())
+                        {
+                            results.Add(mapRow(reader));
+                        }
+                        return results;
+                    }
+                }
+            }
+        }
+
         public bool TestConnection()
         {
             MySqlConnection conn = GetCon();

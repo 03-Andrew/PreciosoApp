@@ -12,7 +12,8 @@ namespace PreciosoApp.Models
     {
         public int Id { get; set; } 
         public string Name { get; set; }
-        public string DOB { get; set; }
+        public DateTime DOB { get; set; }
+        public DateOnly DOB_date { get; set; }
         public int Age { get; set; }
         public string ContactInfo { get; set; }
         public string Gender { get; set; }
@@ -40,7 +41,8 @@ namespace PreciosoApp.Models
                             Client client = new Client();
                             client.Id = reader.GetInt32("client_id");
                             client.Name = reader.GetString("client_name");
-                            client.DOB = reader.GetDateTime("client_dob").ToString().Substring(0,10);
+                            client.DOB = reader.GetDateTime("client_dob");
+                            client.DOB_date = DateOnly.FromDateTime(client.DOB);
                             client.Age = reader.GetInt32("age");
                             client.ContactInfo = reader.GetString("client_contactinfo");
                             client.Gender = reader.GetString("gender");
@@ -116,6 +118,53 @@ namespace PreciosoApp.Models
         public static List<Client> FilterClientsByName(List<Client> allClients, string searchText)
         {
             return allClients.FindAll(client => client.Name.ToLower().Contains(searchText.ToLower()));
+        }
+
+        public void addClient(string lastname, string firstname, DateTime dob, string contactinfo, int gender)
+        {
+
+            string name = lastname + ", " + firstname;
+            Database db = new Database();
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+
+                string query = "INSERT INTO tbl_client (client_name, client_dob, client_contactinfo, client_gender) VALUES (@Name, @DOB, @ContactInfo, @Gender)";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Name", name);
+                    cmd.Parameters.AddWithValue("@DOB", dob.Date);
+                    cmd.Parameters.AddWithValue("@ContactInfo", contactinfo);
+                    cmd.Parameters.AddWithValue("@Gender", gender);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+
+
+        public void updateClient(int id, string name, DateTimeOffset dob, string contactInfo, int genderId)
+        {
+            Database db = new Database();
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = "UPDATE tbl_client SET client_name = @Name, client_dob = @DOB, client_contactinfo = @ContactInfo, " +
+                              "client_gender = @GenderID WHERE client_id = @ID;";
+
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@Name", name);
+                cmd.Parameters.AddWithValue("@DOB", dob);
+                cmd.Parameters.AddWithValue("@ContactInfo", contactInfo);
+                cmd.Parameters.AddWithValue("@GenderID", genderId);
+                cmd.Parameters.AddWithValue("@ID", id); // Assuming ID is the primary key for therapist
+
+                // Execute the update query
+                cmd.ExecuteNonQuery();
+            }
         }
     }
 }

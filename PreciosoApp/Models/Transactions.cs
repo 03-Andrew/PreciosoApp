@@ -9,8 +9,10 @@ using MySqlX.XDevAPI;
 
 namespace PreciosoApp.Models
 {
+
     public class Transactions
     {
+        Database db = new Database();
         public int ID { get; set; }
         public DateTime Date_Time { get; set; }
         public string ClientName { get; set; }
@@ -36,13 +38,31 @@ namespace PreciosoApp.Models
         */
         public List<Transactions> GetTransactions()
         {
-            Database db = new Database();
+            
             List<Transactions> transactions = new List<Transactions>();
 
             using (MySqlConnection conn = db.GetCon())
             {
                 conn.Open();
-                string query = "";
+                string query = "select t.transaction_id, t.transaction_datetime, c.client_name, th.name, mp.mode, " +
+                    "t.notes from tbl_transaction t left join tbl_client c on t.client_assigned = c.client_id " +
+                    "left join tbl_therapist th on t.therapist_assigned = th.therapist_id left join tbl_modeofpayment mp on t.mode_of_payment = mp.mode_id;";
+
+                using(MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        Transactions tr = new Transactions();
+                        tr.ID = reader.GetInt32(0);
+                        tr.Date_Time = reader.GetDateTime(1);
+                        tr.ClientName = reader.GetString(2);
+                        tr.TherapisName = reader.GetString(3);
+                        tr.MOP = reader.GetString(4);
+                        tr.Notes = reader.GetString(5);
+                        transactions.Add(tr);
+                    }
+                }
+
             }
             return transactions;
         }
@@ -51,7 +71,6 @@ namespace PreciosoApp.Models
         {
             int transactionID = -1; // Initialize with a default value
 
-            Database db = new Database();
 
             using (MySqlConnection conn = db.GetCon())
             {
@@ -85,11 +104,159 @@ namespace PreciosoApp.Models
         public double Total { get; set; }
         public double Comm { get; set; }
         public string ProductsSold { get; set; }
+        Database db = new Database();
 
         public List<ProductSoldTransactions> GetPTransactions()
         {
+            Func<MySqlDataReader, ProductSoldTransactions> mapRow = reader => new ProductSoldTransactions
+            {
+                Id = reader.GetInt32(0),
+                Date_Time = reader.GetDateTime(1),
+                ClientName = reader.GetString(2),
+                TherapistName = reader.GetString(3),
+                MOP = reader.GetString(4),
+                Total = reader.GetDouble(6),
+                Comm = reader.GetDouble(7),
+            };
+
+            string query = "select * from prod_sold_history;";
+            return db.ExecuteQuery(query, mapRow);
+        }
+
+
+        public static implicit operator ProductSoldTransactions(ObservableCollection<ProductSold> v)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ProductSold
+    {
+        public int TransactionId { get; set; }
+        public string ProdName { get; set; }
+        public double ProductCost { get; set; }
+        public int Quantity { get; set; }
+        public double Commission { get; set; }
+        public string ProdSold { get; set; }
+        Database db = new Database();
+
+        public List<ProductSold> GetProductsSold()
+        {
+            Func<MySqlDataReader, ProductSold> mapRow = reader => new ProductSold
+            {
+                TransactionId = reader.GetInt32(0),
+                ProdName = reader.GetString(1),
+                ProductCost = reader.GetDouble(2),
+                Quantity = reader.GetInt32(3),
+                Commission = reader.GetDouble(4)
+            };
+
+            string query = "SELECT * FROM prod_sold;";
+            return db.ExecuteQuery(query, mapRow);
+        }
+
+
+        public void InsertProductSold(int trnscID, int productID, int qty)
+        {
+            int transactionID = -1; // Initialize with a default value
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = @"INSERT INTO tbl_products_sold (transaction_id, product_id, quantity) 
+                         VALUES (@trnscID, @productID, @quantity);";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@trnscID", trnscID);
+                cmd.Parameters.AddWithValue("@productID", productID);
+                cmd.Parameters.AddWithValue("@quantity", qty);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+    }
+
+
+    public class Service_Transaction
+    {
+        public int ID { get; set; }
+        public DateTime Date { get; set; }
+        public string ClientName { get; set; }
+        public string Therapist { get; set; }
+        public string Mode { get; set; }
+        public double Price { get; set; }
+        public double Commission { get; set; }
+        public string Notes { get; set; }
+        Database db = new Database();
+
+        public Service_Transaction() { }
+
+        public List<Service_Transaction> GetService_Transactions()
+        {
+            Func<MySqlDataReader, Service_Transaction> mapRow = reader => new Service_Transaction
+            {
+                ID = reader.GetInt32(0),
+                Date = reader.GetDateTime(1),
+                ClientName = reader.GetString(2),
+                Therapist = reader.GetString(3),
+                Mode = reader.GetString(4),
+                Price = reader.GetDouble(5),
+                Commission = reader.GetDouble(6),
+                Notes = reader.GetString(7)
+            };
+
+            string query = "select * from services_history";
+
+            return db.ExecuteQuery(query, mapRow);
+
+        }
+    }
+
+
+}
+
+
+/*
+ *
+ *Trash
+ *public List<ProductSold> GetProductsSold2()
+        {
+            List<ProductSold> Ptransactions = new List<ProductSold>();
+
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = "SELECT * FROM prod_sold;";
+                //string query = "SELECT transaction_id, GROUP_CONCAT(\" \", product_name, \" (\",quantity,\") \", product_cost*quantity, \" Comm: \", commission, \"\\n\") AS products_sold FROM prod_sold GROUP BY transaction_id ORDER BY transaction_id;";
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ProductSold pst = new ProductSold
+                            {
+                                TransactionId = reader.GetInt32(0),
+                                
+                                ProdName = reader.GetString(1),
+                                ProductCost = reader.GetDouble(2),
+                                Quantity = reader.GetInt32(3),
+                                Commission = reader.GetDouble(4)
+                            };
+
+                            Ptransactions.Add(pst);
+                        }
+                    }
+                }
+            }
+            return Ptransactions;
+        }
+
+
+        public List<ProductSoldTransactions> GetPTransactions2()
+        {
             List<ProductSoldTransactions> Ptransactions = new List<ProductSoldTransactions>();
-            Database db = new Database();
             using (MySqlConnection conn = db.GetCon())
             {
                 conn.Open();
@@ -107,7 +274,7 @@ namespace PreciosoApp.Models
 
                 string query2 = "select * from prod_sold_history;";
 
-                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                using (MySqlCommand cmd = new MySqlCommand(query2, conn))
                 {
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -122,7 +289,6 @@ namespace PreciosoApp.Models
                                 MOP = reader.GetString(4),
                                 Total = reader.GetDouble(6),
                                 Comm = reader.GetDouble(7),
-                                ProductsSold = reader.GetString("product_list")
                             };
 
                             Ptransactions.Add(pst);
@@ -132,64 +298,7 @@ namespace PreciosoApp.Models
             }
             return Ptransactions;
         }
-
-        public static implicit operator ProductSoldTransactions(ObservableCollection<ProductSold> v)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class ProductSold
-    {
-        public int TransactionId { get; set; }
-        public string ProdName { get; set; }
-        public double ProductCost { get; set; }
-        public int Quantity { get; set; }
-        public double Commission { get; set; }
-        public string ProdSold { get; set; }
-
-        public List<ProductSold> GetProductsSold()
-        {
-            List<ProductSold> Ptransactions = new List<ProductSold>();
-            Database db = new Database();
-
-            using (MySqlConnection conn = db.GetCon())
-            {
-                conn.Open();
-                //string query = "SELECT * FROM prod_sold where transaction_id = " + id + ";";
-                string query = "SELECT transaction_id, GROUP_CONCAT(\" \", product_name, \" (\",quantity,\") \", product_cost*quantity, \" Comm: \", commission, \"\\n\") AS products_sold FROM prod_sold GROUP BY transaction_id ORDER BY transaction_id;";
-                using (MySqlCommand cmd = new MySqlCommand(query, conn))
-                {
-
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            ProductSold pst = new ProductSold
-                            {
-                                TransactionId = reader.GetInt32(0),
-                                ProdSold = reader.GetString(1).Replace(",", "")
-                                /*
-                                ProductName = reader.GetString(1),
-                                ProductCost = reader.GetDouble(2),
-                                Quantity = reader.GetInt32(3),
-                                Commission = reader.GetDouble(4)*/
-                            };
-
-                            Ptransactions.Add(pst);
-                        }
-                    }
-                }
-            }
-            return Ptransactions;
-        }
-
-        public void InsertProductSold(int trnscID, int productID, int qty)
-        {
-            int transactionID = -1; // Initialize with a default value
-
-            Database db = new Database();
-
+ */
             using (MySqlConnection conn = db.GetCon())
             {
                 conn.Open();

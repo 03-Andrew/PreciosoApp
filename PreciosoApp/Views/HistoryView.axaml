@@ -14,7 +14,7 @@
 				<TabItem Header="Product Sold"  FontSize="16">
 					<Grid RowDefinitions="3*,*,*">
 						<DataGrid Grid.Row="0" ItemsSource="{Binding PTransactions}" IsReadOnly="True"
-								  SelectedItem="{Binding SelectedRow, Mode=TwoWay}">
+								  SelectedItem="{Binding SelectedRow, Mode=TwoWay}" GridLinesVisibility="Horizontal">
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="ID" Width="Auto" Binding="{Binding Id}"/>
 								<DataGridTextColumn Header="Date" Width="Auto" Binding="{Binding Date_Time}"/>
@@ -25,14 +25,23 @@
 								<DataGridTextColumn Header="Comm"  Binding="{Binding Comm} StringFormat={}{0:C2}}"/>
 							</DataGrid.Columns>
 						</DataGrid>
-						<DataGrid  Grid.Row="1" ItemsSource="{Binding PSold}" IsReadOnly="True">
+					
+						<DataGrid Grid.Row="2" ItemsSource="{Binding PSold}" Height="300" BorderBrush="Aqua" GridLinesVisibility="Horizontal">
 							<DataGrid.Columns>
-								<DataGridTextColumn Header="Products Sold" Binding="{Binding ProdSold}"/>
+								<DataGridTextColumn Header="Product Name" Binding="{Binding ProdName}" />
+								<DataGridTextColumn Header="Product Cost" Binding="{Binding ProductCost}" />
+								<DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" />
+								<DataGridTextColumn Header="Commission" Binding="{Binding Commission}" />
 							</DataGrid.Columns>
 						</DataGrid>
 				
 						
 					</Grid>
+				</TabItem>
+				<TabItem Header="Services" FontSize="16">
+					<DataGrid ItemsSource="{Binding ServiceTransactions}" AutoGenerateColumns="True">
+						
+					</DataGrid>
 				</TabItem>
 			</TabControl>
 
