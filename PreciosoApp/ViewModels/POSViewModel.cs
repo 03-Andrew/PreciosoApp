@@ -19,6 +19,7 @@ namespace PreciosoApp.ViewModels
     {
         private ObservableCollection<Inventory> inventory;
         private ObservableCollection<Services> services;
+        private ObservableCollection<Promos> promos;
         private ObservableCollection<Inventory> allInventory;
         private ObservableCollection<string> categories;
         private ObservableCollection<OrderItem> orderItems;
@@ -36,6 +37,8 @@ namespace PreciosoApp.ViewModels
             removeItem = new RelayCommand(RemoveSelected);
             var inv = new Inventory();
             var serv = new Services();
+            var promo = new Promos();
+            promos = new ObservableCollection<Promos>(promo.GetPromos());
             services = new ObservableCollection<Services>(serv.GetServices());
             allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
             OrderItems = new ObservableCollection<OrderItem>();
@@ -46,6 +49,7 @@ namespace PreciosoApp.ViewModels
             {
             "Services",
             "Products",
+            "Promos",
             };
         }
 
@@ -56,6 +60,8 @@ namespace PreciosoApp.ViewModels
             removeItem = new RelayCommand(RemoveSelected);
             var inv = new Inventory();
             var serv = new Services();
+            var promo = new Promos();
+            promos = new ObservableCollection<Promos>(promo.GetPromos());
             services = new ObservableCollection<Services>(serv.GetServices());
             allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
             OrderItems = new ObservableCollection<OrderItem>();
@@ -67,6 +73,30 @@ namespace PreciosoApp.ViewModels
             {
             "Services",
             "Products",
+            "Promos",
+            };
+        }
+
+        public POSViewModel(MainWindowViewModel mainWindow, ObservableCollection<OrderItem> orderItems)
+        {
+            this.mainWindow = mainWindow;
+            OrderItems = orderItems;
+
+            removeItem = new RelayCommand(RemoveSelected);
+            var inv = new Inventory();
+            var serv = new Services();
+            var promo = new Promos();
+            promos = new ObservableCollection<Promos>(promo.GetPromos());
+            services = new ObservableCollection<Services>(serv.GetServices());
+            allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
+            Inventory = allInventory;
+            LoadProductNames();
+
+            Categories = new ObservableCollection<string>
+            {
+            "Services",
+            "Products",
+            "Promos",
             };
         }
 
@@ -98,6 +128,16 @@ namespace PreciosoApp.ViewModels
             {
                 services = value;
                 OnPropertyChanged(nameof(Services));
+            }
+        }
+
+        public ObservableCollection<Promos> Promos
+        {
+            get { return promos; }
+            set
+            {
+                promos = value;
+                OnPropertyChanged(nameof(Promos));
             }
         }
 
@@ -157,7 +197,18 @@ namespace PreciosoApp.ViewModels
                 if (selectedProduct == null)
                 {
                     var selectedService = Services.FirstOrDefault(item => item.servName == selectedListItem);
-                    UpdateDataGrid(selectedService);
+                    if (selectedService != null)
+                    {
+                        UpdateDataGrid(selectedService);
+                    }
+                    else
+                    {
+                        var selectedPromo = Promos.FirstOrDefault(item => item.promoName == selectedListItem);
+                        if (selectedPromo != null)
+                        {
+                            UpdateDataGrid(selectedPromo);
+                        }
+                    }
                 }
                 else
                 {
@@ -192,6 +243,12 @@ namespace PreciosoApp.ViewModels
             var serv = new Services();
             List<string> servicesNames = serv.GetServicesName();
             ProdNames = new List<string>(servicesNames);
+        }
+        private void LoadPromoNames()
+        {
+            var promo = new Promos();
+            List<string> promoNames = promo.GetPromoNames();
+            ProdNames = new List<string>(promoNames);
 
         }
 
@@ -205,6 +262,10 @@ namespace PreciosoApp.ViewModels
             {
                 LoadProductNames();
             }
+            else if (SelectedCategory == "Promos")
+            {
+                LoadPromoNames();
+            }
         }
 
         private void UpdateDataGrid(object selectedItem)
@@ -212,13 +273,20 @@ namespace PreciosoApp.ViewModels
             if (selectedItem != null)
             {
                 string itemName = "";
+                string itemType = "None";
 
                 if (selectedItem is Inventory product)
                 {
                     itemName = product.prodName;
+                    itemType = "Product";
                 } else if (selectedItem is Services service)
                 {
                     itemName = service.servName;
+                    itemType = "Service";
+                } else if (selectedItem is Promos promo)
+                {
+                    itemName = promo.promoName;
+                    itemType = "Promo";
                 }
 
                 var existingOrderItem = mainWindow.OrderItems.FirstOrDefault(item => item.ItemName == itemName);
@@ -228,13 +296,20 @@ namespace PreciosoApp.ViewModels
                 }
                 else
                 {
+
                     mainWindow.OrderItems.Add(new OrderItem
                     {
-                        ItemID = (selectedItem is Inventory products) ? products.invID : ((selectedItem is Services service) ? service.servID : 0),
-                        ItemName = itemName,
-                        ItemPrice = (selectedItem is Inventory productss) ? productss.prodCost : ((selectedItem is Services services) ? services.servCost : 0),
-                        Quantity = 1
+                    ItemID = (selectedItem is Inventory products) ? products.invID :
+                             (selectedItem is Services service) ? service.servID :
+                             ((selectedItem is Promos promo) ? promo.promoID : 0),
+                    ItemName = itemName,
+                    ItemPrice = (selectedItem is Inventory productss) ? productss.prodCost :
+                                (selectedItem is Services services) ? services.servCost :
+                                ((selectedItem is Promos promos) ? promos.promoCost : 0),
+                    Quantity = 1,
+                    ItemType = itemType,
                     });
+
                 }
                 this.OrderItems = mainWindow.OrderItems;
             }
@@ -249,8 +324,7 @@ namespace PreciosoApp.ViewModels
             });
             this.OrderItems = mainWindow.OrderItems;
         }
-
-        
+     
     }
 
     public class OrderItem : ViewModelBase
@@ -259,6 +333,7 @@ namespace PreciosoApp.ViewModels
         private string itemName;
         private float itemPrice;
         private int quantity;
+        private string itemType;
 
         public int ItemID
         {
@@ -297,6 +372,16 @@ namespace PreciosoApp.ViewModels
             {
                 quantity = value;
                 OnPropertyChanged(nameof(Quantity));
+            }
+        }
+
+        public string ItemType
+        {
+            get { return itemType; }
+            set
+            {
+                itemType = value;
+                OnPropertyChanged(nameof(ItemType));
             }
         }
     }

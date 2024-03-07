@@ -13,7 +13,8 @@
 				<ComboBox ItemsSource="{Binding Categories}" 
 						  SelectedItem="{Binding SelectedCategory}" 
 					      SelectedIndex="0"></ComboBox>
-				<ListBox Background="#ffffff" Margin="20"
+				<ListBox x:Name="OrderListBox"
+						 Background="#ffffff" Margin="20"
 						 HorizontalAlignment="Left"
 						 ItemsSource="{Binding ProdNames}" 
 						 SelectedItem="{Binding SelectedListItem}"

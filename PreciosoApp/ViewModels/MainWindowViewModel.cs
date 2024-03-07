@@ -83,6 +83,15 @@ public partial class MainWindowViewModel : ViewModelBase
         var checkoutViewModel = new CheckoutViewModel(OrderItems);
         CurrentPage = checkoutViewModel;
     }
+
+    public void MoveToPOSView()
+    {
+        System.Diagnostics.Debug.WriteLine("Button Clicked");
+        System.Diagnostics.Debug.WriteLine(OrderItems[0].ItemName);
+
+        var posViewModel = new POSViewModel(this, OrderItems);
+        CurrentPage = posViewModel;
+    }
 }
 
 

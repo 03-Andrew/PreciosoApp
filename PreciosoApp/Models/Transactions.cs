@@ -17,7 +17,7 @@ namespace PreciosoApp.Models
         public DateTime Date_Time { get; set; }
         public string ClientName { get; set; }
         public string TherapisName { get; set; }
-        public string MOP {  get; set; }
+        public string MOP { get; set; }
         public double Total { get; set; }
         public double TotalCommission { get; set; }
         public string Notes { get; set; }
@@ -66,7 +66,7 @@ namespace PreciosoApp.Models
             }
             return transactions;
         }
-        
+
         public int InsertTransaction(DateTimeOffset? Date_Time, int ClientID, int TherapistID, int MOP, string Notes)
         {
             int transactionID = -1; // Initialize with a default value
@@ -90,7 +90,7 @@ namespace PreciosoApp.Models
             }
 
             return transactionID;
-    }
+        }
 
     }
 
@@ -133,8 +133,8 @@ namespace PreciosoApp.Models
     public class ProductSold
     {
         public int TransactionId { get; set; }
-        public string ProdName {  get; set; }
-        public double ProductCost {  get; set; }
+        public string ProdName { get; set; }
+        public double ProductCost { get; set; }
         public int Quantity { get; set; }
         public double Commission { get; set; }
         Database db = new Database();
@@ -323,3 +323,110 @@ namespace PreciosoApp.Models
             return Ptransactions;
         }
  */
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = @"INSERT INTO tbl_products_sold (transaction_id, product_id, quantity) 
+                         VALUES (@trnscID, @productID, @quantity);";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@trnscID", trnscID);
+                cmd.Parameters.AddWithValue("@productID", productID);
+                cmd.Parameters.AddWithValue("@quantity", qty);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+    }
+
+    //Appointment table
+    public class ServicesUsed
+    {
+        public int TransactionId { get; set; }
+        public int ServiceId { get; set; }
+        public int status { get; set; }
+
+
+        public void insertServiceUsed(int trnscID, int serviceID, int qty)
+        {
+            int transactionID = -1; // Initialize with a default value
+
+            Database db = new Database();
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = @"INSERT INTO `tbl_appointment` (`transaction_id`, `service_id`, `quantity`, `appointment_status`) 
+                                 VALUES (@trnscID, @serviceID, @quantity, 2);";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@trnscID", trnscID);
+                cmd.Parameters.AddWithValue("@quantity", qty);
+                cmd.Parameters.AddWithValue("@serviceID", serviceID);
+                cmd.ExecuteNonQuery();
+            }
+        }
+    }
+
+    public class PromoTransaction
+    {
+        public int TransactionId { get; set; }
+        public int PromoID { get; set; }
+
+        public void insertPromoTransaction(int trnscID, int promoID, int qty)
+        {
+            int transactionID = -1; // Initialize with a default value
+
+            Database db = new Database();
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = @"INSERT INTO `tbl_promo_transaction` (`transaction_id`, `promo_id`, `status`) 
+                                 VALUES (@trnscID, @promoID, 2) ";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@trnscID", trnscID);
+                cmd.Parameters.AddWithValue("@promoID", promoID);
+                cmd.ExecuteNonQuery();
+            }
+
+            List<(int serviceID, int quantity)> promoServices = GetPromoServices(promoID);
+            var sUsed = new ServicesUsed();
+
+            foreach (var (serviceID, quantity) in promoServices)
+            {
+                int servQty = quantity * qty;
+                sUsed.insertServiceUsed(trnscID, serviceID, servQty);
+            }
+        }
+
+        private List<(int serviceID, int quantity)> GetPromoServices(int promoID)
+        {
+            List<(int serviceID, int quantity)> services = new List<(int serviceID, int quantity)>();
+
+            Database db = new Database();
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = @"SELECT service_id, quantity FROM tbl_promo_services WHERE promo_id = @promoID";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@promoID", promoID);
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int serviceID = reader.GetInt32("service_id");
+                            int quantity = reader.GetInt32("quantity");
+                            services.Add((serviceID, quantity));
+                        }
+                    }
+                }
+            }
+
+            return services;
+        }
+    }
+}
+

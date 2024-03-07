@@ -59,6 +59,9 @@
 								<DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" />
 							</DataGrid.Columns>
 						</DataGrid>
+						<Button x:CompileBindings="False"
+								Command="{Binding $parent[Window].DataContext.MoveToPOSView}"
+								Margin="0 110 0 0">Back</Button>
 					</StackPanel>
 					<StackPanel Margin="160 0 0 0">
 						<StackPanel Orientation="Horizontal" Margin="0 15 0 200">
