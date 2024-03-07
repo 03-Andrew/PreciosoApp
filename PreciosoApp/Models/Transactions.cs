@@ -137,7 +137,6 @@ namespace PreciosoApp.Models
         public double ProductCost {  get; set; }
         public int Quantity { get; set; }
         public double Commission { get; set; }
-        public string ProdSold { get; set; }
         Database db = new Database();
 
         public List<ProductSold> GetProductsSold()
@@ -211,6 +210,31 @@ namespace PreciosoApp.Models
         }
     }
 
+    public class ServicesUsed
+    {
+        public int TransactionId { get; set; }
+        public string Service { get; set; }
+        public double Cost { get; set; }
+        public string Status  { get; set; }
+        public double Commission { get; set; }
+        Database db = new Database();
+
+        public List<ServicesUsed> GetServicesUsed()
+        {
+            Func<MySqlDataReader, ServicesUsed> mapRow = reader => new ServicesUsed
+            { 
+                TransactionId = reader.GetInt32(0),
+                Service = reader.GetString(1),
+                Status = reader.GetString(2),
+                Cost = reader.GetDouble(3),
+                Commission = reader.GetDouble(4)
+            };
+
+            string query = "select * from services_availed;";
+
+            return db.ExecuteQuery(query, mapRow);
+        }
+    }
 
 }
 

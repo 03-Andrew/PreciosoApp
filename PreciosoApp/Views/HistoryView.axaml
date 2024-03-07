@@ -12,8 +12,8 @@
 			<TextBlock Margin="15 15 0 10">History</TextBlock>
 			<TabControl Background="#efefef">
 				<TabItem Header="Product Sold"  FontSize="16">
-					<Grid RowDefinitions="3*,*,*">
-						<DataGrid Grid.Row="0" ItemsSource="{Binding PTransactions}" IsReadOnly="True"
+					<Grid RowDefinitions="2*,*,*">
+						<DataGrid Grid.Row="0" ItemsSource="{Binding PTransactions}" IsReadOnly="True" Height="300"
 								  SelectedItem="{Binding SelectedRow, Mode=TwoWay}" GridLinesVisibility="Horizontal">
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="ID" Width="Auto" Binding="{Binding Id}"/>
@@ -39,9 +39,16 @@
 					</Grid>
 				</TabItem>
 				<TabItem Header="Services" FontSize="16">
-					<DataGrid ItemsSource="{Binding ServiceTransactions}" AutoGenerateColumns="True">
+					<Grid RowDefinitions="2*,*">
+						<DataGrid Grid.Row="0" ItemsSource="{Binding ServiceTransactions}" Height="300" AutoGenerateColumns="True" 
+								  SelectedItem="{Binding SelectedRow1, Mode=TwoWay}">
 						
-					</DataGrid>
+						</DataGrid>
+						<DataGrid Grid.Row="1" ItemsSource="{Binding ServicesUsed}" Height="300" AutoGenerateColumns="True">
+
+						</DataGrid>
+					</Grid>
+					
 				</TabItem>
 			</TabControl>
 

@@ -12,7 +12,7 @@ namespace PreciosoApp.ViewModels
     {
         private ObservableCollection<ProductSoldTransactions> allPTransactions;
         private ObservableCollection<ProductSoldTransactions> pTransactions;
-        private ObservableCollection<ProductSold> allPSold;
+        
 
         public ObservableCollection<ProductSoldTransactions> PTransactions
         {
@@ -24,6 +24,7 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        private ObservableCollection<ProductSold> allPSold;
         private ObservableCollection<ProductSold> _pSold;
         public ObservableCollection<ProductSold> PSold
         {
@@ -46,15 +47,30 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        private ObservableCollection<ServicesUsed> allSUsed;
+        private ObservableCollection<ServicesUsed> _servicesUsed;
+        public ObservableCollection<ServicesUsed> ServicesUsed
+        {
+            get { return _servicesUsed; }
+            set
+            {
+                _servicesUsed = value;
+                OnPropertyChanged(nameof(ServicesUsed));
+            }
+        }
+
+
         public HistoryViewModel()
         {
             allPTransactions = new ObservableCollection<ProductSoldTransactions>(
                 new ProductSoldTransactions().GetPTransactions());
             pTransactions = allPTransactions;
-            allPSold = new ObservableCollection<ProductSold>((new ProductSold().GetProductsSold()));
-
+            allPSold = new ObservableCollection<ProductSold>(new ProductSold().GetProductsSold());
+            allSUsed = new ObservableCollection<ServicesUsed>(new ServicesUsed().GetServicesUsed());
             _serviceTransactions = new ObservableCollection<Service_Transaction>(new Service_Transaction().GetService_Transactions());
             ServiceTransactions = _serviceTransactions;
+
+
         }
 
         private ProductSoldTransactions _selectedRow;
@@ -66,6 +82,20 @@ namespace PreciosoApp.ViewModels
                 _selectedRow = value;
                 OnPropertyChanged(nameof(SelectedRow));
                 FilterPSold();
+                
+            }
+        }
+
+        private Service_Transaction _selectedRow1;
+        public Service_Transaction SelectedRow1
+        {
+            get => _selectedRow1;
+            set
+            {
+                _selectedRow1 = value;
+                OnPropertyChanged(nameof(SelectedRow1));
+                FilterServicesUsed();
+
             }
         }
 
@@ -77,6 +107,13 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        private void FilterServicesUsed()
+        {
+            if (SelectedRow1 != null)
+            {
+                ServicesUsed = new ObservableCollection<ServicesUsed>(allSUsed.Where(su => su.TransactionId == SelectedRow1.ID));
+            }
+        }
 
 
         /*
