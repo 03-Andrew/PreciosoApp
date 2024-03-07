@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 
 namespace PreciosoApp.ViewModels
 {
@@ -70,6 +72,7 @@ namespace PreciosoApp.ViewModels
             _serviceTransactions = new ObservableCollection<Service_Transaction>(new Service_Transaction().GetService_Transactions());
             ServiceTransactions = _serviceTransactions;
 
+            FilterCommand = new RelayCommand(FilterRowsByDate);
 
         }
 
@@ -115,6 +118,46 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+
+        private DateTime _startDate = DateTime.Today.AddYears(-100);
+        public DateTime StartDate
+        {
+            get { return _startDate; }
+            set
+            {
+                _startDate = value;
+                OnPropertyChanged(nameof(StartDate));
+                
+            }
+        }
+        private DateTime _endDate = DateTime.Now;
+        public DateTime EndDate
+        {
+            get { return _endDate; }
+            set
+            {
+                _endDate = value;
+                OnPropertyChanged(nameof(EndDate));
+                
+            }
+        }
+
+        public void FilterRowsByDate()
+        {
+
+            var allRows = allPTransactions.AsQueryable();
+            if (_startDate != DateTime.MinValue)
+            {
+                allRows = allRows.Where(c => c.Date_Time >= _startDate);
+            }
+
+            if (_endDate != DateTime.MinValue)
+            {
+                allRows = allRows.Where(c => c.Date_Time <= _endDate);
+            }
+        }
+
+        public ICommand FilterCommand { get; }
 
         /*
         private string searchText; 
