@@ -95,7 +95,6 @@ namespace PreciosoApp.ViewModels
 
         private ObservableCollection<Client> clients;
         private ObservableCollection<Client> allClients;
-        private string searchText;
         public ObservableCollection<Client> Client
         {
             get { return clients; }
@@ -106,19 +105,36 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        private ObservableCollection<ProductSoldTransactions> _transactions;
+        private ObservableCollection<ProductSoldTransactions> allTransactions;
+        public ObservableCollection<ProductSoldTransactions> Transactions
+        {
+            get { return _transactions; }
+            set
+            {
+                _transactions = value;
+                OnPropertyChanged(nameof(Transactions));   
+            }
+        }
+
+
         public ICommand AddClientCommand { get; }
 
         public AppointmentViewModel()
         {
             var client = new Client();
             allClients = new ObservableCollection<Client>(client.GetAllClients());
+            Client = allClients;
+
             var genders = new TypesQueries();
             Genders = new ObservableCollection<Gender>(genders.GetGenders());
-            Client = allClients;
             AddClientCommand = new RelayCommand(AddClient);
+
+         
+
         }
 
-
+        private string searchText;
         public string SearchText
         {
             get { return searchText; }
@@ -147,7 +163,7 @@ namespace PreciosoApp.ViewModels
 
         private void AddClient()
         {
-            var client = new ClientQueries();
+            var client = new Client();
             // Retrieve values from bound properties
             string lastName = LastName;
             string firstName = FirstName;
@@ -179,9 +195,62 @@ namespace PreciosoApp.ViewModels
             {
                 _selectedClient = value;
                 OnPropertyChanged(nameof(SelectedClient));
+                filteredTransaction();
             }
         }
 
+       
 
+        private void filteredTransaction()
+        {
+            if (_selectedClient != null)
+            {
+                var tran = new ProductSoldTransactions();
+                Transactions = new ObservableCollection<ProductSoldTransactions>(tran.GetPTransactions().Where(tr => tr.ClientName.Contains(SelectedClient.Name)));
+            }
+            else
+            {
+                Transactions = _transactions;
+            }
+        } 
+
+        public void updateCustomer()
+        {
+            try
+            {
+                var client = new Client();
+                int id = SelectedClient.Id;
+                string name = SelectedClient.Name;
+                DateTime dob = SelectedClient.DOB;
+                string contact = SelectedClient.ContactInfo;
+                int gender = SelectedGender?.Id ?? GetGenderId(SelectedClient.Gender);
+
+
+                client.updateClient(id, name, dob, contact, gender);
+
+                Client = new ObservableCollection<Client>(client.GetAllClients());
+
+                OnPropertyChanged(nameof(SelectedClient));
+
+                SelectedGender = null;
+            } 
+            catch(Exception ex)
+            {
+                Console.Write(ex.ToString());
+            }
+            
+
+        }
+
+        public int GetGenderId(string gender)
+        {
+            foreach (var item in Genders)
+            {
+                if (item.GenderType == gender) return item.Id;
+            }
+            return -1;
+        }
+
+        
     }
 }

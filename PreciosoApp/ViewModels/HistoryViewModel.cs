@@ -35,6 +35,16 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        private ObservableCollection<Service_Transaction> _serviceTransactions; 
+        public ObservableCollection<Service_Transaction> ServiceTransactions
+        {
+            get { return _serviceTransactions; }
+            set
+            {
+                _serviceTransactions = value;
+                OnPropertyChanged(nameof(ServiceTransactions));
+            }
+        }
 
         public HistoryViewModel()
         {
@@ -42,7 +52,9 @@ namespace PreciosoApp.ViewModels
                 new ProductSoldTransactions().GetPTransactions());
             pTransactions = allPTransactions;
             allPSold = new ObservableCollection<ProductSold>((new ProductSold().GetProductsSold()));
-            
+
+            _serviceTransactions = new ObservableCollection<Service_Transaction>(new Service_Transaction().GetService_Transactions());
+            ServiceTransactions = _serviceTransactions;
         }
 
         private ProductSoldTransactions _selectedRow;
@@ -64,6 +76,8 @@ namespace PreciosoApp.ViewModels
                 PSold = new ObservableCollection<ProductSold>(allPSold.Where(ps => ps.TransactionId == SelectedRow.Id)); ;
             }
         }
+
+
 
         /*
         private string searchText; 

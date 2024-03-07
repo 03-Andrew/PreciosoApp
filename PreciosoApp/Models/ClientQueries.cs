@@ -31,7 +31,7 @@ namespace PreciosoApp.Models
                             Client client = new Client();
                             client.Id = reader.GetInt32("client_id");
                             client.Name = reader.GetString("client_name");
-                            client.DOB = reader.GetDateTime("client_dob").ToString().Substring(0, 10);
+                            client.DOB = reader.GetDateTime("client_dob");
                             client.Age = reader.GetInt32("age");
                             client.ContactInfo = reader.GetString("client_contactinfo");
                             client.Gender = reader.GetString("gender");

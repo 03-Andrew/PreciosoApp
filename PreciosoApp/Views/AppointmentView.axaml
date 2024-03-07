@@ -22,10 +22,16 @@
 						
 					</StackPanel>
 
-					<DataGrid Margin="20" ItemsSource="{Binding Client}" SelectedItem=""
-				  AutoGenerateColumns="True" IsReadOnly="True" CanUserResizeColumns="True"
-				  GridLinesVisibility="All" Height="150"
-				  />
+					<DataGrid Margin="20" ItemsSource="{Binding Client}" SelectedItem="{Binding SelectedClient, Mode=TwoWay}" IsReadOnly="True" CanUserResizeColumns="True"
+				  GridLinesVisibility="All" Height="150">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}"/>
+							<DataGridTextColumn Header="DOB" Width="*" Binding="{Binding DOB_date}"/>
+							<DataGridTextColumn Header="Age" Width="*" Binding="{Binding Age}"/>
+							<DataGridTextColumn Header="Contact Number" Width="*" Binding="{Binding ContactInfo}"/>
+							<DataGridTextColumn Header="Gender" Width="Auto" Binding="{Binding Gender}"/>
+						</DataGrid.Columns>
+					</DataGrid>
 				</StackPanel>
 			</Border>
 
@@ -102,11 +108,15 @@
 									</ComboBox>
 								</StackPanel>
 								<StackPanel Margin="25">
-									
-									<Button>Update</Button>
+									<Button Command="{Binding updateCustomer}">Update</Button>
 								</StackPanel>
 							</StackPanel>
 						</StackPanel>
+					</TabItem>
+					<TabItem Header="Customer History">
+						<DataGrid ItemsSource="{Binding Transactions}" AutoGenerateColumns="True" Height="300">
+							
+						</DataGrid>
 					</TabItem>
 				</TabControl>	
 			</StackPanel>
