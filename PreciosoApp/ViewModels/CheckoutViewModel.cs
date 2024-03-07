@@ -197,6 +197,8 @@ namespace PreciosoApp.ViewModels
         {
             var trnsc = new Transactions();
             var pSold = new ProductSold();
+            var sUsed = new ServicesUsed();
+            var pTrnsc = new PromoTransaction();
             int trnscID = trnsc.InsertTransaction(SelectedDateTime, selectedClientID, selectedTherapistID, selectedMOPID, Notes);
 
             for (int i = 0; i < OrderItems.Count; i++) 
@@ -204,7 +206,19 @@ namespace PreciosoApp.ViewModels
                 var item = OrderItems[i];
                 if (item != null)
                 {
-                    pSold.InsertProductSold(trnscID, item.ItemID, item.Quantity);
+                    switch (item.ItemType)
+                    {
+                        case "Product":
+                            pSold.InsertProductSold(trnscID, item.ItemID, item.Quantity);
+                            break;
+                        case "Service":
+                            sUsed.insertServiceUsed(trnscID, item.ItemID, item.Quantity); 
+                            break;
+                        case "Promo":
+                            pTrnsc.insertPromoTransaction(trnscID, item.ItemID, item.Quantity);
+                            break;
+
+                    }
                 }
             }
 
