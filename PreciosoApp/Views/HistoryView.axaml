@@ -12,8 +12,20 @@
 			<TextBlock Margin="15 15 0 10">History</TextBlock>
 			<TabControl Background="#efefef">
 				<TabItem Header="Product Sold"  FontSize="16">
-					<Grid RowDefinitions="3*,*,*">
-						<DataGrid Grid.Row="0" ItemsSource="{Binding PTransactions}" IsReadOnly="True"
+					<Grid RowDefinitions="*,*,*">
+						<StackPanel Grid.Row="0" Orientation="Horizontal">
+							<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
+								<TextBlock Text="Start Date" Padding="0 10 0 10"/>
+							</Grid>
+							<CalendarDatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}"></CalendarDatePicker>
+							<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
+								<TextBlock Text="End Date: " Padding="0 10 0 10"/>
+							</Grid>
+							<CalendarDatePicker SelectedDate="{Binding EndDate, Mode=TwoWay}"></CalendarDatePicker>
+						<Button Content="Filter" Command="{Binding FilterCommand}" />
+
+						</StackPanel>
+						<DataGrid Grid.Row="1" ItemsSource="{Binding PTransactions}" IsReadOnly="True" Height="300"
 								  SelectedItem="{Binding SelectedRow, Mode=TwoWay}" GridLinesVisibility="Horizontal">
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="ID" Width="Auto" Binding="{Binding Id}"/>
@@ -39,9 +51,42 @@
 					</Grid>
 				</TabItem>
 				<TabItem Header="Services" FontSize="16">
-					<DataGrid ItemsSource="{Binding ServiceTransactions}" AutoGenerateColumns="True">
+					<Grid RowDefinitions="*,*">
+						<DataGrid Grid.Row="0" ItemsSource="{Binding ServiceTransactions}" Height="300" AutoGenerateColumns="True" 
+								  SelectedItem="{Binding SelectedRow1, Mode=TwoWay}">
 						
-					</DataGrid>
+						</DataGrid>
+						<DataGrid Grid.Row="1" ItemsSource="{Binding ServicesUsed}" Height="300" AutoGenerateColumns="True">
+
+						</DataGrid>
+					</Grid>
+					
+				</TabItem>
+				<TabItem Header="All Transactions" FontSize="16">
+					<Grid RowDefinitions="*,*">
+						<DataGrid Grid.Row="0" ItemsSource="{Binding AllTransactions}" Height="300" AutoGenerateColumns="True"
+								  SelectedItem="{Binding SelectedRowT, Mode=TwoWay}">
+
+						</DataGrid>
+						<Grid Grid.Row="1" ColumnDefinitions="*, *">
+							<StackPanel Grid.Column="0" Margin="10" >
+								<TextBlock>Products Sold</TextBlock>
+								<DataGrid ItemsSource="{Binding PSold}" Height="300" AutoGenerateColumns="True">
+
+								</DataGrid>
+							</StackPanel>
+							
+							<StackPanel Grid.Column="1" Margin="10" >
+								<TextBlock>Services availed</TextBlock>
+								<DataGrid ItemsSource="{Binding ServicesUsed}" Height="300" AutoGenerateColumns="True">
+
+								</DataGrid>
+							</StackPanel>
+
+							
+						</Grid>
+
+					</Grid>
 				</TabItem>
 			</TabControl>
 

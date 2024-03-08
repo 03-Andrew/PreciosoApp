@@ -130,9 +130,13 @@ namespace PreciosoApp.ViewModels
             Genders = new ObservableCollection<Gender>(genders.GetGenders());
             AddClientCommand = new RelayCommand(AddClient);
 
-         
+            FilterCommand = new RelayCommand(FilterClients);
+    
+
 
         }
+
+        public ICommand FilterCommand { get; }
 
         private string searchText;
         public string SearchText
@@ -148,15 +152,32 @@ namespace PreciosoApp.ViewModels
 
         private void FilterClients()
         {
-            if (string.IsNullOrWhiteSpace(SearchText))
+            if (string.IsNullOrWhiteSpace(SearchText) && _startDate == DateTime.Today.AddYears(-100) && _endDate == DateTime.MinValue)
             {
                 Client = allClients;
+                return;
             }
-            else
+
+            var filteredClients = allClients.AsQueryable();
+
+
+            if (!string.IsNullOrWhiteSpace(SearchText))
             {
                 string searchTextLower = SearchText.ToLower().Trim();
-                Client = new ObservableCollection<Client>(allClients.Where(c => c.Name.ToLower().Contains(searchTextLower)));
+                filteredClients = filteredClients.Where(c => c.Name.ToLower().Contains(searchTextLower));
             }
+
+            if (_startDate != DateTime.MinValue)
+            {
+                filteredClients = filteredClients.Where(c => c.DOB >= _startDate);
+            }
+
+            if (_endDate != DateTime.MinValue)
+            {
+                filteredClients = filteredClients.Where(c => c.DOB <= _endDate);
+            }
+
+            Client = new ObservableCollection<Client>(filteredClients.ToList());
         }
 
 
@@ -212,6 +233,7 @@ namespace PreciosoApp.ViewModels
             {
                 Transactions = _transactions;
             }
+            
         } 
 
         public void updateCustomer()
@@ -251,6 +273,27 @@ namespace PreciosoApp.ViewModels
             return -1;
         }
 
-        
+        private DateTime _startDate = DateTime.Today.AddYears(-100);
+        public DateTime StartDate
+        {
+            get { return _startDate; }
+            set
+            {
+                _startDate = value;
+                OnPropertyChanged(nameof(StartDate));
+                FilterClients();
+            }
+        }
+        private DateTime _endDate = DateTime.Now;
+        public DateTime EndDate
+        {
+            get { return _endDate; }
+            set
+            {
+                _endDate = value;
+                OnPropertyChanged(nameof(EndDate));
+                FilterClients();
+            }
+        }
     }
 }

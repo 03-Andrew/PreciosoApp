@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 
 namespace PreciosoApp.ViewModels
 {
@@ -12,7 +14,7 @@ namespace PreciosoApp.ViewModels
     {
         private ObservableCollection<ProductSoldTransactions> allPTransactions;
         private ObservableCollection<ProductSoldTransactions> pTransactions;
-        private ObservableCollection<ProductSold> allPSold;
+        
 
         public ObservableCollection<ProductSoldTransactions> PTransactions
         {
@@ -24,6 +26,7 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        private ObservableCollection<ProductSold> allPSold;
         private ObservableCollection<ProductSold> _pSold;
         public ObservableCollection<ProductSold> PSold
         {
@@ -46,15 +49,46 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        private ObservableCollection<ServicesUsed> allSUsed;
+        private ObservableCollection<ServicesUsed> _servicesUsed;
+        public ObservableCollection<ServicesUsed> ServicesUsed
+        {
+            get { return _servicesUsed; }
+            set
+            {
+                _servicesUsed = value;
+                OnPropertyChanged(nameof(ServicesUsed));
+            }
+        }
+
+        private ObservableCollection<AllTransactions> allT;
+        private ObservableCollection<AllTransactions> _allTs;
+        public ObservableCollection<AllTransactions> AllTransactions
+        {
+            get { return _allTs; }
+            set
+            {
+                _allTs = value;
+                OnPropertyChanged(nameof(AllTransactions));
+            }
+        }
+
+
         public HistoryViewModel()
         {
             allPTransactions = new ObservableCollection<ProductSoldTransactions>(
                 new ProductSoldTransactions().GetPTransactions());
             pTransactions = allPTransactions;
-            allPSold = new ObservableCollection<ProductSold>((new ProductSold().GetProductsSold()));
-
+            allPSold = new ObservableCollection<ProductSold>(new ProductSold().GetProductsSold());
+            allSUsed = new ObservableCollection<ServicesUsed>(new ServicesUsed().GetServicesUsed());
             _serviceTransactions = new ObservableCollection<Service_Transaction>(new Service_Transaction().GetService_Transactions());
             ServiceTransactions = _serviceTransactions;
+
+            allT = new ObservableCollection<AllTransactions>(new AllTransactions().GetTransactions());
+            AllTransactions = allT;
+
+            FilterCommand = new RelayCommand(FilterRowsByDate);
+
         }
 
         private ProductSoldTransactions _selectedRow;
@@ -66,9 +100,44 @@ namespace PreciosoApp.ViewModels
                 _selectedRow = value;
                 OnPropertyChanged(nameof(SelectedRow));
                 FilterPSold();
+                
             }
         }
 
+        private Service_Transaction _selectedRow1;
+        public Service_Transaction SelectedRow1
+        {
+            get => _selectedRow1;
+            set
+            {
+                _selectedRow1 = value;
+                OnPropertyChanged(nameof(SelectedRow1));
+                FilterServicesUsed();
+
+            }
+        }
+
+        private AllTransactions _selectedRowT;
+        public AllTransactions SelectedRowT
+        {
+            get => _selectedRowT;
+            set
+            {
+                _selectedRowT = value;
+                OnPropertyChanged(nameof(SelectedRowT));
+                FilterTransactions();
+
+            }
+        }
+
+        private void FilterTransactions()
+        {
+            if(SelectedRowT != null)
+            {
+                PSold = new ObservableCollection<ProductSold>(allPSold.Where(ps => ps.TransactionId == SelectedRowT.ID));
+                ServicesUsed = new ObservableCollection<ServicesUsed>(allSUsed.Where(su => su.TransactionId == SelectedRowT.ID));
+            }
+        }
         private void FilterPSold()
         {
             if (SelectedRow != null)
@@ -77,7 +146,54 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        private void FilterServicesUsed()
+        {
+            if (SelectedRow1 != null)
+            {
+                ServicesUsed = new ObservableCollection<ServicesUsed>(allSUsed.Where(su => su.TransactionId == SelectedRow1.ID));
+            }
+        }
 
+
+        private DateTime _startDate = DateTime.Today.AddYears(-100);
+        public DateTime StartDate
+        {
+            get { return _startDate; }
+            set
+            {
+                _startDate = value;
+                OnPropertyChanged(nameof(StartDate));
+                
+            }
+        }
+        private DateTime _endDate = DateTime.Now;
+        public DateTime EndDate
+        {
+            get { return _endDate; }
+            set
+            {
+                _endDate = value;
+                OnPropertyChanged(nameof(EndDate));
+                
+            }
+        }
+
+        public void FilterRowsByDate()
+        {
+
+            var allRows = allPTransactions.AsQueryable();
+            if (_startDate != DateTime.MinValue)
+            {
+                allRows = allRows.Where(c => c.Date_Time >= _startDate);
+            }
+
+            if (_endDate != DateTime.MinValue)
+            {
+                allRows = allRows.Where(c => c.Date_Time <= _endDate);
+            }
+        }
+
+        public ICommand FilterCommand { get; }
 
         /*
         private string searchText; 

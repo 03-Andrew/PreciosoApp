@@ -19,7 +19,17 @@
 						</Grid>
 						<TextBox Text="{Binding SearchText, Mode=TwoWay}"
 								 Margin="10 20 0 0" HorizontalAlignment="Left" Padding="10" Width="300"/>
-						
+
+						<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
+							<TextBlock Text="Start Date" Padding="0 10 0 10"/>
+						</Grid>
+							<CalendarDatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}"></CalendarDatePicker>
+						<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
+							<TextBlock Text="End Date: " Padding="0 10 0 10"/>
+						</Grid>
+							<CalendarDatePicker SelectedDate="{Binding EndDate, Mode=TwoWay}"></CalendarDatePicker>
+						<Button Content="Filter" Command="{Binding FilterCommand}" />
+
 					</StackPanel>
 
 					<DataGrid Margin="20" ItemsSource="{Binding Client}" SelectedItem="{Binding SelectedClient, Mode=TwoWay}" IsReadOnly="True" CanUserResizeColumns="True"

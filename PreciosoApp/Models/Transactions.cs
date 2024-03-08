@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI;
+using ZstdSharp.Unsafe;
 using PreciosoApp.Models;
 
 namespace PreciosoApp.Models
@@ -138,7 +139,6 @@ namespace PreciosoApp.Models
         public double ProductCost { get; set; }
         public int Quantity { get; set; }
         public double Commission { get; set; }
-        public string ProdSold { get; set; }
         Database db = new Database();
 
         public List<ProductSold> GetProductsSold()
@@ -212,9 +212,150 @@ namespace PreciosoApp.Models
         }
     }
 
+    public class ServicesUsed
+    {
+        public int TransactionId { get; set; }
+        public string Service { get; set; }
+        public double Cost { get; set; }
+        public string Status { get; set; }
+        public double Commission { get; set; }
+        Database db = new Database();
+
+        public List<ServicesUsed> GetServicesUsed()
+        {
+            Func<MySqlDataReader, ServicesUsed> mapRow = reader => new ServicesUsed
+            {
+                TransactionId = reader.GetInt32(0),
+                Service = reader.GetString(1),
+                Status = reader.GetString(2),
+                Cost = reader.GetDouble(3),
+                Commission = reader.GetDouble(4)
+            };
+
+            string query = "select * from services_availed;";
+
+            return db.ExecuteQuery(query, mapRow);
+        }
+
+    }
+
+    public class ServicesUsedIn
+    {
+        public int TransactionId { get; set; }
+        public int ServiceId { get; set; }
+        public int Status { get; set; }
+        public void insertServiceUsed(int trnscID, int promoID, int qty)
+        {
+            int transactionID = -1;
+            Database db = new Database();
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = @"INSERT INTO tbl_products_sold (transaction_id, product_id, quantity) 
+                         VALUES (@trnscID, @productID, @quantity);";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@trnscID", trnscID);
+                cmd.Parameters.AddWithValue("@productID", promoID);
+                cmd.Parameters.AddWithValue("@quantity", qty);
+                cmd.ExecuteNonQuery();
+            }
+
+        }
+    }
+
+    public class AllTransactions
+    {
+        public int ID { get; set; }
+        public DateTime Date { get; set; }
+        public string Client { get; set; }
+        public string Therapist { get; set; }
+        public string ModeOfPayment { get; set; }
+        public string Note { get; set; }
+        public double Prod_rev {  get; set; }
+        public double Prod_comm { get; set; }
+        public double Serv_rev {  get; set; }
+        public double Serv_comm {  get; set; }
+        public double Total_Gross { get; set; }
+        public double Total_comm {  get; set; }
+
+        Database db = new Database();
+
+        public List<AllTransactions> GetTransactions()
+        {
+            Func<MySqlDataReader, AllTransactions> mapRow = reader => new AllTransactions
+            {
+                ID = reader.GetInt32(0),
+                Date = reader.GetDateTime(1),
+                Client = reader.GetString(2),
+                Therapist = reader.GetString(3),
+                ModeOfPayment = reader.GetString(4),
+                Note = reader.GetString(5),
+                Prod_rev = reader.GetDouble(6),
+                Prod_comm = reader.GetDouble(7),
+                Serv_rev = reader.GetDouble(8),
+                Serv_comm = reader.GetDouble(9),
+                Total_Gross = reader.GetDouble(10),
+                Total_comm = reader.GetDouble(11)
+
+            };
+
+            string query = "SELECT * from transactions_view1";
+
+            return db.ExecuteQuery(query, mapRow);
+        }
+    }
+
+    //Appointment tabl
+    public class PromoTransaction
+    {
+        public int TransactionId { get; set; }
+        public int PromoID { get; set; }
+
+        public void insertPromoTransaction(int trnscID, int promoID, int qty)
+        {
+            int transactionID = -1; // Initialize with a default value
+
+            Database db = new Database();
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = @"INSERT INTO `tbl_promo_transaction` (`transaction_id`, `promo_id`, `status`) 
+                                 VALUES (@trnscID, @promoID, 2) ";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@trnscID", trnscID);
+                cmd.Parameters.AddWithValue("@promoID", promoID);
+                cmd.ExecuteNonQuery();
+            }
+
+            List<(int serviceID, int quantity)> promoServices = GetPromoServices(promoID);
+            var sUsed = new ServicesUsedIn();
+
+            foreach (var (serviceID, quantity) in promoServices)
+            {
+                int servQty = quantity * qty;
+                sUsed.insertServiceUsed(trnscID, serviceID, servQty);
+            }
+        }
+
+        private List<(int serviceID, int quantity)> GetPromoServices(int promoID)
+        {
+            List<(int serviceID, int quantity)> services = new List<(int serviceID, int quantity)>();
+
+
+            return services;
+        }
+    }
+}
 
 
 
+/*
+ *
+ *Trash
+ *public List<ProductSold> GetProductsSold2()
+        {
+            List<ProductSold> Ptransactions = new List<ProductSold>();
 
     /*
      *
@@ -292,6 +433,25 @@ namespace PreciosoApp.Models
                                     Comm = reader.GetDouble(7),
                                 };
 
+                            Ptransactions.Add(pst);
+                        }
+                    }
+                }
+            }
+            return Ptransactions;
+        }
+using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = @"INSERT INTO tbl_products_sold (transaction_id, product_id, quantity) 
+                         VALUES (@trnscID, @productID, @quantity);";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@trnscID", trnscID);
+                cmd.Parameters.AddWithValue("@productID", productID);
+                cmd.Parameters.AddWithValue("@quantity", qty);
+                cmd.ExecuteNonQuery();
+            }
+        }
                                 Ptransactions.Add(pst);
                             }
                         }
@@ -313,6 +473,8 @@ namespace PreciosoApp.Models
                 }
             }
 
+    }
+ */
         }
     */
 
