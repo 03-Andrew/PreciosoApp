@@ -84,8 +84,8 @@ namespace PreciosoApp.ViewModels
             _serviceTransactions = new ObservableCollection<Service_Transaction>(new Service_Transaction().GetService_Transactions());
             ServiceTransactions = _serviceTransactions;
 
-            allT = new ObservableCollection<AllTransactions>(new AllTransactions().GetTransactions());
-            AllTransactions = allT;
+            //allT = new ObservableCollection<AllTransactions>(new AllTransactions().GetTransactions());
+            //AllTransactions = allT;
 
             FilterCommand = new RelayCommand(FilterRowsByDate);
 
