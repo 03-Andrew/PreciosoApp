@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI;
+using PreciosoApp.Models;
 
 namespace PreciosoApp.Models
 {
@@ -38,7 +39,7 @@ namespace PreciosoApp.Models
         */
         public List<Transactions> GetTransactions()
         {
-            
+
             List<Transactions> transactions = new List<Transactions>();
 
             using (MySqlConnection conn = db.GetCon())
@@ -48,7 +49,7 @@ namespace PreciosoApp.Models
                     "t.notes from tbl_transaction t left join tbl_client c on t.client_assigned = c.client_id " +
                     "left join tbl_therapist th on t.therapist_assigned = th.therapist_id left join tbl_modeofpayment mp on t.mode_of_payment = mp.mode_id;";
 
-                using(MySqlCommand cmd = new MySqlCommand(query, conn))
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -212,107 +213,108 @@ namespace PreciosoApp.Models
     }
 
 
-}
 
 
-/*
- *
- *Trash
- *public List<ProductSold> GetProductsSold2()
-        {
-            List<ProductSold> Ptransactions = new List<ProductSold>();
 
-
-            using (MySqlConnection conn = db.GetCon())
+    /*
+     *
+     *Trash
+     *public List<ProductSold> GetProductsSold2()
             {
-                conn.Open();
-                string query = "SELECT * FROM prod_sold;";
-                //string query = "SELECT transaction_id, GROUP_CONCAT(\" \", product_name, \" (\",quantity,\") \", product_cost*quantity, \" Comm: \", commission, \"\\n\") AS products_sold FROM prod_sold GROUP BY transaction_id ORDER BY transaction_id;";
-                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                List<ProductSold> Ptransactions = new List<ProductSold>();
+
+
+                using (MySqlConnection conn = db.GetCon())
                 {
-
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    conn.Open();
+                    string query = "SELECT * FROM prod_sold;";
+                    //string query = "SELECT transaction_id, GROUP_CONCAT(\" \", product_name, \" (\",quantity,\") \", product_cost*quantity, \" Comm: \", commission, \"\\n\") AS products_sold FROM prod_sold GROUP BY transaction_id ORDER BY transaction_id;";
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
                     {
-                        while (reader.Read())
-                        {
-                            ProductSold pst = new ProductSold
-                            {
-                                TransactionId = reader.GetInt32(0),
-                                
-                                ProdName = reader.GetString(1),
-                                ProductCost = reader.GetDouble(2),
-                                Quantity = reader.GetInt32(3),
-                                Commission = reader.GetDouble(4)
-                            };
 
-                            Ptransactions.Add(pst);
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                ProductSold pst = new ProductSold
+                                {
+                                    TransactionId = reader.GetInt32(0),
+
+                                    ProdName = reader.GetString(1),
+                                    ProductCost = reader.GetDouble(2),
+                                    Quantity = reader.GetInt32(3),
+                                    Commission = reader.GetDouble(4)
+                                };
+
+                                Ptransactions.Add(pst);
+                            }
                         }
                     }
                 }
+                return Ptransactions;
             }
-            return Ptransactions;
-        }
 
 
-        public List<ProductSoldTransactions> GetPTransactions2()
-        {
-            List<ProductSoldTransactions> Ptransactions = new List<ProductSoldTransactions>();
-            using (MySqlConnection conn = db.GetCon())
+            public List<ProductSoldTransactions> GetPTransactions2()
             {
-                conn.Open();
-                string query = "SELECT t.transaction_id as ID, t.transaction_datetime as DateTime, c.client_name, th.name as Therapist, mp.mode, t.notes, " +
-                               "SUM(ps.quantity * p.product_cost) AS total_price, " +
-                               "SUM(ps.quantity * p.commission) AS comm, " +
-                               "GROUP_CONCAT(CONCAT(p.product_name, ' (Qty: ', ps.quantity, ')')) AS product_list " +
-                               "FROM tbl_transaction t " +
-                               "JOIN tbl_client c ON t.client_assigned = c.client_id " +
-                               "JOIN tbl_therapist th ON t.therapist_assigned = th.therapist_id " +
-                               "JOIN tbl_modeofpayment mp ON t.mode_of_payment = mp.mode_id " +
-                               "INNER JOIN tbl_products_sold ps ON t.transaction_id = ps.transaction_id " +
-                               "INNER JOIN tbl_product p ON ps.product_id = p.product_id " +
-                               "GROUP BY t.transaction_id;";
-
-                string query2 = "select * from prod_sold_history;";
-
-                using (MySqlCommand cmd = new MySqlCommand(query2, conn))
+                List<ProductSoldTransactions> Ptransactions = new List<ProductSoldTransactions>();
+                using (MySqlConnection conn = db.GetCon())
                 {
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            ProductSoldTransactions pst = new ProductSoldTransactions
-                            {
-                                Id = reader.GetInt32(0),
-                                Date_Time = reader.GetDateTime(1),
-                                ClientName = reader.GetString(2),
-                                TherapistName = reader.GetString(3),
-                                MOP = reader.GetString(4),
-                                Total = reader.GetDouble(6),
-                                Comm = reader.GetDouble(7),
-                            };
+                    conn.Open();
+                    string query = "SELECT t.transaction_id as ID, t.transaction_datetime as DateTime, c.client_name, th.name as Therapist, mp.mode, t.notes, " +
+                                   "SUM(ps.quantity * p.product_cost) AS total_price, " +
+                                   "SUM(ps.quantity * p.commission) AS comm, " +
+                                   "GROUP_CONCAT(CONCAT(p.product_name, ' (Qty: ', ps.quantity, ')')) AS product_list " +
+                                   "FROM tbl_transaction t " +
+                                   "JOIN tbl_client c ON t.client_assigned = c.client_id " +
+                                   "JOIN tbl_therapist th ON t.therapist_assigned = th.therapist_id " +
+                                   "JOIN tbl_modeofpayment mp ON t.mode_of_payment = mp.mode_id " +
+                                   "INNER JOIN tbl_products_sold ps ON t.transaction_id = ps.transaction_id " +
+                                   "INNER JOIN tbl_product p ON ps.product_id = p.product_id " +
+                                   "GROUP BY t.transaction_id;";
 
-                            Ptransactions.Add(pst);
+                    string query2 = "select * from prod_sold_history;";
+
+                    using (MySqlCommand cmd = new MySqlCommand(query2, conn))
+                    {
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                ProductSoldTransactions pst = new ProductSoldTransactions
+                                {
+                                    Id = reader.GetInt32(0),
+                                    Date_Time = reader.GetDateTime(1),
+                                    ClientName = reader.GetString(2),
+                                    TherapistName = reader.GetString(3),
+                                    MOP = reader.GetString(4),
+                                    Total = reader.GetDouble(6),
+                                    Comm = reader.GetDouble(7),
+                                };
+
+                                Ptransactions.Add(pst);
+                            }
                         }
                     }
                 }
+                return Ptransactions;
             }
-            return Ptransactions;
-        }
- */
-            using (MySqlConnection conn = db.GetCon())
-            {
-                conn.Open();
-                string query = @"INSERT INTO tbl_products_sold (transaction_id, product_id, quantity) 
-                         VALUES (@trnscID, @productID, @quantity);";
-                MySqlCommand cmd = new MySqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@trnscID", trnscID);
-                cmd.Parameters.AddWithValue("@productID", productID);
-                cmd.Parameters.AddWithValue("@quantity", qty);
-                cmd.ExecuteNonQuery();
-            }
-        }
 
-    }
+                using (MySqlConnection conn = db.GetCon())
+                {
+                    conn.Open();
+                    string query = @"INSERT INTO tbl_products_sold (transaction_id, product_id, quantity) 
+                             VALUES (@trnscID, @productID, @quantity);";
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@trnscID", trnscID);
+                    cmd.Parameters.AddWithValue("@productID", productID);
+                    cmd.Parameters.AddWithValue("@quantity", qty);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+        }
+    */
 
     //Appointment table
     public class ServicesUsed
@@ -324,20 +326,53 @@ namespace PreciosoApp.Models
 
         public void insertServiceUsed(int trnscID, int serviceID, int qty)
         {
-            int transactionID = -1; // Initialize with a default value
-
             Database db = new Database();
 
             using (MySqlConnection conn = db.GetCon())
             {
                 conn.Open();
-                string query = @"INSERT INTO `tbl_appointment` (`transaction_id`, `service_id`, `quantity`, `appointment_status`) 
-                                 VALUES (@trnscID, @serviceID, @quantity, 2);";
+
+                // Check if the record exists
+                if (ServiceUsedExists(trnscID, serviceID))
+                {
+                    // The record already exists, update the quantity
+                    string updateQuery = @"UPDATE `tbl_appointment` 
+                                       SET `quantity` = `quantity` + @quantity 
+                                       WHERE `transaction_id` = @trnscID AND `service_id` = @serviceID";
+                    MySqlCommand updateCmd = new MySqlCommand(updateQuery, conn);
+                    updateCmd.Parameters.AddWithValue("@trnscID", trnscID);
+                    updateCmd.Parameters.AddWithValue("@quantity", qty);
+                    updateCmd.Parameters.AddWithValue("@serviceID", serviceID);
+                    updateCmd.ExecuteNonQuery();
+                }
+                else
+                {
+                    // The record does not exist, insert it
+                    string insertQuery = @"INSERT INTO `tbl_appointment` (`transaction_id`, `service_id`, `quantity`, `appointment_status`) 
+                                     VALUES (@trnscID, @serviceID, @quantity, 2);";
+                    MySqlCommand insertCmd = new MySqlCommand(insertQuery, conn);
+                    insertCmd.Parameters.AddWithValue("@trnscID", trnscID);
+                    insertCmd.Parameters.AddWithValue("@quantity", qty);
+                    insertCmd.Parameters.AddWithValue("@serviceID", serviceID);
+                    insertCmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private bool ServiceUsedExists(int trnscID, int serviceID)
+        {
+            Database db = new Database();
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = @"SELECT COUNT(*) FROM `tbl_appointment` WHERE `transaction_id` = @trnscID AND `service_id` = @serviceID";
                 MySqlCommand cmd = new MySqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@trnscID", trnscID);
-                cmd.Parameters.AddWithValue("@quantity", qty);
                 cmd.Parameters.AddWithValue("@serviceID", serviceID);
-                cmd.ExecuteNonQuery();
+
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+                return count > 0;
             }
         }
     }

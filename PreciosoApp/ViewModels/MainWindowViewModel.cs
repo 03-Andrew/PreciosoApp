@@ -77,19 +77,19 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public void MoveToCheckoutWindow()
     {
-        System.Diagnostics.Debug.WriteLine("Button Clicked");
-        System.Diagnostics.Debug.WriteLine(OrderItems[0].ItemName);
-
-        var checkoutViewModel = new CheckoutViewModel(OrderItems);
+        var checkoutViewModel = new CheckoutViewModel(OrderItems, this);
         CurrentPage = checkoutViewModel;
     }
 
     public void MoveToPOSView()
     {
-        System.Diagnostics.Debug.WriteLine("Button Clicked");
-        System.Diagnostics.Debug.WriteLine(OrderItems[0].ItemName);
-
         var posViewModel = new POSViewModel(this, OrderItems);
+        CurrentPage = posViewModel;
+    }
+
+    public void dialogWindowButton()
+    {
+        var posViewModel = new POSViewModel();
         CurrentPage = posViewModel;
     }
 }
