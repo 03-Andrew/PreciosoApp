@@ -10,9 +10,15 @@
 	<Grid RowDefinitions="Auto, *">
 		<StackPanel Orientation="Horizontal">
 			<StackPanel>
-				<ComboBox ItemsSource="{Binding Categories}" 
-						  SelectedItem="{Binding SelectedCategory}" 
+				<StackPanel Orientation="Horizontal">
+					<ComboBox ItemsSource="{Binding Categories}"
+						  SelectedItem="{Binding SelectedCategory}"
 					      SelectedIndex="0"></ComboBox>
+					<TextBox Text="{Binding SearchText, Mode=TwoWay}"
+							 Watermark="Search items" 
+						     Width="150" Margin="20 0 0 0"></TextBox>
+				</StackPanel>
+
 				<ListBox x:Name="OrderListBox"
 						 Background="#ffffff" Margin="20"
 						 HorizontalAlignment="Left"

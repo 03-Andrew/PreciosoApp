@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PreciosoApp.Models;
+using PreciosoApp.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,26 +16,38 @@ namespace PreciosoApp.ViewModels
         public ObservableCollection<OrderItem> orderItems;
         private ObservableCollection<Inventory> inventory;
         private ObservableCollection<Inventory> allInventory;
+        private ObservableCollection<Client> clients;
+        private ObservableCollection<Client> allClients;
+        private MainWindowViewModel mainWindow;
+        private Client selectedClientData;
         private List<string> clientNames;
         private List<string> thrpstNames;
         private List<string> mopNames;
+        private string searchText;
         private string selectedClient;
-        private int selectedClientID;
         private string selectedTherapist;
-        private int selectedTherapistID;
-        private DateTimeOffset? selectedDateTime;
         private string selectedMOP;
+        private DateTimeOffset? selectedDateTime;
+        private int selectedClientID;
+        private int selectedTherapistID;
         private int selectedMOPID;
         public ICommand checkOut { get; }
 
         public string Notes { get; set; } = string.Empty;
 
-        public CheckoutViewModel(ObservableCollection<OrderItem> orderItems)
+        public CheckoutViewModel(ObservableCollection<OrderItem> orderItems , MainWindowViewModel mwVM)
         {
+            mainWindow = mwVM;
+
             OrderItems = orderItems;
             var inv = new Inventory();
+            var client = new Client();
             allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
+            allClients = new ObservableCollection<Client>(client.GetAllClients());
             Inventory = allInventory;
+            Client = allClients;
+            SelectedDateTime = DateTimeOffset.Now.LocalDateTime;
+            System.Diagnostics.Debug.WriteLine(selectedDateTime);
             checkOut = new RelayCommand(CheckoutButton);
 
             LoadClientNames();
@@ -59,6 +72,36 @@ namespace PreciosoApp.ViewModels
             {
                 inventory = value;
                 OnPropertyChanged(nameof(Inventory));
+            }
+        }
+
+        public ObservableCollection<Client> Client
+        {
+            get { return clients; }
+            set
+            {
+                clients = value;
+                OnPropertyChanged(nameof(Client));
+            }
+        }
+
+        public Client SelectedClientData
+        {
+            get => selectedClientData;
+            set
+            {
+                selectedClientData = value;
+                if(selectedClientData != null)
+                {
+                    var client = new Client();
+                    selectedClient = selectedClientData.Name;
+                    selectedClientID = client.GetClientID(selectedClient).FirstOrDefault();
+                }
+                else
+                {
+                    selectedClient = "";
+                }
+                OnPropertyChanged(nameof(SelectedClient));
             }
         }
 
@@ -169,6 +212,30 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        public string SearchText
+        {
+            get { return searchText; }
+            set
+            {
+                searchText = value;
+                OnPropertyChanged(nameof(SearchText));
+                FilterClients();
+            }
+        }
+
+        private void FilterClients()
+        {
+            if (string.IsNullOrWhiteSpace(SearchText))
+            {
+                Client = allClients;
+            }
+            else
+            {
+                string searchTextLower = SearchText.ToLower().Trim();
+                Client = new ObservableCollection<Client>(allClients.Where(c => c.Name.ToLower().Contains(searchTextLower)));
+            }
+        }
+
         private void LoadClientNames()
         {
             var client = new Client();
@@ -199,31 +266,42 @@ namespace PreciosoApp.ViewModels
             var pSold = new ProductSold();
             var sUsed = new ServicesUsedIn();
             var pTrnsc = new PromoTransaction();
-            int trnscID = trnsc.InsertTransaction(SelectedDateTime, selectedClientID, selectedTherapistID, selectedMOPID, Notes);
+            var window = new DialogWindow();
 
-            for (int i = 0; i < OrderItems.Count; i++) 
+            if (selectedDateTime == null || selectedClientID == null || selectedTherapistID == null || selectedMOP == null)
             {
-                var item = OrderItems[i];
-                if (item != null)
-                {
-                    switch (item.ItemType)
-                    {
-                        case "Product":
-                            pSold.InsertProductSold(trnscID, item.ItemID, item.Quantity);
-                            break;
-                        case "Service":
-                            sUsed.insertServiceUsed(trnscID, item.ItemID, item.Quantity); 
-                            break;
-                        case "Promo":
-                            pTrnsc.insertPromoTransaction(trnscID, item.ItemID, item.Quantity);
-                            break;
+                window.DialogText = "You are missing some required fields! please fill them out!";
+                window.Show();
+            }
+            else
+            {
+                int trnscID = trnsc.InsertTransaction(SelectedDateTime, selectedClientID, selectedTherapistID, selectedMOPID, Notes);
 
+                for (int i = 0; i < OrderItems.Count; i++)
+                {
+                    var item = OrderItems[i];
+                    if (item != null)
+                    {
+                        switch (item.ItemType)
+                        {
+                            case "Product":
+                                pSold.InsertProductSold(trnscID, item.ItemID, item.Quantity);
+                                break;
+                            case "Service":
+                                sUsed.insertServiceUsed(trnscID, item.ItemID, item.Quantity);
+                                break;
+                            case "Promo":
+                                pTrnsc.insertPromoTransaction(trnscID, item.ItemID, item.Quantity);
+                                break;
+
+                        }
                     }
                 }
+                window.Show();
+
+                mainWindow.CurrentPage = new POSViewModel(mainWindow);
+                System.Diagnostics.Debug.WriteLine("Success");
             }
-
-            System.Diagnostics.Debug.WriteLine("Success");
         }
-
     }
 }

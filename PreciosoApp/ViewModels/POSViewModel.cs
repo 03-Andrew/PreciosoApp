@@ -24,10 +24,12 @@ namespace PreciosoApp.ViewModels
         private ObservableCollection<string> categories;
         private ObservableCollection<OrderItem> orderItems;
         private List<string> prodNames;
+        private List<string> allList;
         private OrderItem selectedOrderItem;
         private ViewModelBase currentViewModel;
         private string selectedCategory;
         private string selectedListItem;
+        private string searchText;
 
         public MainWindowViewModel mainWindow { get; set; }
         public ICommand removeItem { get; }
@@ -190,7 +192,6 @@ namespace PreciosoApp.ViewModels
                 if (selectedListItem == value)
                     return;
                 selectedListItem = value;
-                System.Diagnostics.Debug.WriteLine(selectedListItem);
 
 
                 var selectedProduct = Inventory.FirstOrDefault(item => item.prodName == selectedListItem);
@@ -225,9 +226,31 @@ namespace PreciosoApp.ViewModels
             set
             {
                 selectedOrderItem = value;
-                System.Diagnostics.Debug.WriteLine(selectedOrderItem);
 
                 OnPropertyChanged(nameof(SelectedOrderItem));
+            }
+        }
+        public string SearchText
+        {
+            get { return searchText; }
+            set
+            {
+                searchText = value;
+                OnPropertyChanged(nameof(SearchText));
+                FilterList();
+            }
+        }
+
+        private void FilterList()
+        {
+            if (string.IsNullOrWhiteSpace(SearchText))
+            {
+                ProdNames = allList;
+            }
+            else
+            {
+                string searchTextLower = SearchText.ToLower().Trim();
+                ProdNames = new List<string>(allList.Where(c => c.ToLower().Contains(searchTextLower)));
             }
         }
 
@@ -235,6 +258,7 @@ namespace PreciosoApp.ViewModels
         {
             var inv = new Inventory();
             List<string> productNames = inv.GetProductName();
+            allList = new List<string>(productNames);
             ProdNames = new List<string>(productNames);
         }
 
@@ -242,12 +266,14 @@ namespace PreciosoApp.ViewModels
         {
             var serv = new Services();
             List<string> servicesNames = serv.GetServicesName();
+            allList = new List<string>(servicesNames);
             ProdNames = new List<string>(servicesNames);
         }
         private void LoadPromoNames()
         {
             var promo = new Promos();
             List<string> promoNames = promo.GetPromoNames();
+            allList = new List<string>(promoNames);
             ProdNames = new List<string>(promoNames);
 
         }
