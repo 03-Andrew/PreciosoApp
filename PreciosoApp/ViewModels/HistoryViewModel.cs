@@ -80,14 +80,14 @@ namespace PreciosoApp.ViewModels
                 new ProductSoldTransactions().GetPTransactions());
             pTransactions = allPTransactions;
             allPSold = new ObservableCollection<ProductSold>(new ProductSold().GetProductsSold());
-            allSUsed = new ObservableCollection<ServicesUsed>(new ServicesUsed().GetServicesUsed());
-            _serviceTransactions = new ObservableCollection<Service_Transaction>(new Service_Transaction().GetService_Transactions());
-            ServiceTransactions = _serviceTransactions;
+            //allSUsed = new ObservableCollection<ServicesUsed>(new ServicesUsed().GetServicesUsed());
+            //_serviceTransactions = new ObservableCollection<Service_Transaction>(new Service_Transaction().GetService_Transactions());
+            //ServiceTransactions = _serviceTransactions;
 
             //allT = new ObservableCollection<AllTransactions>(new AllTransactions().GetTransactions());
             //AllTransactions = allT;
 
-            FilterCommand = new RelayCommand(FilterRowsByDate);
+            //FilterCommand = new RelayCommand(FilterRowsByDate);
 
         }
 

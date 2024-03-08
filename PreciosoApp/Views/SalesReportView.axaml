@@ -3,6 +3,25 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="PreciosoApp.Views.SalesReportView">
-  Welcome to Avalonia!
+             x:Class="PreciosoApp.Views.SalesReportView"
+			 xmlns:vm="using:PreciosoApp.ViewModels"
+			 x:DataType="vm:SalesReportViewModel">
+	<Grid>
+		<StackPanel>
+			<StackPanel Orientation="Horizontal">
+				<StackPanel Orientation="Vertical">
+					<TextBlock>Select Start Date</TextBlock>
+					<CalendarDatePicker SelectedDate="{Binding StartDate}"></CalendarDatePicker>
+				</StackPanel>
+				<StackPanel Orientation="Vertical">
+					<TextBlock>Select End Date</TextBlock>
+					<CalendarDatePicker SelectedDate="{Binding EndDate}"></CalendarDatePicker>
+				</StackPanel>
+				<Button Command="{Binding FilterCommand}">Filter</Button>
+			</StackPanel>
+			<DataGrid AutoGenerateColumns="True" ItemsSource="{Binding DailyGross}" >
+				
+			</DataGrid>
+		</StackPanel>
+	</Grid>
 </UserControl>
