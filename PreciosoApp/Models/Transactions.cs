@@ -237,6 +237,58 @@ namespace PreciosoApp.Models
             return db.ExecuteQuery(query, mapRow);
         }
 
+        public void insertServiceUsed(int trnscID, int serviceID, int qty)
+        {
+            Database db = new Database();
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+
+                // Check if the record exists
+                if (ServiceUsedExists(trnscID, serviceID))
+                {
+                    // The record already exists, update the quantity
+                    string updateQuery = @"UPDATE `tbl_appointment` 
+                                       SET `quantity` = `quantity` + @quantity 
+                                       WHERE `transaction_id` = @trnscID AND `service_id` = @serviceID";
+                    MySqlCommand updateCmd = new MySqlCommand(updateQuery, conn);
+                    updateCmd.Parameters.AddWithValue("@trnscID", trnscID);
+                    updateCmd.Parameters.AddWithValue("@quantity", qty);
+                    updateCmd.Parameters.AddWithValue("@serviceID", serviceID);
+                    updateCmd.ExecuteNonQuery();
+                }
+                else
+                {
+                    // The record does not exist, insert it
+                    string insertQuery = @"INSERT INTO `tbl_appointment` (`transaction_id`, `service_id`, `quantity`, `appointment_status`) 
+                                     VALUES (@trnscID, @serviceID, @quantity, 2);";
+                    MySqlCommand insertCmd = new MySqlCommand(insertQuery, conn);
+                    insertCmd.Parameters.AddWithValue("@trnscID", trnscID);
+                    insertCmd.Parameters.AddWithValue("@quantity", qty);
+                    insertCmd.Parameters.AddWithValue("@serviceID", serviceID);
+                    insertCmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private bool ServiceUsedExists(int trnscID, int serviceID)
+        {
+            Database db = new Database();
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = @"SELECT COUNT(*) FROM `tbl_appointment` WHERE `transaction_id` = @trnscID AND `service_id` = @serviceID";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@trnscID", trnscID);
+                cmd.Parameters.AddWithValue("@serviceID", serviceID);
+
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+                return count > 0;
+            }
+        }
+
     }
 
     public class ServicesUsedIn
@@ -329,7 +381,7 @@ namespace PreciosoApp.Models
             }
 
             List<(int serviceID, int quantity)> promoServices = GetPromoServices(promoID);
-            var sUsed = new ServicesUsedIn();
+            var sUsed = new ServicesUsed();
 
             foreach (var (serviceID, quantity) in promoServices)
             {
@@ -342,15 +394,34 @@ namespace PreciosoApp.Models
         {
             List<(int serviceID, int quantity)> services = new List<(int serviceID, int quantity)>();
 
+            Database db = new Database();
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = @"SELECT service_id, quantity FROM tbl_promo_services WHERE promo_id = @promoID";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@promoID", promoID);
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int serviceID = reader.GetInt32("service_id");
+                            int quantity = reader.GetInt32("quantity");
+                            services.Add((serviceID, quantity));
+                        }
+                    }
+                }
+            }
 
             return services;
         }
     }
-}
 
-
-
-/*
+    /*
  *
  *Trash
  *public List<ProductSold> GetProductsSold2()
@@ -474,132 +545,5 @@ using (MySqlConnection conn = db.GetCon())
             }
 
     }
- */
-        }
-    */
-
-    //Appointment table
-    public class ServicesUsed
-    {
-        public int TransactionId { get; set; }
-        public int ServiceId { get; set; }
-        public int status { get; set; }
-
-
-        public void insertServiceUsed(int trnscID, int serviceID, int qty)
-        {
-            Database db = new Database();
-
-            using (MySqlConnection conn = db.GetCon())
-            {
-                conn.Open();
-
-                // Check if the record exists
-                if (ServiceUsedExists(trnscID, serviceID))
-                {
-                    // The record already exists, update the quantity
-                    string updateQuery = @"UPDATE `tbl_appointment` 
-                                       SET `quantity` = `quantity` + @quantity 
-                                       WHERE `transaction_id` = @trnscID AND `service_id` = @serviceID";
-                    MySqlCommand updateCmd = new MySqlCommand(updateQuery, conn);
-                    updateCmd.Parameters.AddWithValue("@trnscID", trnscID);
-                    updateCmd.Parameters.AddWithValue("@quantity", qty);
-                    updateCmd.Parameters.AddWithValue("@serviceID", serviceID);
-                    updateCmd.ExecuteNonQuery();
-                }
-                else
-                {
-                    // The record does not exist, insert it
-                    string insertQuery = @"INSERT INTO `tbl_appointment` (`transaction_id`, `service_id`, `quantity`, `appointment_status`) 
-                                     VALUES (@trnscID, @serviceID, @quantity, 2);";
-                    MySqlCommand insertCmd = new MySqlCommand(insertQuery, conn);
-                    insertCmd.Parameters.AddWithValue("@trnscID", trnscID);
-                    insertCmd.Parameters.AddWithValue("@quantity", qty);
-                    insertCmd.Parameters.AddWithValue("@serviceID", serviceID);
-                    insertCmd.ExecuteNonQuery();
-                }
-            }
-        }
-
-        private bool ServiceUsedExists(int trnscID, int serviceID)
-        {
-            Database db = new Database();
-
-            using (MySqlConnection conn = db.GetCon())
-            {
-                conn.Open();
-                string query = @"SELECT COUNT(*) FROM `tbl_appointment` WHERE `transaction_id` = @trnscID AND `service_id` = @serviceID";
-                MySqlCommand cmd = new MySqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@trnscID", trnscID);
-                cmd.Parameters.AddWithValue("@serviceID", serviceID);
-
-                int count = Convert.ToInt32(cmd.ExecuteScalar());
-                return count > 0;
-            }
-        }
-    }
-
-    public class PromoTransaction
-    {
-        public int TransactionId { get; set; }
-        public int PromoID { get; set; }
-
-        public void insertPromoTransaction(int trnscID, int promoID, int qty)
-        {
-            int transactionID = -1; // Initialize with a default value
-
-            Database db = new Database();
-
-            using (MySqlConnection conn = db.GetCon())
-            {
-                conn.Open();
-                string query = @"INSERT INTO `tbl_promo_transaction` (`transaction_id`, `promo_id`, `status`) 
-                                 VALUES (@trnscID, @promoID, 2) ";
-                MySqlCommand cmd = new MySqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@trnscID", trnscID);
-                cmd.Parameters.AddWithValue("@promoID", promoID);
-                cmd.ExecuteNonQuery();
-            }
-
-            List<(int serviceID, int quantity)> promoServices = GetPromoServices(promoID);
-            var sUsed = new ServicesUsed();
-
-            foreach (var (serviceID, quantity) in promoServices)
-            {
-                int servQty = quantity * qty;
-                sUsed.insertServiceUsed(trnscID, serviceID, servQty);
-            }
-        }
-
-        private List<(int serviceID, int quantity)> GetPromoServices(int promoID)
-        {
-            List<(int serviceID, int quantity)> services = new List<(int serviceID, int quantity)>();
-
-            Database db = new Database();
-
-            using (MySqlConnection conn = db.GetCon())
-            {
-                conn.Open();
-                string query = @"SELECT service_id, quantity FROM tbl_promo_services WHERE promo_id = @promoID";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@promoID", promoID);
-
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            int serviceID = reader.GetInt32("service_id");
-                            int quantity = reader.GetInt32("quantity");
-                            services.Add((serviceID, quantity));
-                        }
-                    }
-                }
-            }
-
-            return services;
-        }
-    }
+*/
 }
-
