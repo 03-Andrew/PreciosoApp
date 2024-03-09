@@ -52,12 +52,12 @@
 				</TabItem>
 				<TabItem Header="Services" FontSize="16">
 					<Grid RowDefinitions="*,*">
-						<DataGrid Grid.Row="0" ItemsSource="{Binding ServiceTransactions}" Height="300" AutoGenerateColumns="True" 
-								  SelectedItem="{Binding SelectedRow1, Mode=TwoWay}">
+						<DataGrid Grid.Row="0" ItemsSource="{Binding ServicesPromosTransactions}" Height="300" AutoGenerateColumns="True" 
+								  SelectedItem="{Binding SelectedRowSP, Mode=TwoWay}">
 						
 						</DataGrid>
-						<DataGrid Grid.Row="1" ItemsSource="{Binding ServicesUsed}" Height="300" AutoGenerateColumns="True">
-
+						<DataGrid Grid.Row="1" ItemsSource="{Binding ServicesPromosUsed}" Height="300" AutoGenerateColumns="True">
+							
 						</DataGrid>
 					</Grid>
 					

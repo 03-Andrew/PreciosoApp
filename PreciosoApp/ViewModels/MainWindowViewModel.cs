@@ -55,6 +55,7 @@ public partial class MainWindowViewModel : ViewModelBase
         new ListItemTemplate(typeof(InventoryViewModel), "desktop_regular"),
         new ListItemTemplate(typeof(AppointmentViewModel), "desktop_regular"),
         new ListItemTemplate(typeof(POSViewModel), "desktop_regular"),
+        new ListItemTemplate(typeof(ServicesViewModel), "desktop_regular"),
         new ListItemTemplate(typeof(SalesReportViewModel), "desktop_regular"),
         new ListItemTemplate(typeof(HistoryViewModel), "desktop_regular"),
         new ListItemTemplate(typeof(TherapistViewModel), "desktop_regular")

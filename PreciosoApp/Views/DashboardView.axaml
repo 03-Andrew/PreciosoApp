@@ -3,6 +3,34 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="PreciosoApp.Views.DashboardView">
-Dashboard
+             x:Class="PreciosoApp.Views.DashboardView"
+			 xmlns:vm="using:PreciosoApp.ViewModels"
+	         x:DataType="vm:DashboardViewModel" >
+	<Grid>
+		<StackPanel>
+			<DataGrid AutoGenerateColumns="True" ItemsSource="{Binding AllTransactions}" Margin="10"/>
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+				<TextBlock Text="Records Per Page" VerticalAlignment="Center" Margin="5"/>
+				<ComboBox Margin="5" ItemsSource="{Binding nums}" SelectedValue="{Binding SelectedRecord, Mode=TwoWay}">
+				</ComboBox>
+
+				<Button Content="&lt;&lt;" IsEnabled="{Binding IsFirstEnabled}" Margin="5"
+						Command="{Binding FirstCommand}"/>
+				<Button Content="&lt;" IsEnabled="{Binding IsPreviousEnabled}" Margin="5"
+						Command="{Binding PreviousCommand}"/>
+				<TextBlock VerticalAlignment="Center"> 
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{} {0} of {1}">
+							<Binding Path="CurrentPage"/>
+							<Binding Path="NumberOfPages"/>
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+				<Button Content=">" IsEnabled="{Binding IsNextEnabled}" Margin="5" 
+						Command="{Binding NextCommand}"/>
+				<Button Content=">>" IsEnabled="{Binding IsLastEnabled}" Margin="5"
+						Command="{Binding LastCommand}"/>
+			</StackPanel>
+		</StackPanel>
+	</Grid>
 </UserControl>

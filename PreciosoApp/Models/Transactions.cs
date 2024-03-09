@@ -323,12 +323,12 @@ namespace PreciosoApp.Models
         public string Therapist { get; set; }
         public string ModeOfPayment { get; set; }
         public string Note { get; set; }
-        public double Prod_rev {  get; set; }
+        public double Prod_rev { get; set; }
         public double Prod_comm { get; set; }
-        public double Serv_rev {  get; set; }
-        public double Serv_comm {  get; set; }
+        public double Serv_rev { get; set; }
+        public double Serv_comm { get; set; }
         public double Total_Gross { get; set; }
-        public double Total_comm {  get; set; }
+        public double Total_comm { get; set; }
 
         Database db = new Database();
 
@@ -356,6 +356,10 @@ namespace PreciosoApp.Models
             return db.ExecuteQuery(query, mapRow);
         }
     }
+
+
+
+
 
     //Appointment tabl
     public class PromoTransaction
@@ -420,6 +424,79 @@ namespace PreciosoApp.Models
             return services;
         }
     }
+
+    public class ServicePromoTransactions
+    {
+        public int ID { get; set; }
+        public DateTime Date { get; set; }
+        public string ClientName { get; set; }
+        public string TherapistName { get; set; }
+        public string MOP { get; set; }
+        public string Notes { get; set; }
+        public double Total { get; set; }
+        public double Comm { get; set; }
+        Database db = new Database();
+
+        public ServicePromoTransactions() { }
+
+        public List<ServicePromoTransactions> GetTransactions()
+        {
+            Func<MySqlDataReader, ServicePromoTransactions> mapRow = reader => new ServicePromoTransactions
+            {
+                ID = reader.GetInt32(0),
+                Date = reader.GetDateTime(1),
+                ClientName = reader.GetString(2),
+                TherapistName = reader.GetString(3),
+                MOP = reader.GetString(4),
+                Notes = reader.GetString(5),
+                Total = reader.GetDouble(6),
+                Comm = reader.GetDouble(7)
+            };
+
+            string query = "select t.transaction_id, t.transaction_datetime, c.client_name, th.name, mp.mode, t.notes, sum(sp.price) as total, sum(sp.commission) as comm "+
+                            "from tbl_transaction t " +
+                            "join tbl_client c on t.client_assigned = c.client_id " + 
+                            "join tbl_therapist th on t.therapist_assigned = th.therapist_id " +
+                            "join tbl_modeofpayment mp on t.mode_of_payment = mp.mode_id " + 
+                            "join service_promo_availed sp on t.transaction_id = sp.transaction_id "  + 
+                            "group by t.transaction_id;";
+
+            return db.ExecuteQuery(query, mapRow);
+        }
+    }
+
+    public class ServicePromoUsed
+    {
+        public int ID { get; set; }
+        public string Service_Promo { get; set; }
+        public string Type { get; set; }
+        public string Status { get; set; }
+        public double Price { get; set; }
+        public double Comm { get; set; }
+        Database db = new Database();
+
+        public ServicePromoUsed() {
+            
+        }
+
+        public List<ServicePromoUsed> GetServicePromoUsed()
+        {
+            Func<MySqlDataReader, ServicePromoUsed> mapRow = reader => new ServicePromoUsed
+            {
+                ID = reader.GetInt32(0),
+                Service_Promo = reader.GetString(1),
+                Type = reader.GetString(2),
+                Status = reader.GetString(3),
+                Price = reader.GetDouble(4),
+                Comm = reader.GetDouble(5)
+            };
+
+            string query = "select * from service_promo_availed";
+
+            return db.ExecuteQuery(query, mapRow);
+        }
+    }
+}
 
     /*
  *
@@ -546,4 +623,3 @@ using (MySqlConnection conn = db.GetCon())
 
     }
 */
-}
