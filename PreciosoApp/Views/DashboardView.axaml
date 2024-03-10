@@ -8,7 +8,9 @@
 	         x:DataType="vm:DashboardViewModel" >
 	<Grid>
 		<StackPanel>
-			<DataGrid AutoGenerateColumns="True" ItemsSource="{Binding AllTransactions}" Margin="10"/>
+			<DataGrid AutoGenerateColumns="True" ItemsSource="{Binding TransactionCollection}" Margin="10">
+					
+			</DataGrid>
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
 				<TextBlock Text="Records Per Page" VerticalAlignment="Center" Margin="5"/>
 				<ComboBox Margin="5" ItemsSource="{Binding nums}" SelectedValue="{Binding SelectedRecord, Mode=TwoWay}">
