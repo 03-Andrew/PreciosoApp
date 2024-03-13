@@ -15,8 +15,6 @@ namespace PreciosoApp.Models
         public float servComm { get; set; }
         public string servType { get; set; }
 
-        public Services() { }
-
         public List<Services> GetServices()
         {
             Database db = new Database();
@@ -73,6 +71,28 @@ namespace PreciosoApp.Models
                 }
             }
             return services;
+        }
+
+        public void addClient(string serviceName, float servicePrice, int cRate, int sType)
+        {
+            Database db = new Database();
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+
+                string query = "INSERT INTO `tbl_service` (`service_name`, `service_price`, `commission_rate`, `service_type`) " +
+                               "VALUES (@Name, @Price, @Rate, @Type) ";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Name", serviceName);
+                    cmd.Parameters.AddWithValue("@Price", servicePrice);
+                    cmd.Parameters.AddWithValue("@Rate", cRate);
+                    cmd.Parameters.AddWithValue("@Type", sType);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 }

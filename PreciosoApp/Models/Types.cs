@@ -195,4 +195,72 @@ namespace PreciosoApp.Models
             }
         }
     }
+
+    public class CommissionRate
+    {
+        public int id { get; set; }
+        public float rateValue { get; set; }
+
+        Database db = new Database();
+        public List<CommissionRate> GetComissionRate()
+        {
+            List<CommissionRate> types = new List<CommissionRate>();
+
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = "select * from tbl_commission_rate";
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            CommissionRate type = new CommissionRate();
+                            type.id = reader.GetInt32(0);
+                            type.rateValue = reader.GetFloat(1);
+
+                            types.Add(type);
+                        }
+                    }
+                }
+                return types;
+            }
+        }
+    }
+
+    public class ServiceType
+    {
+        public int id { get; set; }
+        public string serviceType { get; set; }
+
+        Database db = new Database();
+        public List<ServiceType> GetServiceType()
+        {
+            List<ServiceType> types = new List<ServiceType>();
+
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = "select * from tbl_service_type";
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ServiceType type = new ServiceType();
+                            type.id = reader.GetInt32(0);
+                            type.serviceType = reader.GetString(1);
+
+                            types.Add(type);
+                        }
+                    }
+                }
+                return types;
+            }
+        }
+    }
 }

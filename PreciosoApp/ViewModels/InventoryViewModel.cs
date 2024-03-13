@@ -17,17 +17,6 @@ namespace PreciosoApp.ViewModels
         private string searchProd;
         private List<string> prodNames;
 
-        
-
-        public ObservableCollection<Inventory> Inventory
-        {
-            get { return inventory; }
-            set
-            {
-                inventory = value;
-                OnPropertyChanged(nameof(Inventory));
-            }
-        }
         public InventoryViewModel()
         {
             var inv = new Inventory();
@@ -42,7 +31,16 @@ namespace PreciosoApp.ViewModels
             Therapist = new ObservableCollection<Therapist>(ther.GetAllTherapist());
 
         }
-        
+
+        public ObservableCollection<Inventory> Inventory
+        {
+            get { return inventory; }
+            set
+            {
+                inventory = value;
+                OnPropertyChanged(nameof(Inventory));
+            }
+        }
 
         public string SearchProd
         {

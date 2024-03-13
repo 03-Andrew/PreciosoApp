@@ -291,30 +291,6 @@ namespace PreciosoApp.Models
 
     }
 
-    public class ServicesUsedIn
-    {
-        public int TransactionId { get; set; }
-        public int ServiceId { get; set; }
-        public int Status { get; set; }
-        public void insertServiceUsed(int trnscID, int promoID, int qty)
-        {
-            int transactionID = -1;
-            Database db = new Database();
-            using (MySqlConnection conn = db.GetCon())
-            {
-                conn.Open();
-                string query = @"INSERT INTO tbl_products_sold (transaction_id, product_id, quantity) 
-                         VALUES (@trnscID, @productID, @quantity);";
-                MySqlCommand cmd = new MySqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@trnscID", trnscID);
-                cmd.Parameters.AddWithValue("@productID", promoID);
-                cmd.Parameters.AddWithValue("@quantity", qty);
-                cmd.ExecuteNonQuery();
-            }
-
-        }
-    }
-
     public class AllTransactions
     {
         public int ID { get; set; }
@@ -422,6 +398,26 @@ namespace PreciosoApp.Models
             }
 
             return services;
+        }
+
+        public void InsertPromoServices(int promoID, int serviceID, int qty)
+        {
+            int transactionID = -1; // Initialize with a default value
+
+            Database db = new Database();
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = @"INSERT INTO `tbl_promo_services` (`promo_id`, `service_id`, `quantity`) 
+                                 VALUES (@promoID, @serviceID, @qty) ";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@promoID", promoID);
+                cmd.Parameters.AddWithValue("@serviceID", serviceID);
+                cmd.Parameters.AddWithValue("@qty", qty);
+
+                cmd.ExecuteNonQuery();
+            }
         }
     }
 

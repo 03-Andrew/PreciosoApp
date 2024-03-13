@@ -15,9 +15,9 @@
 				</ComboBox>
 
 				<Button Content="&lt;&lt;" IsEnabled="{Binding IsFirstEnabled}" Margin="5"
-						Command="{Binding FirstCommand}"/>
+						/>
 				<Button Content="&lt;" IsEnabled="{Binding IsPreviousEnabled}" Margin="5"
-						Command="{Binding PreviousCommand}"/>
+						/>
 				<TextBlock VerticalAlignment="Center"> 
 					<TextBlock.Text>
 						<MultiBinding StringFormat="{} {0} of {1}">
@@ -27,9 +27,9 @@
 					</TextBlock.Text>
 				</TextBlock>
 				<Button Content=">" IsEnabled="{Binding IsNextEnabled}" Margin="5" 
-						Command="{Binding NextCommand}"/>
+						/>
 				<Button Content=">>" IsEnabled="{Binding IsLastEnabled}" Margin="5"
-						Command="{Binding LastCommand}"/>
+						/>
 			</StackPanel>
 		</StackPanel>
 	</Grid>
