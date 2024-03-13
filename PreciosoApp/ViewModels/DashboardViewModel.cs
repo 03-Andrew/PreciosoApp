@@ -1,33 +1,127 @@
-﻿using Avalonia.Data;
+﻿using Avalonia.Collections;
+using Avalonia.Data;
 using PreciosoApp.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace PreciosoApp.ViewModels
 {
     public class DashboardViewModel : ViewModelBase
     {
-        public DashboardViewModel()
+        public ICommand FirstCommand { get; set; }
+        public ICommand PreviousCommand { get; set; }
+        public ICommand NextCommand { get; set; }
+        public ICommand LastCommand { get; set; }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            AllTransactions = new ObservableCollection<AllTransactions>(new AllTransactions().GetTransactions());
-            nums = new ObservableCollection<string>() { "3", "6", "9" };
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private ObservableCollection<AllTransactions> _allTransactions;
-        public ObservableCollection<AllTransactions> AllTransactions
+        private DataGridCollectionView _transactionCollection;
+        public DataGridCollectionView TransactionCollection
         {
-            get { return _allTransactions; }
+            get { return _transactionCollection; }
             set
             {
-                _allTransactions = value;
-                OnPropertyChanged(nameof(AllTransactions));
-                UpdateRecordCount();
+                _transactionCollection = value;
+                OnPropertyChanged(nameof(TransactionCollection));
             }
         }
+
+
+
+        private ObservableCollection<AllTransactions> _transactionList;
+        public ObservableCollection<AllTransactions> TransactionList
+        {
+            get { return _transactionList; }
+            set
+            {
+                _transactionList = value;
+                OnPropertyChanged(nameof(AllTransactions));
+
+            }
+        }
+
+
+        public DashboardViewModel()
+        {
+            TransactionCollection = new DataGridCollectionView(ListOfTransactions);
+            nums = new ObservableCollection<int>() { 3, 6, 9 };
+
+
+            NextCommand = new Command((s) => true, NextPage);
+            FirstCommand = new Command((s) => true, FirstPage);
+            LastCommand = new Command((s) => true, LastPage);
+            PreviousCommand = new Command((s) => true, PreviousPage);
+            Load();
+        }
+
+        public void Load()
+        {
+            foreach(var item in new AllTransactions().GetTransactions())
+            {
+                ListOfTransactions.Add(item);
+            }
+            UpdateCollection(ListOfTransactions.Take(SelectedRecord));
+            UpdateRecordCount();
+             
+        }
+        private void UpdateCollection(IEnumerable<AllTransactions> enumerable)
+        {
+            TransactionList.Clear();
+            foreach (var item in enumerable)
+            {
+                TransactionList.Add(item);
+            }
+        }
+
+        public List<AllTransactions> ListOfTransactions = new List<AllTransactions>();
+
+        int RecordStartFrom = 0;
+
+        private void PreviousPage(object obj)
+        {
+            CurrentPage--;
+            RecordStartFrom = ListOfTransactions.Count - SelectedRecord * (NumberOfPages - (CurrentPage - 1));
+            var recorsToShow = ListOfTransactions.Skip(RecordStartFrom).Take(SelectedRecord);
+            UpdateCollection(recorsToShow);
+            UpdateEnableState();
+        }
+
+        private void LastPage(object obj)
+        {
+            var recordsToskip = SelectedRecord * (NumberOfPages - 1);
+            UpdateCollection(ListOfTransactions.Skip(recordsToskip));
+            CurrentPage = NumberOfPages;
+            UpdateEnableState();
+        }
+
+        private void FirstPage(object obj)
+        {
+            UpdateCollection(ListOfTransactions.Take(SelectedRecord));
+            CurrentPage = 1;
+            UpdateEnableState();
+        }
+
+        private void NextPage(object obj)
+        {
+            RecordStartFrom = CurrentPage * SelectedRecord;
+            var recordsToShow = ListOfTransactions.Skip(RecordStartFrom).Take(SelectedRecord);
+            UpdateCollection(recordsToShow);
+            CurrentPage++;
+            UpdateEnableState();
+        }       
 
 
         private int _currentPage = 1;
@@ -43,7 +137,7 @@ namespace PreciosoApp.ViewModels
         }
 
 
-        private int _numberOfPages = 10;
+        private int _numberOfPages = 5;
         public int NumberOfPages
         {
             get { return _numberOfPages; }
@@ -55,8 +149,8 @@ namespace PreciosoApp.ViewModels
             }
         }
 
-        private string _selectedRecord = "3";
-        public string SelectedRecord
+        private int _selectedRecord = 3;
+        public int SelectedRecord
         {
             get { return _selectedRecord; }
             set
@@ -66,14 +160,17 @@ namespace PreciosoApp.ViewModels
                 UpdateRecordCount();
             }
         }
-        public ObservableCollection<string> nums { get; private set; }
+        public ObservableCollection<int> nums { get; private set; }
         
         public void UpdateRecordCount()
         {
-            NumberOfPages = AllTransactions.Count / Convert.ToInt32(SelectedRecord);
+            NumberOfPages = (int)Math.Ceiling((double)ListOfTransactions.Count / SelectedRecord);
             NumberOfPages = NumberOfPages == 0 ? 1 : NumberOfPages;
+            UpdateCollection(ListOfTransactions.Take(SelectedRecord));
             CurrentPage = 1;
         }
+
+
 
         private bool _isFirstEnabled;
         public bool IsFirstEnabled
@@ -129,6 +226,29 @@ namespace PreciosoApp.ViewModels
             IsNextEnabled = CurrentPage < NumberOfPages;
             IsLastEnabled = CurrentPage < NumberOfPages;
 
+        }
+    }
+
+
+    public class Command : ICommand
+    {
+        public Command(Func<object, bool> methodCanExecute, Action<object> methodExecute)
+        {
+            MethodCanExecute = methodCanExecute;
+            MethodExecute = methodExecute;
+        }
+        Action<object> MethodExecute;
+        Func<object, bool> MethodCanExecute;
+        public event EventHandler CanExecuteChanged;
+
+        public bool CanExecute(object parameter)
+        {
+            return MethodExecute != null && MethodCanExecute.Invoke(parameter);
+        }
+
+        public void Execute(object parameter)
+        {
+            MethodExecute(parameter);
         }
     }
 }
