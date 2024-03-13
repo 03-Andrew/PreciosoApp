@@ -6,8 +6,19 @@
         x:Class="PreciosoApp.Views.DialogWindow"
         Title="DialogWindow"
 		Width="200" Height="100"
-		WindowStartupLocation="CenterScreen">
-	<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-		<TextBlock TextAlignment="Center" Margin="0 0 0 0" TextWrapping="Wrap" 
-				   x:Name="dialogTextBlock">Checkout complete!</TextBlock>	</StackPanel>
+		WindowStartupLocation="CenterScreen"
+		Background="Transparent"
+		ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaToDecorationsHint="True">
+	
+	
+	<Border Background="WhiteSmoke" CornerRadius="30">
+		<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+			<TextBlock TextAlignment="Center" Margin="0 0 0 0" TextWrapping="Wrap" 
+					   x:Name="dialogTextBlock">Checkout complete!</TextBlock>
+			<Button HorizontalAlignment="Center" Margin="0 10 0 0" Click="CloseWindow">Close</Button>
+		</StackPanel>
+	</Border>
+
+	
 </Window>

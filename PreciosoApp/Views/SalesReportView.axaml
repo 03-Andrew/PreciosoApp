@@ -7,21 +7,67 @@
 			 xmlns:vm="using:PreciosoApp.ViewModels"
 			 x:DataType="vm:SalesReportViewModel">
 	<Grid>
-		<StackPanel>
-			<StackPanel Orientation="Horizontal">
-				<StackPanel Orientation="Vertical">
-					<TextBlock>Select Start Date</TextBlock>
-					<CalendarDatePicker SelectedDate="{Binding StartDate}"></CalendarDatePicker>
+
+		<TabControl>
+			<TabItem Header="Daily Income Report">
+				<StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<StackPanel Orientation="Vertical">
+							<TextBlock>Select Start Date</TextBlock>
+							<CalendarDatePicker SelectedDate="{Binding StartDate}"></CalendarDatePicker>
+						</StackPanel>
+						<StackPanel Orientation="Vertical">
+							<TextBlock>Select End Date</TextBlock>
+							<CalendarDatePicker SelectedDate="{Binding EndDate}"></CalendarDatePicker>
+						</StackPanel>
+						<Button Command="{Binding FilterCommand}">Filter</Button>
+					</StackPanel>
+					<DataGrid AutoGenerateColumns="True" ItemsSource="{Binding DailyGross}" >
+						
+					</DataGrid>
 				</StackPanel>
-				<StackPanel Orientation="Vertical">
-					<TextBlock>Select End Date</TextBlock>
-					<CalendarDatePicker SelectedDate="{Binding EndDate}"></CalendarDatePicker>
+			</TabItem>
+			<TabItem Header="Daily Sales">
+				<StackPanel>
+					<StackPanel Orientation="Vertical">
+						<StackPanel Orientation="Horizontal">
+							<TextBlock Margin="5" VerticalAlignment="Center">Select Date</TextBlock>
+							<CalendarDatePicker SelectedDate="{Binding SelectedDate}" Margin="5"></CalendarDatePicker>
+							<Button Margin="5">Search</Button>
+						</StackPanel>
+						
+						<DataGrid Margin="0 20 0 0" Height="500" GridLinesVisibility="All" AutoGenerateColumns="False" ItemsSource="{Binding DailyReport}">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Date" Width="auto" Binding="{Binding DateTime}"/>
+								<DataGridTextColumn Header="Client" Width="auto" Binding="{Binding Client}"/>
+								<DataGridTextColumn Header="Therapist" Width="auto" Binding="{Binding Therapist}"/>
+								<DataGridTextColumn Header="MOP" Width="auto" Binding="{Binding MOP}"/>
+								<DataGridTemplateColumn Header="Availed"  Width="auto">
+									<DataTemplate>
+										<TextBox Text="{Binding Availed}" BorderThickness="0" LineHeight="20"/>
+									</DataTemplate>
+								</DataGridTemplateColumn>
+								<DataGridTemplateColumn Header="Type"  Width="auto">
+									<DataTemplate>
+										<TextBox Text="{Binding Type}" BorderThickness="0" LineHeight="20"/>
+									</DataTemplate>
+								</DataGridTemplateColumn>
+								<DataGridTemplateColumn Header="Sales"  Width="auto">
+									<DataTemplate>
+										<TextBox Text="{Binding Price}" BorderThickness="0" LineHeight="20"/>
+									</DataTemplate>
+								</DataGridTemplateColumn>
+								<DataGridTemplateColumn Header="Commission"  Width="auto">
+									<DataTemplate>
+										<TextBox Text="{Binding Commission}" BorderThickness="0" LineHeight="20"/>
+									</DataTemplate>
+								</DataGridTemplateColumn>
+							</DataGrid.Columns>
+						</DataGrid>
+					</StackPanel>
 				</StackPanel>
-				<Button Command="{Binding FilterCommand}">Filter</Button>
-			</StackPanel>
-			<DataGrid AutoGenerateColumns="True" ItemsSource="{Binding DailyGross}" >
-				
-			</DataGrid>
-		</StackPanel>
+			</TabItem>
+		</TabControl>
+
 	</Grid>
 </UserControl>

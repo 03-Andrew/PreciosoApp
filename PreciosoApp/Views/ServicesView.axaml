@@ -2,10 +2,210 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1080" d:DesignHeight="720"
              x:Class="PreciosoApp.Views.ServicesView"
 			 xmlns:vm="using:PreciosoApp.ViewModels"
 			 x:DataType="vm:ServicesViewModel">
-	
-	Services Page
+	<Grid RowDefinitions="Auto, *">
+		<Border Grid.Row="0" Background="#f3f3f3f3" Margin="20 20 20 20" CornerRadius="10">
+			<Border.Effect>
+				<DropShadowEffect Opacity="0.1"/>
+			</Border.Effect>
+			<StackPanel>
+				<TabControl>
+					<TabItem Header="Services">
+						<StackPanel>
+							<StackPanel Orientation="Horizontal">
+								<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
+									<TextBlock Text="Search Service: " Padding="0 10 0 10"/>
+								</Grid>
+								<TextBox Text="{Binding SearchServ, Mode=TwoWay}"
+										 Margin="10 20 0 0" HorizontalAlignment="Left" Padding="10" Width="300"/>
+							</StackPanel>
+							<DataGrid Margin="20"  ItemsSource="{Binding Services}"
+							  AutoGenerateColumns="True" IsReadOnly="True" CanUserResizeColumns="True"
+							  GridLinesVisibility="All" Height="150" />
+						</StackPanel>
+					</TabItem>
+					<TabItem Header="Promos">
+						<StackPanel>
+							<StackPanel Orientation="Horizontal">
+								<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
+									<TextBlock Text="Search Promos: " Padding="0 10 0 10"/>
+								</Grid>
+								<TextBox Text="{Binding SearchPromo, Mode=TwoWay}"
+										 Margin="10 20 0 0" HorizontalAlignment="Left" Padding="10" Width="300"/>
+							</StackPanel>
+							<DataGrid Margin="20"  ItemsSource="{Binding Promos}"
+							  AutoGenerateColumns="True" IsReadOnly="True" CanUserResizeColumns="True"
+							  GridLinesVisibility="All" Height="150" />
+						</StackPanel>
+					</TabItem>
+				</TabControl>
+			</StackPanel>
+		</Border>
+		<Border Grid.Row="1" Background="#f3f3f3f3" Margin="20 20 20 20" CornerRadius="10">
+			<Border.Effect>
+				<DropShadowEffect Opacity="0.1"/>
+			</Border.Effect>
+			<StackPanel>
+				<TabControl>
+					<TabItem Header="Add Services">
+						<StackPanel>
+							<StackPanel Orientation="Horizontal">
+							<StackPanel>
+								<TextBlock Text="Service Name" Margin="20 0 20 0"/>
+								<StackPanel Margin="20 5 20 20">
+									<TextBox Watermark="Service Name"
+											 Text="{Binding ServiceName}" 
+											 Padding="10" Width="150" Margin="0 0 10 0"/>
+								</StackPanel>
+							</StackPanel>
+							<StackPanel>
+								<TextBlock Text="Service Price" Margin="20 0 20 0"/>
+								<StackPanel Margin="20 5 20 20">
+									<TextBox Watermark="Price"
+											 Text="{Binding ServicePrice}" 
+											 Padding="10" Width="100" Margin="0 0 10 0"/>
+								</StackPanel>
+							</StackPanel>
+						</StackPanel>
+							<StackPanel Orientation="Horizontal">
+								<StackPanel>
+									<TextBlock Text="Comission Rate" Margin="20 0 20 0"/>
+									<StackPanel Margin="20 5 20 20">
+										<ComboBox PlaceholderText="Rate" 
+												  Padding="10" Margin="0 2 10 0"
+												  ItemsSource="{Binding CommissionRates}"
+												  SelectedItem="{Binding SelectedRate}"> 
+											<ComboBox.ItemTemplate>
+												<DataTemplate>
+													<TextBlock Text="{Binding rateValue}" />
+												</DataTemplate>
+											</ComboBox.ItemTemplate>
+										</ComboBox>
+									<Button Command="{Binding AddServicesCommand}" Margin="0 20 0 0">Add new Service</Button>
+									</StackPanel>
+								</StackPanel>
+								<StackPanel>
+									<TextBlock Text="Service Type" Margin="20 0 20 0"/>
+									<StackPanel Margin="20 5 20 20">
+										<ComboBox PlaceholderText="Type" 
+												  Padding="10" Width="130" 
+												  Margin="0 2 10 0"
+												  ItemsSource="{Binding ServiceTypes}"
+												  SelectedItem="{Binding SelectedServiceType}">
+											<ComboBox.ItemTemplate>
+												<DataTemplate>
+													<TextBlock Text="{Binding serviceType}" />
+												</DataTemplate>
+											</ComboBox.ItemTemplate>
+									</ComboBox>
+									</StackPanel>
+								</StackPanel>
+							</StackPanel>
+						</StackPanel>
+					</TabItem>
+					<TabItem Header="Add Promos">
+						<StackPanel Orientation="Vertical">
+							<Grid RowDefinitions="*,*" ColumnDefinitions="*,*">
+								<Grid Grid.Column="0" RowDefinitions="*,*" ColumnDefinitions="*,*">
+									<StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
+										<StackPanel>
+											<TextBlock Text="Promo Name" Margin="20 0 20 0"/>
+											<StackPanel Margin="20 5 20 20">
+												<TextBox Watermark="Promo Name"
+														 Text="{Binding PromoName}"
+														 Padding="10" Width="150" Margin="0 0 10 0"/>
+											</StackPanel>
+										</StackPanel>
+										<StackPanel>
+											<TextBlock Text="Promo Price" Margin="20 0 20 0"/>
+											<StackPanel Margin="20 5 20 20">
+												<TextBox Watermark="Price"
+														 Text="{Binding PromoPrice}"
+														 Padding="10" Width="100" Margin="0 0 10 0"/>
+											</StackPanel>
+										</StackPanel>
+									</StackPanel>
+									<StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
+										<StackPanel>
+											<TextBlock Text="Comission Rate" Margin="20 0 20 0"/>
+											<StackPanel Margin="20 5 20 20">
+												<ComboBox PlaceholderText="Rate"
+														  Padding="10" Margin="0 2 10 0"
+														  ItemsSource="{Binding PromoCommissionRates}"
+														  SelectedItem="{Binding SelectedPromoRate}">
+													<ComboBox.ItemTemplate>
+														<DataTemplate>
+															<TextBlock Text="{Binding rateValue}" />
+														</DataTemplate>
+													</ComboBox.ItemTemplate>
+												</ComboBox>
+												<Button Command="{Binding AddPromosCommand}" Margin="0 20 0 0">Add new Service</Button>
+											</StackPanel>
+										</StackPanel>
+										<StackPanel>
+											<TextBlock Text="Select Services In Promo" Margin="50 0 20 0"/>
+											<StackPanel Margin="50 5 20 20">
+												<Expander Width="250" Height="230">
+													<Expander.Header>
+														Services
+													</Expander.Header>
+													<Grid RowDefinitions="*,*" ColumnDefinitions="90,*">
+														<StackPanel Grid.Row="0" Grid.Column="0"
+																	Orientation="Vertical">
+															<TextBlock Text="Search" Margin="10"
+																   ></TextBlock>
+															<TextBox  HorizontalAlignment="Left"
+																	  VerticalAlignment="Top"
+																	  Text="{Binding SearchPromoServicesText, Mode=TwoWay}" Height="10" Width="10"/>
+															<TextBlock Text="Qty used" Margin="10"
+																	   ></TextBlock>
+															<TextBox  HorizontalAlignment="Left"
+																	  VerticalAlignment="Top"
+																	  Text="{Binding SelectedPromoServicesQty, Mode=TwoWay}" Height="10" Width="10"/>
+														</StackPanel>
+														<Button Command="{Binding AddPromoServicesCommand}"
+																HorizontalAlignment="Center" 
+																HorizontalContentAlignment="Center"
+																Width="100"
+																VerticalAlignment="Top" 
+																Grid.Row="0" Grid.Column="1">Add</Button>
+														<DataGrid Height="150" ItemsSource="{Binding PromoServices}"
+																  SelectedItem="{Binding SelectedPromosServices, Mode=TwoWay}"
+																  IsReadOnly="True"
+																  CanUserResizeColumns="True" GridLinesVisibility="All"
+																  Grid.Row="1" Grid.Column="1">
+															<DataGrid.Columns>
+																<DataGridTextColumn Header="Name" Width="150" Binding="{Binding servName}"/>
+															</DataGrid.Columns>
+														</DataGrid>
+													</Grid>
+												</Expander>
+											</StackPanel>
+										</StackPanel>
+									</StackPanel>
+								</Grid>
+								<StackPanel Grid.Column="1">
+									<TextBlock Margin="0 0 0 10">Services In Promo (double click on quantity to edit)</TextBlock>
+									<DataGrid  HorizontalAlignment="Left" 
+											   Width="350" Height="200" ItemsSource="{Binding ServiceItems}"
+											   IsReadOnly="True"
+											   CanUserResizeColumns="True" GridLinesVisibility="All">
+										<DataGrid.Columns>
+											<DataGridTextColumn Width="350" Header="Name" Binding="{Binding SelectedServiceName}"></DataGridTextColumn>
+											<DataGridTextColumn Width="350" Header="Qty" Binding="{Binding Quantity}"></DataGridTextColumn>
+
+										</DataGrid.Columns>
+									</DataGrid>
+								</StackPanel>
+							</Grid>
+							
+						</StackPanel>
+					</TabItem>
+				</TabControl>
+			</StackPanel>
+		</Border>
+	</Grid>
 </UserControl>

@@ -25,12 +25,33 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        public void loadDailyReport()
+        {
+            _dailyReport = new ObservableCollection<DailyReport>(new DailyReport().GetDailyReports());
+            DailyReport = _dailyReport;
+ 
+        }
+
+        private ObservableCollection<DailyReport> _dailyReport;
+        public ObservableCollection<DailyReport> DailyReport
+        {
+            get { return _dailyReport; }
+            set
+            {
+                _dailyReport = value;
+                OnPropertyChanged(nameof(DailyReport));
+            }
+        }
+
         public ICommand FilterCommand { get; }
         public SalesReportViewModel() 
         {
-            _dailyGross = new ObservableCollection<DailyGross>(new DailyGross().GetDailyGross());
-            DailyGross = _dailyGross;
-            FilterCommand = new RelayCommand(FilterByDate);
+            //_dailyGross = new ObservableCollection<DailyGross>(new DailyGross().GetDailyGross());
+            //DailyGross = _dailyGross;
+            //FilterCommand = new RelayCommand(FilterByDate);
+
+            loadDailyReport();
+            FilterGrid = new RelayCommand(FilterBySelectedDate);
         }
 
         private DateTime _startDate = DateTime.Today.AddYears(-15);
@@ -56,6 +77,27 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        private DateTime _selectedDate = DateTime.Now;
+        public  DateTime SelectedDate
+        {
+            get { return _selectedDate; }
+            set
+            {
+                _selectedDate = value;
+                OnPropertyChanged(nameof(SelectedDate));
+                FilterBySelectedDate();
+            }
+        }
+
+        private void FilterBySelectedDate()
+        {
+            var filteredByDate = _dailyReport.AsQueryable();
+
+            filteredByDate = filteredByDate.Where(c => c.DateTime.Date == _selectedDate.Date);
+
+            DailyReport = new ObservableCollection<DailyReport>(filteredByDate.ToList());
+        }
+
         private void FilterByDate()
         {
           
@@ -75,5 +117,6 @@ namespace PreciosoApp.ViewModels
             DailyGross = new ObservableCollection<DailyGross>(filteredByDate.ToList());
         }
 
+        public ICommand FilterGrid { get; }
     }
 }

@@ -264,7 +264,7 @@ namespace PreciosoApp.ViewModels
         {
             var trnsc = new Transactions();
             var pSold = new ProductSold();
-            var sUsed = new ServicesUsedIn();
+            var sUsed = new ServicesUsed();
             var pTrnsc = new PromoTransaction();
             var window = new DialogWindow();
 
