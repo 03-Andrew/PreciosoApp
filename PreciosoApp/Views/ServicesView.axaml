@@ -6,6 +6,7 @@
              x:Class="PreciosoApp.Views.ServicesView"
 			 xmlns:vm="using:PreciosoApp.ViewModels"
 			 x:DataType="vm:ServicesViewModel">
+	
 	<Grid RowDefinitions="Auto, *">
 		<Border Grid.Row="0" Background="#f3f3f3f3" Margin="20 20 20 20" CornerRadius="10">
 			<Border.Effect>

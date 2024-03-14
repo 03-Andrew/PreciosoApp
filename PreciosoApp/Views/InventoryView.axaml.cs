@@ -1,13 +1,12 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 
-namespace PreciosoApp.Views;
-
-public partial class InventoryView : UserControl
+namespace PreciosoApp.Views
 {
-    public InventoryView()
+    public partial class InventoryView : UserControl
     {
-        InitializeComponent();
+        public InventoryView()
+        {
+            InitializeComponent();
+        }
     }
 }

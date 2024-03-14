@@ -263,4 +263,38 @@ namespace PreciosoApp.Models
             }
         }
     }
+
+    public class ProductType
+    {
+        public int id { get; set; }
+        public string productType { get; set; }
+
+        Database db = new Database();
+        public List<ProductType> GetProductType()
+        {
+            List<ProductType> types = new List<ProductType>();
+
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = "select * from  tbl_product_type";
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ProductType type = new ProductType();
+                            type.id = reader.GetInt32(0);
+                            type.productType = reader.GetString(1);
+
+                            types.Add(type);
+                        }
+                    }
+                }
+                return types;
+            }
+        }
+    }
 }

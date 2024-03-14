@@ -1,5 +1,6 @@
 ﻿using DynamicData;
 using MySql.Data.MySqlClient;
+using Mysqlx.Crud;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,9 +31,9 @@ namespace PreciosoApp.Models
                 conn.Open();
 
                 string query = "SELECT p.product_id, p.product_name, p.product_cost, p.commission, t.type, p.critical_level, " +
-                    "( SELECT SUM(quantity) FROM tbl_stockin_product t1 WHERE t1.product_id = p.product_id ) - " +
-                    "( SELECT SUM(quantity) FROM tbl_products_sold t2 WHERE t2.product_id = p.product_id ) AS stock_level " +
-                    "FROM tbl_product p JOIN tbl_product_type t ON p.product_type = t.type_id; ";
+                    "( SELECT COALESCE(SUM(quantity), 0) FROM tbl_stockin_product t1 WHERE t1.product_id = p.product_id ) - " +
+                    "( SELECT COALESCE(SUM(quantity), 0) FROM tbl_products_sold t2 WHERE t2.product_id = p.product_id ) " +
+                    "AS stock_level FROM tbl_product p JOIN tbl_product_type t ON p.product_type = t.type_id;";
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
                     using (MySqlDataReader reader = cmd.ExecuteReader())
@@ -76,6 +77,48 @@ namespace PreciosoApp.Models
 
             }
 
+        }
+
+        public void AddNewProduct(string prodName, float prodCost, int typeID)
+        {
+            Database db = new Database();
+            using (MySqlConnection con = db.GetCon())
+            {
+                con.Open();
+                string query = "INSERT INTO `tbl_product` (`product_name`, `product_cost`, `product_type`, `critical_level`) " +
+                               "VALUES (@prodName, @prodCost, @typeID, '5');";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@prodName", prodName);
+                    cmd.Parameters.AddWithValue("@prodCost", prodCost);
+                    cmd.Parameters.AddWithValue("@typeID", typeID);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdateProduct(string prodName, float prodCost, int typeID, int productID)
+        {
+            Database db = new Database();
+            using (MySqlConnection con = db.GetCon())
+            {
+                con.Open();
+                string query = "UPDATE `tbl_product` " +
+                               "SET `product_name` = @prodName, `product_cost` = @prodCost, `product_type` = @typeID " +
+                               "WHERE `tbl_product`.`product_id` = @prodID;";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@prodName", prodName);
+                    cmd.Parameters.AddWithValue("@prodCost", prodCost);
+                    cmd.Parameters.AddWithValue("@typeID", typeID);
+                    cmd.Parameters.AddWithValue("@prodID", productID);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
 
         public void StockIn(int Supplier_id, DateTime date, int Therapist_id)

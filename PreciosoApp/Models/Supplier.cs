@@ -1,4 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
+using Mysqlx.Crud;
 using MySqlX.XDevAPI;
 using System;
 using System.Collections.Generic;
@@ -41,7 +42,44 @@ namespace PreciosoApp.Models
             return supp;
         }
 
+        public void addNewSuppler(string suppName, string suppNo)
+        {
+            Database db = new Database();
+            using (MySqlConnection con = db.GetCon())
+            {
+                con.Open();
+                string query = "INSERT INTO `tbl_supplier` (`supplier_name`, `supplier_contactnum`) " +
+                               "VALUES (@suppName, @suppNo);";
 
+                using (MySqlCommand cmd = new MySqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@suppName", suppName);
+                    cmd.Parameters.AddWithValue("@suppNo", suppNo);
 
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void updateSupplier(string suppName, string suppNo, int suppID)
+        {
+            Database db = new Database();
+            using (MySqlConnection con = db.GetCon())
+            {
+                con.Open();
+                string query = "UPDATE `tbl_supplier` " +
+                               "SET `supplier_name` = @suppName, `supplier_contactnum` = @suppNo " +
+                               "WHERE `tbl_supplier`.`supplier_id` = @suppID";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@suppName", suppName);
+                    cmd.Parameters.AddWithValue("@suppNo", suppNo);
+                    cmd.Parameters.AddWithValue("@suppID", suppID);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }

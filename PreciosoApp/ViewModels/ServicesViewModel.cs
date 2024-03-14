@@ -75,7 +75,6 @@ namespace PreciosoApp.ViewModels
             AddPromoServicesCommand = new RelayCommand(AddToPromoDataGrid);
             RemovePromoServicesCommand = new RelayCommand(RemoveSelectedPromoDataGrid);
 
-            
             var serv = new Services();
             var prmo = new Promos();
             var cRate = new CommissionRate();
@@ -535,9 +534,16 @@ namespace PreciosoApp.ViewModels
         {
             var window = new DialogWindow();
 
-            if (SelectedPromosServices == null || SelectedPromoServicesQty == null)
+            if (SelectedPromosServices == null || SelectedPromoServicesQty == null || SelectedPromoServicesQty == 0)
             {
-                window.DialogText = "You are missing some required fields! please fill them out!";
+                if(SelectedPromoServicesQty == 0 || SelectedPromoServicesQty == null)
+                {
+                    window.DialogText = "Quantity added is 0, please input a valid quantity number!";
+                }
+                else
+                {
+                    window.DialogText = "You are missing some required fields! please fill them out!";
+                }
                 window.Show();
             }
             else
