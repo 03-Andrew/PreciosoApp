@@ -94,5 +94,28 @@ namespace PreciosoApp.Models
 
             return promoID;
         }
+
+        public void UpdatePromos(int promoID, string promoName, float promoPrice, int rateID)
+        {
+            Database db = new Database();
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+
+                string query = "UPDATE `tbl_promo` SET `promo` = @promoName, `price` = @promoPrice, `commission_rate` = @rateID " +
+                               "WHERE `tbl_promo`.`promo_id` = @promoID ";
+
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+
+                // Add parameters with actual values
+                cmd.Parameters.AddWithValue("@promoName", promoName);
+                cmd.Parameters.AddWithValue("@promoPrice", promoPrice);
+                cmd.Parameters.AddWithValue("@rateID", rateID);
+                cmd.Parameters.AddWithValue("@promoID", promoID);
+
+                // Execute the update query
+                cmd.ExecuteNonQuery();
+            }
+        }
     }
 }

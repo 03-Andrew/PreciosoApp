@@ -64,9 +64,9 @@ namespace PreciosoApp.ViewModels
             FirstCommand = new Command((s) => true, FirstPage);
             LastCommand = new Command((s) => true, LastPage);
             PreviousCommand = new Command((s) => true, PreviousPage);
-            Load();
+            //Load();
         }
-
+        /*
         public void Load()
         {
             foreach(var item in new AllTransactions().GetTransactions())
@@ -77,6 +77,7 @@ namespace PreciosoApp.ViewModels
             UpdateRecordCount();
              
         }
+        */
         private void UpdateCollection(IEnumerable<AllTransactions> enumerable)
         {
             TransactionList.Clear();
