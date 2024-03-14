@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls.Documents;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using PreciosoApp.Models;
 using PreciosoApp.Views;
@@ -25,19 +26,30 @@ namespace PreciosoApp.ViewModels
         private string searchPromo;
         private List<string> servNames;
 
-        // Add Promos and Add Services Related Variables
-            // Add Services
-        public ObservableCollection<CommissionRate> commissionRates;
-        public ObservableCollection<ServiceType> serviceTypes;
+        // Selected Data
+            // Services
+        private Services selectedService;
         public CommissionRate selectedRate;
         public ServiceType selectedServiceType;
+
+        // Selected Promos
+        private Promos selectedPromo;
+        public CommissionRate selectedPromoRate;
+        public Services selectedPromoServices;
+        ObservableCollection<PromoServicesItems> selectedPromosServicesUpdate;
+
+
+        // Add Promos and Add Services Related Variables
+        // Add Services
+        public ObservableCollection<CommissionRate> commissionRates;
+        public ObservableCollection<ServiceType> serviceTypes;
+        
             // Add Promos
         public ObservableCollection<CommissionRate> promoCommissionRates;
         public ObservableCollection<PromoServicesItems> serviceItems;
         private ObservableCollection<Services> promoServices;
         private ObservableCollection<Services> promoAllServices;
-        public CommissionRate selectedPromoRate;
-        public Services selectedPromoServices;
+        private PromoServicesItems selectedServiceItem;
         private string promoName;
         private float promoPrice;
         private string serviceName;
@@ -46,15 +58,24 @@ namespace PreciosoApp.ViewModels
         private int selectedPromoServicesQty;
 
         public ICommand AddServicesCommand { get; }
+        public ICommand UpdateServicesCommand { get; }
+
         public ICommand AddPromosCommand { get; }
+        public ICommand UpdatePromosCommand { get; }
         public ICommand AddPromoServicesCommand { get; }
+        public ICommand RemovePromoServicesCommand { get; }
 
 
         public ServicesViewModel()
         {
             AddServicesCommand = new RelayCommand(AddServices);
+            UpdateServicesCommand = new RelayCommand(UpdateService);
             AddPromosCommand = new RelayCommand(AddPromos);
+            UpdatePromosCommand = new RelayCommand(UpdatePromos);
             AddPromoServicesCommand = new RelayCommand(AddToPromoDataGrid);
+            RemovePromoServicesCommand = new RelayCommand(RemoveSelectedPromoDataGrid);
+
+            
             var serv = new Services();
             var prmo = new Promos();
             var cRate = new CommissionRate();
@@ -145,6 +166,16 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        public PromoServicesItems SelectedServiceItem
+        {
+            get { return selectedServiceItem; }
+            set
+            {
+                selectedServiceItem = value;
+                OnPropertyChanged(nameof(SelectedServiceItem));
+            }
+        }
+
         public CommissionRate SelectedRate
         {
             get { return selectedRate; }
@@ -152,6 +183,8 @@ namespace PreciosoApp.ViewModels
             {
                 selectedRate = value;
                 OnPropertyChanged(nameof(SelectedRate));
+                System.Diagnostics.Debug.WriteLine(selectedRate);
+
             }
         }
 
@@ -167,6 +200,16 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        public ObservableCollection<PromoServicesItems> SelectedPromosServicesUpdate
+        {
+            get { return selectedPromosServicesUpdate; }
+            set
+            {
+                selectedPromosServicesUpdate = value;
+                OnPropertyChanged(nameof(SelectedPromosServicesUpdate));
+            }
+        }
+
         public ServiceType SelectedServiceType
         {
             get { return selectedServiceType; }
@@ -174,6 +217,7 @@ namespace PreciosoApp.ViewModels
             {
                 selectedServiceType = value;
                 OnPropertyChanged(nameof(SelectedServiceType));
+                System.Diagnostics.Debug.WriteLine(selectedServiceType);
             }
         }
 
@@ -184,6 +228,37 @@ namespace PreciosoApp.ViewModels
             {
                 selectedPromoServices = value;
                 OnPropertyChanged(nameof(SelectedPromosServices));
+            }
+        }
+
+        public Services SelectedService
+        {
+            get { return selectedService; }
+            set
+            {
+                selectedService = value;
+                OnPropertyChanged(nameof(SelectedService));
+            }
+        }
+
+        public Promos SelectedPromo
+        {
+            get { return selectedPromo; }
+            set
+            {
+                selectedPromo = value;
+                OnPropertyChanged(nameof(SelectedPromo));
+                LoadSelectedPromoServices();
+            }
+        }
+
+        public int SelectedPromoServicesQty
+        {
+            get { return selectedPromoServicesQty; }
+            set
+            {
+                selectedPromoServicesQty = value;
+                OnPropertyChanged(nameof(SelectedPromoServicesQty));
             }
         }
 
@@ -238,16 +313,6 @@ namespace PreciosoApp.ViewModels
             }
         }
 
-        public int SelectedPromoServicesQty
-        {
-            get { return selectedPromoServicesQty; }
-            set
-            {
-                selectedPromoServicesQty = value;
-                OnPropertyChanged(nameof(SelectedPromoServicesQty));
-            }
-        }
-
         public string SearchServ
         {
             get { return searchServ; }
@@ -288,6 +353,32 @@ namespace PreciosoApp.ViewModels
             List<string> servicesNames = serv.GetServicesName();
 
             ServNames = new List<string>(servicesNames);
+        }
+
+        private void LoadSelectedPromoServices()
+        {
+            if (SelectedPromo != null)
+            {
+                var promoServ = new PromoTransaction();
+                int promoID = SelectedPromo.promoID;
+                List<PromoServicesItems> promoServicesList = promoServ.GetPromoServices(promoID)
+                    .Select(item =>
+                    {
+                        var serviceName = GetServiceName(item.serviceID);
+                        return new PromoServicesItems { ServiceID = item.serviceID, SelectedServiceName = serviceName, Quantity = item.quantity };
+                    })
+                    .ToList();
+
+                ServiceItems = new ObservableCollection<PromoServicesItems>(promoServicesList);
+            }
+        }
+
+        private string GetServiceName(int serviceID)
+        {
+            var service = new Services();
+            string serviceDetails = service.GetServicesName(serviceID);
+
+            return serviceDetails ?? "Unknown"; 
         }
 
         public int GetCommissionRateID(float rate)
@@ -421,6 +512,25 @@ namespace PreciosoApp.ViewModels
             SelectedServiceType = null;
         }
 
+        private void UpdateService()
+        {
+            Services serv = new Services();
+            int id = SelectedService.servID;
+            string name = SelectedService.servName;
+            float price = SelectedService.servCost;
+            int rateID = SelectedRate?.id ?? GetCommissionRateID(SelectedService.servComm);
+            int typeID = SelectedServiceType?.id ?? GetServiceTypeID(SelectedService.servType);
+
+            serv.UpdateServices(id, name, price, rateID, typeID);
+
+            Services = new ObservableCollection<Services>(serv.GetServices());
+
+            OnPropertyChanged(nameof(SelectedService));
+
+            SelectedRate = null;
+            SelectedServiceType = null;
+        }
+
         private void AddToPromoDataGrid()
         {
             var window = new DialogWindow();
@@ -453,6 +563,16 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        private void RemoveSelectedPromoDataGrid()
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                var selectedItem = SelectedServiceItem;
+                ServiceItems.Remove(selectedItem);
+            });
+        }
+
+
         private void AddPromos()
         {
             var promo = new Promos();
@@ -482,6 +602,36 @@ namespace PreciosoApp.ViewModels
                 SelectedPromoRate = null;
                 ServiceItems.Clear();
             }
+        }
+
+        private void UpdatePromos()
+        {
+            Promos promo = new Promos();
+            var promoServ = new PromoTransaction();
+            int promoID = SelectedPromo.promoID;
+            string name = SelectedPromo.promoName;
+            float price = SelectedPromo.promoCost;
+            int rateID = SelectedPromoRate?.id ?? GetCommissionRateID(SelectedPromo.promoRate);
+
+            promo.UpdatePromos(promoID, name, price, rateID);
+
+            promoServ.ClearPromoServices(promoID);
+
+            for (int i = 0; i < ServiceItems.Count; i++)
+            {
+                var item = ServiceItems[i];
+                if (item != null)
+                {
+                    promoServ.InsertPromoServices(promoID, item.serviceID, item.quantity);
+                }
+            }
+
+            LoadSelectedPromoServices();
+
+            PromoName = "";
+            PromoPrice = 0;
+            SelectedPromoRate = null;
+            ServiceItems.Clear();
         }
     }
 

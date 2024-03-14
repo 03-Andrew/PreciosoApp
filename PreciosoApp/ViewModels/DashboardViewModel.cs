@@ -66,7 +66,7 @@ namespace PreciosoApp.ViewModels
             PreviousCommand = new Command((s) => true, PreviousPage);
             //Load();
         }
-
+        /*
         public void Load()
         {
             foreach(var item in new AllTransactions().GetTransactions())
@@ -77,6 +77,7 @@ namespace PreciosoApp.ViewModels
             UpdateRecordCount();
              
         }
+        */
         private void UpdateCollection(IEnumerable<AllTransactions> enumerable)
         {
             TransactionList.Clear();

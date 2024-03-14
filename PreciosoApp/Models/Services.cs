@@ -73,6 +73,30 @@ namespace PreciosoApp.Models
             return services;
         }
 
+        public string GetServicesName(int serviceID)
+        {
+            Database db = new Database();
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+
+                string query = "SELECT service_name FROM tbl_service WHERE service_id = @ServiceID;";
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@ServiceID", serviceID);
+
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        return result.ToString();
+                    }
+                }
+            }
+
+            return null; 
+        }
+
         public void addClient(string serviceName, float servicePrice, int cRate, int sType)
         {
             Database db = new Database();
@@ -92,6 +116,33 @@ namespace PreciosoApp.Models
 
                     cmd.ExecuteNonQuery();
                 }
+            }
+        }
+
+        public void UpdateServices(int servID, string servName, float servPrice, int rateID, int servType)
+        {
+            Database db = new Database();
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+
+
+                string query = "UPDATE `tbl_service` SET `service_name` = @servName, `service_price` = @servPrice, " +
+                               "`commission_rate` = @rateID, `service_type` = @servType " +
+                               "WHERE `tbl_service`.`service_id` = @servID;";
+
+
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+
+                // Add parameters with actual values
+                cmd.Parameters.AddWithValue("@servName", servName);
+                cmd.Parameters.AddWithValue("@servPrice", servPrice);
+                cmd.Parameters.AddWithValue("@rateID", rateID);
+                cmd.Parameters.AddWithValue("@servType", servType);
+                cmd.Parameters.AddWithValue("@servID", servID);
+
+                // Execute the update query
+                cmd.ExecuteNonQuery();
             }
         }
     }
