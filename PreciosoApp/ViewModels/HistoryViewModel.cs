@@ -101,18 +101,20 @@ namespace PreciosoApp.ViewModels
             pTransactions = allPTransactions;
             allPSold = new ObservableCollection<ProductSold>(new ProductSold().GetProductsSold());
 
-            allSUsed = new ObservableCollection<ServicesUsed>(new ServicesUsed().GetServicesUsed());
+            //allSUsed = new ObservableCollection<ServicesUsed>(new ServicesUsed().GetServicesUsed());
 
             //_serviceTransactions = new ObservableCollection<Service_Transaction>(new Service_Transaction().GetService_Transactions());
             //ServiceTransactions = _serviceTransactions;
 
 
-            //allT = new ObservableCollection<AllTransactions>(new AllTransactions().GetTransactions());
-            //AllTransactions = allT;
+            allT = new ObservableCollection<AllTransactions>(new AllTransactions().GetTransactions());
+            AllTransactions = allT;
 
-            //servicesPromosTransactions = new ObservableCollection<ServicePromoTransactions>(new ServicePromoTransactions().GetTransactions());
-            //ServicesPromosTransactions = servicesPromosTransactions;
-            //allSPUsed = new ObservableCollection<ServicePromoUsed>(new ServicePromoUsed().GetServicePromoUsed());
+
+
+            servicesPromosTransactions = new ObservableCollection<ServicePromoTransactions>(new ServicePromoTransactions().GetTransactions());
+            ServicesPromosTransactions = servicesPromosTransactions;
+            allSPUsed = new ObservableCollection<ServicePromoUsed>(new ServicePromoUsed().GetServicePromoUsed());
 
 
 
@@ -246,30 +248,33 @@ namespace PreciosoApp.ViewModels
 
         public ICommand FilterCommand { get; }
 
-        /*
-        private string searchText; 
-        public string SearchText
-        {
-            get { return searchText; }
-            set
-            {
-                searchText = value;
-                OnPropertyChanged(nameof(SearchText));
-                FilterSold();
-            }
-        }
-
-        private void FilterSold()
-        {
-            if (string.IsNullOrWhiteSpace(SearchText))
-            {
-                PSold = pSold;
-            } else
-            {
-                PSold = new ObservableCollection<ProductSold>(allPSold.Where(ps => ps.TransactionId.ToString().Equals(SearchText)));
-            }
-        }
-        *
-        */
     }
 }
+
+
+
+/*
+private string searchText; 
+public string SearchText
+{
+    get { return searchText; }
+    set
+    {
+        searchText = value;
+        OnPropertyChanged(nameof(SearchText));
+        FilterSold();
+    }
+}
+
+private void FilterSold()
+{
+    if (string.IsNullOrWhiteSpace(SearchText))
+    {
+        PSold = pSold;
+    } else
+    {
+        PSold = new ObservableCollection<ProductSold>(allPSold.Where(ps => ps.TransactionId.ToString().Equals(SearchText)));
+    }
+}
+*
+*/

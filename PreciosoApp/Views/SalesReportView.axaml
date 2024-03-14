@@ -13,21 +13,44 @@
 				<StackPanel>
 					<StackPanel Orientation="Horizontal">
 						<StackPanel Orientation="Vertical">
-							<TextBlock>Select Start Date</TextBlock>
-							<CalendarDatePicker SelectedDate="{Binding StartDate}"></CalendarDatePicker>
+							<TextBlock Margin="5" VerticalAlignment="Center">Select Start Date</TextBlock>
+							<CalendarDatePicker  Margin="5" VerticalAlignment="Center" SelectedDate="{Binding StartDate}"></CalendarDatePicker>
 						</StackPanel>
 						<StackPanel Orientation="Vertical">
-							<TextBlock>Select End Date</TextBlock>
-							<CalendarDatePicker SelectedDate="{Binding EndDate}"></CalendarDatePicker>
+							<TextBlock Margin="5" VerticalAlignment="Center">Select End Date</TextBlock>
+							<CalendarDatePicker Margin="5" VerticalAlignment="Center" SelectedDate="{Binding EndDate}"></CalendarDatePicker>
 						</StackPanel>
-						<Button Content="Filter" Command="{Binding FilterCommand}">
-							
+							<Button Margin="5" VerticalAlignment="Bottom" Content="Filter" Command="{Binding FilterCommand}">
 						</Button>
-					</StackPanel>
-					<DataGrid AutoGenerateColumns="True" ItemsSource="{Binding DailyGross}" >
+
+						<StackPanel>
+							<TextBlock Text="Sales By Products: " VerticalAlignment="Center" Margin="5"/>
+							<TextBlock Text="{Binding TotalProdSales}" VerticalAlignment="Center" Margin="5 0"/>
+						</StackPanel>
+
+						<StackPanel>
+							<TextBlock Text="Sales By Service and Promo: " VerticalAlignment="Center" Margin="5"/>
+							<TextBlock Text="{Binding TotalServPromoSales}" VerticalAlignment="Center" Margin="5 0"/>
+							
+						</StackPanel>
 						
+						<StackPanel>
+							<TextBlock Text="Total Sales: " VerticalAlignment="Center" Margin="5"/>
+							<TextBlock Text="{Binding TotalSales}" VerticalAlignment="Center" Margin="5 0"/>
+						</StackPanel>
+					</StackPanel>
+					<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DailyGross}" 
+							  BorderBrush="Beige" BorderThickness="1" GridLinesVisibility="All"
+							  Height="300">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="Date" Binding="{Binding DateOnly}"/>
+							<DataGridTextColumn Header="Product Sales" Binding="{Binding ProdSales}"/>
+							<DataGridTextColumn Header="Service/Promo Sales" Binding="{Binding ServPromoSales}"/>
+							<DataGridTextColumn Header="Total Sales" Binding="{Binding TotalSales}"/>
+						</DataGrid.Columns>
 					</DataGrid>
 				</StackPanel>
+				
 			</TabItem>
 			<TabItem Header="Daily Sales">
 				<StackPanel>
@@ -71,15 +94,35 @@
 								</DataGridTemplateColumn>
 							</DataGrid.Columns>
 						</DataGrid>
+						
+						<Grid ColumnDefinitions="Auto, Auto">
+							<Border Grid.Column="0"  Background="#fbfcf8" Margin="10" CornerRadius="20" BoxShadow="5 5 5 0 #BEBEBE">
+								<StackPanel >
+									<TextBlock Text="Therapist Commission" FontSize="20" Margin="10,10,10,-10"/>
+									<DataGrid Margin="0 20 0 0" Height="200" AutoGenerateColumns="False"
+										ItemsSource="{Binding Comm}" HeadersVisibility="None">
+										<DataGrid.Columns>
+											<DataGridTextColumn Width="Auto" Header="Therapist" Binding="{Binding TherapistName}"/>
+											<DataGridTextColumn Width="Auto" Header="Commission" Binding="{Binding Commission}"/>
+										</DataGrid.Columns>
+									</DataGrid>
+								</StackPanel>
+							</Border>
+							
+							<Border Grid.Column="1" Background="#fbfcf8" Margin="10" CornerRadius="20" BoxShadow="5 5 5 0 #BEBEBE">
+								<StackPanel Margin=" 0 0 0 10">
+									<TextBlock Text="Sales" FontSize="20" Margin="10,10,10,-10"/>
+									<DataGrid  Margin="0 20 0 0"  AutoGenerateColumns="False"
+											  ItemsSource="{Binding SalesData}" HeadersVisibility="None">
+										<DataGrid.Columns>
+											<DataGridTextColumn Header="Category" Binding="{Binding [0]}"/>
+											<DataGridTextColumn Header="Amount" Binding="{Binding [1]}"/>
+										</DataGrid.Columns>
+									</DataGrid>
 
-						<Grid ColumnDefinitions="*, *">
-							<DataGrid Grid.Column="0" Margin="0 20 0 0" Height="200" GridLinesVisibility="All" AutoGenerateColumns="False"
-								   ItemsSource="{Binding Comm}" BorderThickness="1" BorderBrush="Gray">
-								<DataGrid.Columns>
-									<DataGridTextColumn Header="Therapist" Binding="{Binding TherapistName}"/>
-									<DataGridTextColumn Header="Commission" Binding="{Binding Commission}"/>
-								</DataGrid.Columns>
-							</DataGrid>
+								</StackPanel>
+							</Border>
+							
 						</Grid>
 						
 					</StackPanel>

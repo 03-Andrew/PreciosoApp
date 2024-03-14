@@ -16,9 +16,9 @@ namespace PreciosoApp.Models
     {
         public DateTime Date { get; set; }
         public DateOnly DateOnly { get; set; }
-        public double ProdGrossRevenue { get; set; }
-        public double ServGrossRevenue { get; set; }
-        public double totalRevenue { get; set; }
+        public double ProdSales { get; set; }
+        public double ServPromoSales { get; set; }
+        public double TotalSales { get; set; }
 
         Database db = new Database();
 
@@ -28,13 +28,12 @@ namespace PreciosoApp.Models
             {
                 Date = reader.GetDateTime(0),
                 DateOnly = DateOnly.FromDateTime(reader.GetDateTime(0)),
-                ServGrossRevenue = reader.GetDouble(1),
-                ProdGrossRevenue = reader.GetDouble(2),
-                totalRevenue = reader.GetDouble(3)
+                ProdSales = reader.GetDouble(1),
+                ServPromoSales = reader.GetDouble(2),
+                TotalSales = reader.GetDouble(3)
             };
 
-            string query = "select CAST(t.transaction_datetime AS DATE) AS transaction_date,\r\nsp.total_revenue as service_promo_sales, p.gross_product_revenue as product_sales, \r\nsp.total_revenue + p.gross_product_revenue as total_sales from tbl_transaction t \r\nleft join daily_gross_product p ON CAST(t.transaction_datetime AS DATE) = p.Date\r\nleft join daily_gross_service_promo sp ON CAST(t.transaction_datetime AS DATE) = sp.transaction_date\r\ngroup by transaction_date;  ";
-            
+            string query = "select * from daily_sales";            
             return db.ExecuteQuery(query, mapRow);
         }
     }
