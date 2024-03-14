@@ -66,7 +66,7 @@ namespace PreciosoApp.Models
                          VALUES (@Date_Time, @ClientID, @TherapistID, @MOP, @Notes);
                          SELECT LAST_INSERT_ID();"; // Retrieve the last inserted ID
                 MySqlCommand cmd = new MySqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@Date_Time", Date_Time);
+                cmd.Parameters.AddWithValue("@Date_Time", DateTime.Now);
                 cmd.Parameters.AddWithValue("@ClientID", ClientID);
                 cmd.Parameters.AddWithValue("@TherapistID", TherapistID);
                 cmd.Parameters.AddWithValue("@MOP", MOP);

@@ -13,24 +13,12 @@ namespace PreciosoApp.ViewModels
 {
     public class SalesReportViewModel : ViewModelBase
     {
-        private ObservableCollection<DailyGross> _dailyGross;
-        private ObservableCollection<DailyGross> allDailyGross;
-        public ObservableCollection<DailyGross> DailyGross
-        {
-            get { return _dailyGross; } 
-            set
-            {
-                _dailyGross = value;
-                OnPropertyChanged(nameof(DailyGross));
-            }
-        }
-
         public void loadDailyReport()
         {
-            _dailyReport = new ObservableCollection<DailyReport>(new DailyReport().GetDailyReports());
-            DailyReport = _dailyReport;
- 
+            FilterBySelectedDate(); 
         }
+
+        
 
         private ObservableCollection<DailyReport> _dailyReport;
         public ObservableCollection<DailyReport> DailyReport
@@ -43,15 +31,88 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        private ObservableCollection<Commissions> _comm;
+        public ObservableCollection<Commissions> Comm
+        {
+            get { return _comm; }
+            set
+            {
+                _comm = value;
+                OnPropertyChanged(nameof(Comm));
+            }
+        }
+
+        public ICommand FilterGrid { get; }
         public ICommand FilterCommand { get; }
         public SalesReportViewModel() 
         {
-            //_dailyGross = new ObservableCollection<DailyGross>(new DailyGross().GetDailyGross());
-            //DailyGross = _dailyGross;
-            //FilterCommand = new RelayCommand(FilterByDate);
-
             loadDailyReport();
             FilterGrid = new RelayCommand(FilterBySelectedDate);
+        }
+
+        public string _dateStr = DateTime.Now.ToString("dddd, MMMM dd, yyyy");
+        public string DateStr
+        {
+            get => _dateStr;
+            set
+            {
+                _dateStr= value;
+                OnPropertyChanged(nameof(DateStr));
+            }
+        }
+        private DateTime _selectedDate = DateTime.Now;
+        public DateTime SelectedDate
+        {
+            get { return _selectedDate; }
+            set
+            {
+                if (_selectedDate != value)
+                {
+                    _selectedDate = value;
+                    OnPropertyChanged(nameof(SelectedDate));
+                }
+            }
+        }
+
+        private void FilterBySelectedDate()
+        {
+            var record = new DailyReport();
+            DailyReport = new ObservableCollection<DailyReport>(record.GetDailyReports().Where(r => r.DateTime.Date == SelectedDate.Date));
+            DateStr = SelectedDate.ToString("dddd, MMMM dd, yyyy");
+
+            var comtbl = new Commissions();
+            Comm = new ObservableCollection<Commissions>(comtbl.GetCommissions().Where(c => c.Date == DateOnly.FromDateTime(SelectedDate)));
+        }
+
+
+        private ObservableCollection<DailyGross> _dailyGross;
+        public ObservableCollection<DailyGross> DailyGross
+        {
+            get { return _dailyGross; }
+            set
+            {
+                _dailyGross = value;
+                OnPropertyChanged(nameof(DailyGross));
+            }
+        }
+
+        private void FilterByDate()
+        {
+          
+            var filteredByDate = _dailyGross.AsQueryable();
+
+
+            if (_startDate != DateTime.MinValue)
+            {
+                filteredByDate = filteredByDate.Where(c => c.Date >= _startDate);
+            }
+
+            if (_endDate != DateTime.MinValue)
+            {
+                filteredByDate = filteredByDate.Where(c => c.Date <= _endDate);
+            }
+
+            DailyGross = new ObservableCollection<DailyGross>(filteredByDate.ToList());
         }
 
         private DateTime _startDate = DateTime.Today.AddYears(-15);
@@ -76,47 +137,12 @@ namespace PreciosoApp.ViewModels
                 FilterByDate();
             }
         }
-
-        private DateTime _selectedDate = DateTime.Now;
-        public  DateTime SelectedDate
-        {
-            get { return _selectedDate; }
-            set
-            {
-                _selectedDate = value;
-                OnPropertyChanged(nameof(SelectedDate));
-                FilterBySelectedDate();
-            }
-        }
-
-        private void FilterBySelectedDate()
-        {
-            var filteredByDate = _dailyReport.AsQueryable();
-
-            filteredByDate = filteredByDate.Where(c => c.DateTime.Date == _selectedDate.Date);
-
-            DailyReport = new ObservableCollection<DailyReport>(filteredByDate.ToList());
-        }
-
-        private void FilterByDate()
-        {
-          
-            var filteredByDate = _dailyGross.AsQueryable();
-
-
-            if (_startDate != DateTime.MinValue)
-            {
-                filteredByDate = filteredByDate.Where(c => c.Date >= _startDate);
-            }
-
-            if (_endDate != DateTime.MinValue)
-            {
-                filteredByDate = filteredByDate.Where(c => c.Date <= _endDate);
-            }
-
-            DailyGross = new ObservableCollection<DailyGross>(filteredByDate.ToList());
-        }
-
-        public ICommand FilterGrid { get; }
+        
     }
 }
+
+
+//_dailyGross = new ObservableCollection<DailyGross>(new DailyGross().GetDailyGross());
+//DailyGross = _dailyGross;
+//FilterCommand = new RelayCommand(FilterByDate);
+

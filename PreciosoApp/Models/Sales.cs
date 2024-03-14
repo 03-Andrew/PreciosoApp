@@ -43,6 +43,7 @@ namespace PreciosoApp.Models
     {
         public int TransactionID { get; set; }
         public DateTime DateTime { get; set; }
+        public TimeSpan Time { get; set; }
         public string? Client { get; set; }
         public string? Therapist { get; set; }
         public string? MOP { get; set; }
@@ -56,20 +57,44 @@ namespace PreciosoApp.Models
         {
             Func<MySqlDataReader, DailyReport> mapRow = reader => new DailyReport
             {
-                TransactionID = reader.GetInt16("transaction_id"),
-                DateTime = reader.GetDateTime("transaction_datetime"),
-                Client = reader.GetString("client_name"),
-                Therapist = reader.GetString("therapist"),
-                MOP = reader.GetString("MOP"),
-                Availed = reader.GetString("availed").Replace(", ", "\n").Trim(),
-                Type = reader.GetString("type").Replace(", ", "\n").Trim(),
-                Price = reader.GetString("cost").Replace(", ", "\n").Trim(),
-                Commission = reader.GetString("commission").Replace(", ", "\n").Trim() 
+               TransactionID = reader.GetInt16("transaction_id"),
+               DateTime = reader.GetDateTime("transaction_datetime"),
+               Time = reader.GetDateTime("transaction_datetime").TimeOfDay,      
+               Client = reader.GetString("client_name"),
+               Therapist = reader.GetString("therapist"),
+               MOP = reader.GetString("MOP"),
+               Availed = reader.GetString("availed").Replace(", ", "\n").Trim(),
+               Type = reader.GetString("type").Replace(", ", "\n").Trim(),
+               Price = reader.GetString("cost").Replace(", ", "\n").Trim(),
+               Commission = reader.GetString("commission").Replace(", ", "\n").Trim() 
+            };
+            string query = $"select tr.transaction_id, trx.transaction_datetime, trx.client_name, trx.name as therapist, trx.mode as MOP," +
+                $"tr.availed, tr.type, tr.cost, tr.commission from testView tr " +
+                $"left join transactions_only trx on tr.transaction_id = trx.transaction_id;";
+            return db.ExecuteQuery(query, mapRow);
+        }
+    }
+
+    public class Commissions
+    {
+        public string? TherapistName { get; set; }
+        public double Commission { get; set; }
+        public DateOnly Date { get; set; }
+        Database db = new Database();
+
+        public List<Commissions> GetCommissions()
+        {
+            Func<MySqlDataReader, Commissions> mapRow = reader => new Commissions
+            {
+                TherapistName = reader.GetString("therapist"),
+                Commission = reader.GetDouble("total_commission"),
+                Date = DateOnly.FromDateTime(reader.GetDateTime("date"))
             };
 
-            string query = $"select tr.transaction_id, trx.transaction_datetime, trx.client_name, trx.name as therapist, trx.mode as MOP," +
-                $"tr.availed, tr.type, tr.cost, tr.commission from testView tr left join transactions_only trx on tr.transaction_id = trx.transaction_id;";
-            return db.ExecuteQuery(query, mapRow);
+            string query = "select date(transaction_datetime) as date, therapist,sum(total_commission) as total_commission " +
+                "from Transactions_all group by therapist, DATE(transaction_datetime) order by DATE(transaction_datetime) asc";
+            return db.ExecuteQuery(query, mapRow); 
+
         }
     }
 
