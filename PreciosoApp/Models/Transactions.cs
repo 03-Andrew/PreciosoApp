@@ -17,27 +17,12 @@ namespace PreciosoApp.Models
         Database db = new Database();
         public int ID { get; set; }
         public DateTime Date_Time { get; set; }
-        public string ClientName { get; set; }
-        public string TherapisName { get; set; }
-        public string MOP { get; set; }
-        public double Total { get; set; }
-        public double TotalCommission { get; set; }
-        public string Notes { get; set; }
+        public string? ClientName { get; set; }
+        public string? TherapisName { get; set; }
+        public string? MOP { get; set; }
+        public double? Total { get; set; }
+        public string? Notes { get; set; }
 
-
-        /*
-         * public List<string> TransactionTypes { get; set; }
-        public double TotalService { get; set; }
-        public double TotalProduct {  get; set; }
-        public bool HasProductsSold { get; set; }
-        public List<string> ProductSold { get; set; }
-        public bool HasServicesSold { get; set; }
-        public List<string> ServicesAvailed {  get; set; }
-        public bool HasPromo {  get; set; }
-        public List<string> PromoAvailed { get; set; }
-        public Transactions() { }
-        
-        */
         public List<Transactions> GetTransactions()
         {
 
@@ -81,7 +66,7 @@ namespace PreciosoApp.Models
                          VALUES (@Date_Time, @ClientID, @TherapistID, @MOP, @Notes);
                          SELECT LAST_INSERT_ID();"; // Retrieve the last inserted ID
                 MySqlCommand cmd = new MySqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@Date_Time", Date_Time);
+                cmd.Parameters.AddWithValue("@Date_Time", DateTime.Now);
                 cmd.Parameters.AddWithValue("@ClientID", ClientID);
                 cmd.Parameters.AddWithValue("@TherapistID", TherapistID);
                 cmd.Parameters.AddWithValue("@MOP", MOP);

@@ -54,7 +54,7 @@ namespace PreciosoApp.ViewModels
         }
 
 
-        public DashboardViewModel()
+        public DashboardViewModel() 
         {
             TransactionCollection = new DataGridCollectionView(ListOfTransactions);
             nums = new ObservableCollection<int>() { 3, 6, 9 };

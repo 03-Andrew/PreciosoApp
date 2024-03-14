@@ -11,7 +11,7 @@ namespace PreciosoApp.Models
     {
         public MySqlConnection GetCon()
         {
-            string mysqlCon = "server=localhost; user=root; database=db_preciosospa3; password=";
+            string mysqlCon = "server=localhost; user=root; database=db_preciosospa3(1); password=";
             MySqlConnection conn = new MySqlConnection(mysqlCon);
             return conn;
         }

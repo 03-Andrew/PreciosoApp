@@ -99,21 +99,26 @@ namespace PreciosoApp.ViewModels
         {
             allPTransactions = new ObservableCollection<ProductSoldTransactions>(new ProductSoldTransactions().GetPTransactions());
             pTransactions = allPTransactions;
-            allSUsed = new ObservableCollection<ServicesUsed>(new ServicesUsed().GetServicesUsed());
-
-            _serviceTransactions = new ObservableCollection<Service_Transaction>(new Service_Transaction().GetService_Transactions());
-            ServiceTransactions = _serviceTransactions;
             allPSold = new ObservableCollection<ProductSold>(new ProductSold().GetProductsSold());
 
-            allT = new ObservableCollection<AllTransactions>(new AllTransactions().GetTransactions());
-            AllTransactions = allT;
+            allSUsed = new ObservableCollection<ServicesUsed>(new ServicesUsed().GetServicesUsed());
 
-            servicesPromosTransactions = new ObservableCollection<ServicePromoTransactions>(new ServicePromoTransactions().GetTransactions());
-            ServicesPromosTransactions = servicesPromosTransactions;
-            allSPUsed = new ObservableCollection<ServicePromoUsed>(new ServicePromoUsed().GetServicePromoUsed());
+            //_serviceTransactions = new ObservableCollection<Service_Transaction>(new Service_Transaction().GetService_Transactions());
+            //ServiceTransactions = _serviceTransactions;
+
+
+            //allT = new ObservableCollection<AllTransactions>(new AllTransactions().GetTransactions());
+            //AllTransactions = allT;
+
+            //servicesPromosTransactions = new ObservableCollection<ServicePromoTransactions>(new ServicePromoTransactions().GetTransactions());
+            //ServicesPromosTransactions = servicesPromosTransactions;
+            //allSPUsed = new ObservableCollection<ServicePromoUsed>(new ServicePromoUsed().GetServicePromoUsed());
+
+
 
 
             FilterCommand = new RelayCommand(FilterRowsByDate);
+
 
         }
 

@@ -22,7 +22,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public string setString()
     {
         Database db = new Database();
-        return db.TestConnection() + "Yes";
+        return db.TestConnection() + " " + DateTime.Now;
 
     }
 
