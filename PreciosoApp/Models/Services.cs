@@ -27,7 +27,6 @@ namespace PreciosoApp.Models
                 string query = "SELECT s.service_id, s.service_name, s.service_price, c.rate, st.type " +
                     "FROM tbl_service s JOIN tbl_commission_rate c ON s.commission_rate = c.rate_id " +
                     "LEFT JOIN tbl_service_type st ON s.service_type = st.type_id;";
-                    "JOIN tbl_service_type st ON s.service_type = st.type_id ORDER BY s.service_id asc;";
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
                     using (MySqlDataReader reader = cmd.ExecuteReader())
