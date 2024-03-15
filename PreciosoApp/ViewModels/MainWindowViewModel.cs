@@ -62,7 +62,7 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [ObservableProperty]
-    public ViewModelBase _currentPage = new DashboardViewModel();
+    public ViewModelBase _currentPage = new POSViewModel();
 
     [ObservableProperty]
     private ListItemTemplate? _selectedListItem;
@@ -94,9 +94,9 @@ public partial class MainWindowViewModel : ViewModelBase
     private void Items2()
     {
         Items.Clear(); // Clear existing items
+        Items.Add(new ListItemTemplate(typeof(POSViewModel), "cart_regular"));
         Items.Add(new ListItemTemplate(typeof(InventoryViewModel), "toolbox_regular"));
         Items.Add(new ListItemTemplate(typeof(CustomerViewModel), "person_clock_regular"));
-        Items.Add(new ListItemTemplate(typeof(POSViewModel), "cart_regular"));
         Items.Add(new ListItemTemplate(typeof(ServicesViewModel), "calendar_star_regular"));
         Items.Add(new ListItemTemplate(typeof(SalesReportViewModel), "data_bar_vertical_regular"));
         Items.Add(new ListItemTemplate(typeof(HistoryViewModel), "book_regular"));
@@ -147,11 +147,11 @@ public partial class MainWindowViewModel : ViewModelBase
     
     public void Logout()
     {
-        //var loginWindowView = new LoginWindowView();
-        //var loginWindowViewModel = new LoginWindowViewModel(loginWindowView);
-        //loginWindowView.DataContext = loginWindowViewModel;
-        //loginWindowView.Show();
-        //mainwindow.Close();
+        var loginWindowView = new LoginWindowView();
+        var loginWindowViewModel = new LoginWindowViewModel(loginWindowView);
+        loginWindowView.DataContext = loginWindowViewModel;
+        loginWindowView.Show();
+        mainwindow.Close();
     }
 }
 

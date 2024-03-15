@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1080" d:DesignHeight="720"
              x:Class="PreciosoApp.Views.CustomerView"
 			 xmlns:vm="using:PreciosoApp.ViewModels"
 	         x:DataType="vm:CustomerViewModel">
@@ -19,7 +19,7 @@
 					<TextBox Text="{Binding SearchText, Mode=TwoWay}"
 							 Margin="10 20 0 0" HorizontalAlignment="Left" Padding="10" Width="300"/>
 
-					<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
+					<!--<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
 						<TextBlock Text="Start Date" Padding="0 10 0 10"/>
 					</Grid>
 					<CalendarDatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}"></CalendarDatePicker>
@@ -27,12 +27,12 @@
 						<TextBlock Text="End Date: " Padding="0 10 0 10"/>
 					</Grid>
 					<CalendarDatePicker SelectedDate="{Binding EndDate, Mode=TwoWay}"></CalendarDatePicker>
-					<Button Content="Filter" Command="{Binding FilterCommand}" />
+					<Button Content="Filter" Command="{Binding FilterCommand}" />-->
 
 				</StackPanel>
 
 				<DataGrid Margin="20" ItemsSource="{Binding Client}" SelectedItem="{Binding SelectedClient, Mode=TwoWay}" IsReadOnly="True" CanUserResizeColumns="True"
-			  GridLinesVisibility="All" Height="150">
+			  GridLinesVisibility="All" Height="225">
 					<DataGrid.Columns>
 						<DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}"/>
 						<DataGridTextColumn Header="DOB" Width="*" Binding="{Binding DOB_date}"/>
@@ -58,7 +58,6 @@
 									<StackPanel Orientation="Horizontal" Margin="20 5 20 20">
 										<TextBox Watermark="Last Name" Text="{Binding LastName, Mode=TwoWay}" Padding="10" Width="200" Margin="0 0 10 0" />
 										<TextBox Watermark="First Name" Text="{Binding FirstName, Mode=TwoWay}" Padding="10" Width="200"  Margin="0 0 10 0"/>
-										<TextBox Watermark="M.I" Text="{Binding MiddleInitial, Mode=TwoWay}" Padding="10" Width="50" Margin="0 0 0 0"/>
 									</StackPanel>
 								</StackPanel>
 
@@ -144,7 +143,8 @@
 					<TabItem Header="Services/Promo History" FontSize="20">
 						<StackPanel>
 							<DataGrid Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding ServicePromoUsed}"
-									  SelectedItem="{Binding SelectedPromoService}" Height="200">
+									  SelectedItem="{Binding SelectedPromoService}" Height="210" Margin="0 0 0 10" 
+									  BorderBrush="LightGray" BorderThickness="2" GridLinesVisibility="All">
 								<DataGrid.Columns>
 									<DataGridTextColumn Header="Date" Binding="{Binding DateTime}"/>
 									<DataGridTextColumn Header="Therapist" Binding="{Binding Therapist}"/>
@@ -155,10 +155,15 @@
 									<DataGridTextColumn Header="Status" Binding="{Binding Status}"/>
 								</DataGrid.Columns>
 							</DataGrid>
-							<Button Command="{Binding UpdateServStatus}" Content="Update status" IsEnabled="{Binding IsButtonEnabled}"/>
-							<TextBlock Text="Notes" Margin="5"/>
-							<TextBlock Text="{Binding Note}" Margin="5"/>
-							
+							<Grid ColumnDefinitions="auto,auto">
+								<Button Grid.Column="0" Command="{Binding UpdateServStatus}" Content="Update status" Margin="0 10 0 0"/>
+								<StackPanel Grid.Column="1" Orientation="Horizontal">
+									<TextBlock Text="Notes: " VerticalAlignment="Center" Margin="30 10 0 0"/>
+									<TextBox Text="{Binding Note}" Margin="15 10 0 0" TextWrapping="Wrap" Width="500"/>
+									<!--<Button Content="Update Notes" Margin="15 10 0 0"/>-->
+								</StackPanel>
+								
+							</Grid>
 						</StackPanel>
 					</TabItem>
 				</TabControl>

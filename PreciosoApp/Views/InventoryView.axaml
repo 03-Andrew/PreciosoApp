@@ -211,6 +211,14 @@
 											<Button Command="{Binding UpdateProductCommand}" Margin="20 20 20 5">Update Product</Button>
 										</StackPanel>
 									</TabItem>
+									<TabItem Header="Stock in history">
+										<Grid RowDefinitions="*">
+											<DataGrid Height="200" AutoGenerateColumns="True" ItemsSource="{Binding StockInHis}" Margin="10">
+
+											</DataGrid>
+
+										</Grid>
+									</TabItem>
 								</TabControl>
 							</StackPanel>
 						</Border>

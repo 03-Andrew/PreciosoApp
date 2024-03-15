@@ -81,6 +81,7 @@ namespace PreciosoApp.ViewModels
             LoadProductNames();
             LoadSupplierNames();
             showCriticalStock();
+            loadTabel();
 
 
             var Supp = new Supplier();
@@ -635,6 +636,23 @@ namespace PreciosoApp.ViewModels
                 _errorText = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ErrorText)));
             }
+        }
+
+        private ObservableCollection<StockinHistory> _stockinHis;
+        public ObservableCollection<StockinHistory> StockInHis
+        {
+            get { return _stockinHis; }
+            set
+            {
+                _stockinHis = value;
+                OnPropertyChanged(nameof(StockInHis));
+            }
+        }
+
+        private void loadTabel()
+        {
+            _stockinHis = new ObservableCollection<StockinHistory>(new StockinHistory().GetStockinHistory());
+            StockInHis = _stockinHis;
         }
     }
 

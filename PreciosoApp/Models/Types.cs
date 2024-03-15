@@ -1,4 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
+using PreciosoApp.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -320,24 +321,52 @@ namespace PreciosoApp.Models
         {
             using(MySqlConnection conn = db.GetCon())
             {
-                string query = $"update tbl_appointment set appointment_status = {statusId} where transaction_id = {transactionId} and service_id = {serviceId}";
-                conn.Open();
+                try
+                {
+                    string query = $"update tbl_appointment set appointment_status = {statusId} where transaction_id = {transactionId} and service_id = {serviceId};";
+                    conn.Open();
 
-                MySqlCommand cmd = new MySqlCommand(query, conn);
-                cmd.ExecuteNonQuery();
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    var window = new DialogWindow();
+                    window.DialogText = ex.ToString();
+                    window.Show();
+                }
+                
             }
 
         }
 
-        public void UpdateStatusPromo(int transactionId, int promoId, int statusId)
+        public void UpdateStatusPromo(int transactionId, string promo, int statusId)
         {
             using (MySqlConnection conn = db.GetCon())
             {
-                string query = $"update tbl_promo_transaction set appointment_status = {statusId} where transaction_id = {transactionId} and promo_id = {promoId}";
-                conn.Open();
+                try
+                {
+                    string query = $"UPDATE tbl_promo_transaction AS p " +
+                        $"LEFT JOIN tbl_promo AS pro ON p.promo_id = pro.promo_id " +
+                        $"SET p.status = {statusId} " +
+                        $"WHERE p.transaction_id = {transactionId} AND pro.promo = '{promo}';";
+                    ;
+                    conn.Open();
 
-                MySqlCommand cmd = new MySqlCommand(query, conn);
-                cmd.ExecuteNonQuery();
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    cmd.ExecuteNonQuery();
+
+                    var window = new DialogWindow();
+                    window.DialogText = $"Success {statusId}  {transactionId}  {promo}";
+                    window.Show();
+                }
+                catch (Exception ex)
+                {
+                    var window = new DialogWindow();
+                    window.DialogText = ex.ToString();
+                    window.Show();
+                }
+
             }
         }
     }
