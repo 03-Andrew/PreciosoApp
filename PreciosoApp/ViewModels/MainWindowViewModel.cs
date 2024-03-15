@@ -53,7 +53,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         new ListItemTemplate(typeof(DashboardViewModel), "desktop_regular"),
         new ListItemTemplate(typeof(InventoryViewModel), "toolbox_regular"),
-        new ListItemTemplate(typeof(AppointmentViewModel), "person_clock_regular"),
+        new ListItemTemplate(typeof(CustomerViewModel), "person_clock_regular"),
         new ListItemTemplate(typeof(POSViewModel), "cart_regular"),
         new ListItemTemplate(typeof(ServicesViewModel), "calendar_star_regular"),
         new ListItemTemplate(typeof(SalesReportViewModel), "data_bar_vertical_regular"),

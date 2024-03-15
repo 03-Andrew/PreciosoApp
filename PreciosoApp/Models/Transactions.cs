@@ -452,6 +452,7 @@ namespace PreciosoApp.Models
         public string? Type { get; set; }
         public double Payment { get; set; }
         public string? Status { get; set; }
+        public string? Notes { get; set; }
         Database db = new Database();
 
         public List<ServicePromoHistory> GetServicePromoHistory()
@@ -467,8 +468,9 @@ namespace PreciosoApp.Models
                 Type =  reader.GetString("type"),
                 Payment = reader.GetDouble("service_price"),
                 Status = reader.GetString("status"),
+                Notes = reader.GetString("notes")
             };
-            string query = "select psa.transaction_id, psh.transaction_datetime, psh.client ,psh.therapist, psh.mode, \r\npsa.service_promo, psa.type, psa.service_price, psa.status\r\nfrom promo_service_availed2 psa\r\nleft join promo_service_history psh on psa.transaction_id = psh.transaction_id\r\norder by psa.transaction_id;\r\n";
+            string query = "select psa.transaction_id, psh.transaction_datetime, psh.client ,psh.therapist, psh.mode, \r\npsa.service_promo, psa.type, psa.service_price, psa.status, psh.notes\r\nfrom promo_service_availed2 psa left join promo_service_history psh on psa.transaction_id = psh.transaction_id order by psa.transaction_id;";
             return db.ExecuteQuery(query, mapRow);
         }
     }
