@@ -146,13 +146,13 @@
 									  SelectedItem="{Binding SelectedPromoService}" Height="210" Margin="0 0 0 10" 
 									  BorderBrush="LightGray" BorderThickness="2" GridLinesVisibility="All">
 								<DataGrid.Columns>
-									<DataGridTextColumn Header="Date" Binding="{Binding DateTime}"/>
-									<DataGridTextColumn Header="Therapist" Binding="{Binding Therapist}"/>
-									<DataGridTextColumn Header="MOP" Binding="{Binding MOP}"/>
-									<DataGridTextColumn Header="Availed" Binding="{Binding Availed}"/>
-									<DataGridTextColumn Header="Type" Binding="{Binding Type}"/>
-									<DataGridTextColumn Header="Payment" Binding="{Binding Payment}"/>
-									<DataGridTextColumn Header="Status" Binding="{Binding Status}"/>
+									<DataGridTextColumn Header="Date" Width="Auto" Binding="{Binding DateTime}"/>
+									<DataGridTextColumn Header="Therapist" Width="*" Binding="{Binding Therapist}"/>
+									<DataGridTextColumn Header="MOP" Width="*" Binding="{Binding MOP}"/>
+									<DataGridTextColumn Header="Availed" Width="*" Binding="{Binding Availed}"/>
+									<DataGridTextColumn Header="Type" Width="*" Binding="{Binding Type}"/>
+									<DataGridTextColumn Header="Payment" Width="*" Binding="{Binding Payment}"/>
+									<DataGridTextColumn Header="Status" Width="*" Binding="{Binding Status}"/>
 								</DataGrid.Columns>
 							</DataGrid>
 							<Grid ColumnDefinitions="auto,auto">

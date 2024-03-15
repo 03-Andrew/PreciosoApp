@@ -22,6 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Assets\facade1.jpg" />
+    <None Remove="Assets\img1.jpg" />
     <None Remove="Assets\preciosospa_logo.png" />
   </ItemGroup>
 

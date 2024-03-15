@@ -2,14 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1080" d:DesignHeight="720"
              x:Class="PreciosoApp.Views.POSView"
 			 xmlns:vm="using:PreciosoApp.ViewModels"
 			 x:DataType="vm:POSViewModel"
 			 >
-	<Grid RowDefinitions="Auto, *">
-		<StackPanel Orientation="Horizontal">
-			<StackPanel>
+	<Grid ColumnDefinitions="*, Auto">
+			<StackPanel Grid.Column="0">
 				<StackPanel Orientation="Horizontal">
 					<ComboBox ItemsSource="{Binding Categories}"
 						  SelectedItem="{Binding SelectedCategory}"
@@ -24,11 +23,11 @@
 						 HorizontalAlignment="Left"
 						 ItemsSource="{Binding ProdNames}" 
 						 SelectedItem="{Binding SelectedListItem}"
-						 Width="490" Height="500" >
+						 Height="500">
 					<ListBox.Styles>
 						<Style Selector="ListBoxItem">
-							<Setter Property="Width" Value="223"/>
-							<Setter Property="Height" Value="223"/>
+							<Setter Property="Width" Value="150"/>
+							<Setter Property="Height" Value="150"/>
 							<Setter Property="HorizontalContentAlignment" Value="Center"/>
 							<Setter Property="VerticalContentAlignment" Value="Center"/>
 							<Setter Property="Margin" Value="10"/>
@@ -43,28 +42,30 @@
 					</ListBox.ItemsPanel>
 				</ListBox>
 			</StackPanel>
-			<StackPanel Width="269">
-				<Border Grid.Row="0" Background="#f2f2f2" Margin="20 20 20 20" CornerRadius="10">
+			<StackPanel Grid.Column="1">
+				<Border Background="#f2f2f2" Margin="20 20 20 20" CornerRadius="10">
 					<Border.Effect>
 						<DropShadowEffect Opacity="0.1"/>
 					</Border.Effect>
 					<StackPanel>
 						<TextBlock Text="Order" Margin="20 20 20 10"/>
-						<DataGrid SelectedItem="{Binding SelectedOrderItem}" ItemsSource="{Binding OrderItems}" Height="210">
+						<DataGrid SelectedItem="{Binding SelectedOrderItem}" ItemsSource="{Binding OrderItems}" Height="500">
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Name" Binding="{Binding ItemName}" />
 								<DataGridTextColumn Header="Price" Binding="{Binding ItemPrice}" />
 								<DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" />
 							</DataGrid.Columns>
 						</DataGrid>
-						<Button Margin="10" Command="{Binding removeItem}">Delete</Button>
-						<Button Margin="10" Width="200" 
-								HorizontalContentAlignment="Center" 
-								x:CompileBindings="False"
-					            Command="{Binding $parent[Window].DataContext.MoveToCheckoutWindow}">Checkout</Button>
+						<StackPanel Orientation="Horizontal">
+							<Button Margin="10 0 5 10 " Command="{Binding removeItem}" Width="120"
+									HorizontalContentAlignment="Center">Delete</Button>
+							<Button Margin="0 0 10 10" Width="125"
+									HorizontalContentAlignment="Center"
+									x:CompileBindings="False"
+									Command="{Binding $parent[Window].DataContext.MoveToCheckoutWindow}">Checkout</Button>
+						</StackPanel>
 					</StackPanel>
 				</Border>
 			</StackPanel>
-		</StackPanel>
 	</Grid>
   </UserControl>
