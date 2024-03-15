@@ -1,6 +1,8 @@
-﻿using Avalonia.Controls.Documents;
+﻿using Avalonia.Controls;
+using Avalonia.Controls.Documents;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
+using Org.BouncyCastle.Tls;
 using PreciosoApp.Models;
 using PreciosoApp.Views;
 using System;
@@ -491,6 +493,7 @@ namespace PreciosoApp.ViewModels
 
         private void AddServices()
         {
+            var window = new DialogWindow();
             var serv = new Services();
             // Retrieve values from bound properties
             string servName = ServiceName;
@@ -498,22 +501,39 @@ namespace PreciosoApp.ViewModels
             int servRate = GetSelectedRateID();
             int servType = GetSelectedServiceTypeID();
 
-            // Call method to add client to database
-            serv.addClient(servName, servPrice, servRate, servType);
+            if(servName == null || servPrice == null || servRate == null || servType == null)
+            {
+                window.DialogText = "You are missing some required fields! please fill them out!";
+                window.Show();
+            }
+            else
+            {
+                if(servPrice <= 0)
+                {
+                    window.DialogText = "Price inputted is invalid, please input a valid price!";
+                    window.Show();
+                }
+                else
+                {
+                    // Call method to add client to database
+                    serv.addClient(servName, servPrice, servRate, servType);
 
-            allServices = new ObservableCollection<Services>(serv.GetServices());
-            selectedTab = "Services";
-            FilterInventory();
+                    allServices = new ObservableCollection<Services>(serv.GetServices());
+                    selectedTab = "Services";
+                    FilterInventory();
 
-            // Optionally, clear input fields after adding client
-            ServiceName = "";
-            ServicePrice = 0;
-            SelectedRate = null;
-            SelectedServiceType = null;
+                    // Optionally, clear input fields after adding client
+                    ServiceName = "";
+                    ServicePrice = 0;
+                    SelectedRate = null;
+                    SelectedServiceType = null;
+                }
+            }
         }
 
         private void UpdateService()
         {
+            var window = new DialogWindow();
             Services serv = new Services();
             int id = SelectedService.servID;
             string name = SelectedService.servName;
@@ -521,14 +541,30 @@ namespace PreciosoApp.ViewModels
             int rateID = SelectedRate?.id ?? GetCommissionRateID(SelectedService.servComm);
             int typeID = SelectedServiceType?.id ?? GetServiceTypeID(SelectedService.servType);
 
-            serv.UpdateServices(id, name, price, rateID, typeID);
+            if (SelectedService == null || name == null || price == null || rateID == null || typeID == null)
+            {
+                window.DialogText = "You are missing some required fields! please fill them out!";
+                window.Show();
+            }
+            else
+            {
+                if(price <= 0)
+                {
+                    window.DialogText = "Price inputted is invalid, please input a valid price!";
+                    window.Show();
+                }
+                else
+                {
+                    serv.UpdateServices(id, name, price, rateID, typeID);
 
-            Services = new ObservableCollection<Services>(serv.GetServices());
+                    Services = new ObservableCollection<Services>(serv.GetServices());
 
-            OnPropertyChanged(nameof(SelectedService));
+                    OnPropertyChanged(nameof(SelectedService));
 
-            SelectedRate = null;
-            SelectedServiceType = null;
+                    SelectedRate = null;
+                    SelectedServiceType = null;
+                }
+            }
         }
 
         private void AddToPromoDataGrid()
@@ -549,23 +585,31 @@ namespace PreciosoApp.ViewModels
             }
             else
             {
-                string serviceName = SelectedPromosServices.servName;
-                int serviceID = GetSelectedPromoServicesID();
-                int qty = selectedPromoServicesQty;
-
-                var existingOrderItem = ServiceItems.FirstOrDefault(item => item.SelectedServiceName == serviceName);
-                if (existingOrderItem != null)
+                if (SelectedPromoServicesQty <= 0)
                 {
-                    existingOrderItem.Quantity++;
+                    window.DialogText = "Quantity inputted is invalid, please input a valid quantity!";
+                    window.Show();
                 }
                 else
                 {
-                    ServiceItems.Add(new PromoServicesItems
+                    string serviceName = SelectedPromosServices.servName;
+                    int serviceID = GetSelectedPromoServicesID();
+                    int qty = selectedPromoServicesQty;
+
+                    var existingOrderItem = ServiceItems.FirstOrDefault(item => item.SelectedServiceName == serviceName);
+                    if (existingOrderItem != null)
                     {
-                        ServiceID = serviceID,
-                        SelectedServiceName = serviceName,
-                        Quantity = qty,
-                    });
+                        existingOrderItem.Quantity++;
+                    }
+                    else
+                    {
+                        ServiceItems.Add(new PromoServicesItems
+                        {
+                            ServiceID = serviceID,
+                            SelectedServiceName = serviceName,
+                            Quantity = qty,
+                        });
+                    }
                 }
             }
         }
@@ -613,6 +657,7 @@ namespace PreciosoApp.ViewModels
 
         private void UpdatePromos()
         {
+            var window = new DialogWindow();
             Promos promo = new Promos();
             var promoServ = new PromoTransaction();
             int promoID = SelectedPromo.promoID;
@@ -620,25 +665,41 @@ namespace PreciosoApp.ViewModels
             float price = SelectedPromo.promoCost;
             int rateID = SelectedPromoRate?.id ?? GetCommissionRateID(SelectedPromo.promoRate);
 
-            promo.UpdatePromos(promoID, name, price, rateID);
-
-            promoServ.ClearPromoServices(promoID);
-
-            for (int i = 0; i < ServiceItems.Count; i++)
+            if(promoID == null || name == null || price == null || rateID == null || SelectedPromo == null)
             {
-                var item = ServiceItems[i];
-                if (item != null)
+                window.DialogText = "You are missing some required fields! please fill them out!";
+                window.Show();
+            }
+            else
+            {
+                if(price <= 0)
                 {
-                    promoServ.InsertPromoServices(promoID, item.serviceID, item.quantity);
+                    window.DialogText = "Price inputted is invalid, please input a valid price!";
+                    window.Show();
+                }
+                else
+                {
+                    promo.UpdatePromos(promoID, name, price, rateID);
+
+                    promoServ.ClearPromoServices(promoID);
+
+                    for (int i = 0; i < ServiceItems.Count; i++)
+                    {
+                        var item = ServiceItems[i];
+                        if (item != null)
+                        {
+                            promoServ.InsertPromoServices(promoID, item.serviceID, item.quantity);
+                        }
+                    }
+
+                    LoadSelectedPromoServices();
+
+                    PromoName = "";
+                    PromoPrice = 0;
+                    SelectedPromoRate = null;
+                    ServiceItems.Clear();
                 }
             }
-
-            LoadSelectedPromoServices();
-
-            PromoName = "";
-            PromoPrice = 0;
-            SelectedPromoRate = null;
-            ServiceItems.Clear();
         }
     }
 

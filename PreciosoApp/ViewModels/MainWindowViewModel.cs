@@ -9,6 +9,7 @@ using PreciosoApp.Models;
 using PreciosoApp.Views;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Media;
 using System.Windows.Input;
 
@@ -131,8 +132,19 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public void MoveToCheckoutWindow()
     {
-        var checkoutViewModel = new CheckoutViewModel(OrderItems, this);
-        CurrentPage = checkoutViewModel;
+        var window = new DialogWindow();
+        bool hasNegativeQuantity = OrderItems.Any(item => item.Quantity < 0);
+
+        if (hasNegativeQuantity)
+        {
+            window.DialogText = "An order has a negative quantity! Please change the value to a valid number!";
+            window.Show();
+        }
+        else
+        {
+            var checkoutViewModel = new CheckoutViewModel(OrderItems, this);
+            CurrentPage = checkoutViewModel;
+        }
     }
 
     public void MoveToPOSView()

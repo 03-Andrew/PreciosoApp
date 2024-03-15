@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PreciosoApp.Models;
+using PreciosoApp.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -119,6 +120,7 @@ namespace PreciosoApp.ViewModels
 
             try
             {
+                var window = new DialogWindow();
                 Therapist tp = new Therapist();
                 string name = NewTherapistName;
                 DateTime dob = NewTherapistDOB;
@@ -128,20 +130,35 @@ namespace PreciosoApp.ViewModels
                 int status_id = SelectedTherapistStatus.Id;
                 int type_id = SelectedTherapistType.Id;
 
-                // Add the therapist to the database
-                tp.AddTherapist(name, dob.Date, contact, sched, gender_id, status_id, type_id);
+                if(name == null || dob == null || contact == null || sched == null || gender_id == null || status_id == null || type_id == null)
+                {
+                    window.DialogText = "You are missing some required fields! please fill them out!";
+                    window.Show();
+                }
+                else
+                {
+                    if (contact.Length != 11)
+                    {
+                        window.DialogText = "Contact number must be exactly 11 characters long!";
+                    }
+                    else
+                    {
+                        // Add the therapist to the database
+                        tp.AddTherapist(name, dob.Date, contact, sched, gender_id, status_id, type_id);
 
-                // Refresh the Therapist collection
-                Therapist = new ObservableCollection<Therapist>(tp.GetAllTherapist());
+                        // Refresh the Therapist collection
+                        Therapist = new ObservableCollection<Therapist>(tp.GetAllTherapist());
 
-                // Clear out the fields
-                NewTherapistName = string.Empty;
-                NewTherapistDOB = DateTime.Now;
-                NewTherapistContactInfo = string.Empty;
-                NewTherapistSched = string.Empty;
-                SelectedGender = null;
-                SelectedTherapistStatus = null;
-                SelectedTherapistType = null;
+                        // Clear out the fields
+                        NewTherapistName = string.Empty;
+                        NewTherapistDOB = DateTime.Now;
+                        NewTherapistContactInfo = string.Empty;
+                        NewTherapistSched = string.Empty;
+                        SelectedGender = null;
+                        SelectedTherapistStatus = null;
+                        SelectedTherapistType = null;
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -156,6 +173,7 @@ namespace PreciosoApp.ViewModels
 
         private void UpdateTherapist()
         {
+            var window = new DialogWindow();
             Therapist tp = new Therapist();
             int id = SelectedTherapist.Id;
             string name = SelectedTherapist.Name;
@@ -165,18 +183,32 @@ namespace PreciosoApp.ViewModels
             int gender_id = SelectedGender?.Id ?? GetGenderId(SelectedTherapist.Gender);
             int status_id = SelectedTherapistStatus?.Id ?? GetStatusId(SelectedTherapist.Status);
             int type_id = SelectedTherapistType?.Id ?? GetTypeId(SelectedTherapist.Type);
-  
 
-            tp.UpdateTherapist(id, name, dob, contact, sched, gender_id, status_id, type_id);
+            if (name == null || dob == null || contact == null || sched == null || gender_id == null || status_id == null || type_id == null)
+            {
+                window.DialogText = "You are missing some required fields! please fill them out!";
+                window.Show();
+            }
+            else
+            {
+                if (contact.Length != 11)
+                {
+                    window.DialogText = "Contact number must be exactly 11 characters long!";
+                    window.Show();
+                }
+                else
+                {
+                    tp.UpdateTherapist(id, name, dob, contact, sched, gender_id, status_id, type_id);
 
-            Therapist = new ObservableCollection<Therapist>(tp.GetAllTherapist());
+                    Therapist = new ObservableCollection<Therapist>(tp.GetAllTherapist());
 
-            OnPropertyChanged(nameof(SelectedTherapist));
+                    OnPropertyChanged(nameof(SelectedTherapist));
 
-            SelectedGender = null;
-            SelectedTherapistType = null;
-            SelectedTherapistStatus = null;
-
+                    SelectedGender = null;
+                    SelectedTherapistType = null;
+                    SelectedTherapistStatus = null;
+                }
+            }
         }
 
         public int GetGenderId(string gender)

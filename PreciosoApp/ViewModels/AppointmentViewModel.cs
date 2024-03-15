@@ -1,5 +1,7 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using Avalonia.Controls;
+using CommunityToolkit.Mvvm.Input;
 using PreciosoApp.Models;
+using PreciosoApp.Views;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -184,6 +186,7 @@ namespace PreciosoApp.ViewModels
         private void AddClient()
         {
             var client = new Client();
+            var window = new DialogWindow();
             // Retrieve values from bound properties
             string lastName = LastName;
             string firstName = FirstName;
@@ -192,19 +195,34 @@ namespace PreciosoApp.ViewModels
             DateTime dob = DOB.Date;
             int gender = GetSelectedGenderId();
 
-            // Call method to add client to database
-            client.addClient(lastName, firstName, dob, contactInfo, gender);
+            if(lastName == null || firstName == null || dob == null || contactInfo == null || gender == null)
+            {
+                window.DialogText = "You are missing some required fields! please fill them out!";
+                window.Show();
+            }
+            else
+            {
+                if (contactInfo.Length != 11)
+                {
+                    window.DialogText = "Contact number must be exactly 11 characters long!";
+                }
+                else
+                {
+                    // Call method to add client to database
+                    client.addClient(lastName, firstName, dob, contactInfo, gender);
 
-            allClients = new ObservableCollection<Client>(client.GetAllClients());
-            FilterClients();
+                    allClients = new ObservableCollection<Client>(client.GetAllClients());
+                    FilterClients();
 
-            // Optionally, clear input fields after adding client
-            LastName = "";
-            FirstName = "";
-            MiddleInitial = "";
-            ContactInfo = "";
-            DOB = DateTimeOffset.Now;
-            SelectedGender = null;
+                    // Optionally, clear input fields after adding client
+                    LastName = "";
+                    FirstName = "";
+                    MiddleInitial = "";
+                    ContactInfo = "";
+                    DOB = DateTimeOffset.Now;
+                    SelectedGender = null;
+                }
+            }
         }
 
         private Client _selectedClient;
@@ -249,6 +267,7 @@ namespace PreciosoApp.ViewModels
         {
             try
             {
+                var window = new DialogWindow();
                 var client = new Client();
                 int id = SelectedClient.Id;
                 string name = SelectedClient.Name;
@@ -256,14 +275,28 @@ namespace PreciosoApp.ViewModels
                 string contact = SelectedClient.ContactInfo;
                 int gender = SelectedGender?.Id ?? GetGenderId(SelectedClient.Gender);
 
+                if(id == null || name == null || dob == null || contact == null || gender == null)
+                {
+                    window.DialogText = "You are missing some required fields! please fill them out!";
+                    window.Show();
+                }
+                else
+                {
+                    if (contact.Length != 11)
+                    {
+                        window.DialogText = "Contact number must be exactly 11 characters long!";
+                    }
+                    else
+                    {
+                        client.updateClient(id, name, dob, contact, gender);
 
-                client.updateClient(id, name, dob, contact, gender);
+                        Client = new ObservableCollection<Client>(client.GetAllClients());
 
-                Client = new ObservableCollection<Client>(client.GetAllClients());
+                        OnPropertyChanged(nameof(SelectedClient));
 
-                OnPropertyChanged(nameof(SelectedClient));
-
-                SelectedGender = null;
+                        SelectedGender = null;
+                    }
+                }
             } 
             catch(Exception ex)
             {

@@ -322,7 +322,6 @@ namespace PreciosoApp.ViewModels
                 }
                 else
                 {
-
                     mainWindow.OrderItems.Add(new OrderItem
                     {
                     ItemID = (selectedItem is Inventory products) ? products.invID :

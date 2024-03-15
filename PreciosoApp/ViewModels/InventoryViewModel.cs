@@ -411,28 +411,37 @@ namespace PreciosoApp.ViewModels
         {
             try
             {
+                var window = new DialogWindow();
                 Inventory inv = new Inventory();
-                int invID = inv.StockIn(SelectedSupplier.Id, InputDate.Date, SelectedTherapist.Id);
-                for (int i = 0; i < StockInItems.Count; i++)
+                if(SelectedSupplier == null || InputDate == null || SelectedTherapist == null || StockInItems == null)
                 {
-                    var item = StockInItems[i];
-                    if(item != null)
-                    {
-                        inv.AddStockInProduct(invID, item.ProductID, Quantity, Price);
-                    }
+                    window.DialogText = "Please fill the missing inputs!";
+                    window.Show();
                 }
+                else
+                {
+                    int invID = inv.StockIn(SelectedSupplier.Id, InputDate.Date, SelectedTherapist.Id);
+                    for (int i = 0; i < StockInItems.Count; i++)
+                    {
+                        var item = StockInItems[i];
+                        if (item != null)
+                        {
+                            inv.AddStockInProduct(invID, item.ProductID, Quantity, Price);
+                        }
+                    }
 
-                SelectedSupplier = null;
-                InputDate = DateTime.Now;
-                SelectedTherapist = null;
-                StockInItems.Clear();
-                Quantity = 0;
-                Price = 0;
+                    SelectedSupplier = null;
+                    InputDate = DateTime.Now;
+                    SelectedTherapist = null;
+                    StockInItems.Clear();
+                    Quantity = 0;
+                    Price = 0;
 
-                allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
-                Inventory = allInventory;
-                _errorText = "Added Item";
-                showCriticalStock();
+                    allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
+                    Inventory = allInventory;
+                    _errorText = "Added Item";
+                    showCriticalStock();
+                }
             }
             catch (Exception ex) {
 
@@ -462,25 +471,33 @@ namespace PreciosoApp.ViewModels
             }
             else
             {
-                string serviceName = SelectedStockInProducts.prodName;
-                int serviceID = GetSelectedStockInProductID();
-                int qty = Quantity;
-                double cost = Price;
-
-                var existingOrderItem = StockInItems.FirstOrDefault(item => item.SelectedProductName == serviceName);
-                if (existingOrderItem != null)
+                if(Quantity <= 0 || Price <= 0)
                 {
-                    existingOrderItem.Quantity++;
+                    window.DialogText = "Number inputted is invalid, please input a valid number!";
+                    window.Show();
                 }
                 else
                 {
-                    StockInItems.Add(new StockInProductItems
+                    string serviceName = SelectedStockInProducts.prodName;
+                    int serviceID = GetSelectedStockInProductID();
+                    int qty = Quantity;
+                    double cost = Price;
+
+                    var existingOrderItem = StockInItems.FirstOrDefault(item => item.SelectedProductName == serviceName);
+                    if (existingOrderItem != null)
                     {
-                        ProductID = serviceID,
-                        SelectedProductName = serviceName,
-                        Quantity = qty,
-                        Cost = cost,
-                    });
+                        existingOrderItem.Quantity++;
+                    }
+                    else
+                    {
+                        StockInItems.Add(new StockInProductItems
+                        {
+                            ProductID = serviceID,
+                            SelectedProductName = serviceName,
+                            Quantity = qty,
+                            Cost = cost,
+                        });
+                    }
                 }
             }
         }
@@ -515,17 +532,24 @@ namespace PreciosoApp.ViewModels
                 }
                 else
                 {
-                    inv.AddNewProduct(newProductName, newProductPrice, SelectedProductType.id);
+                    if (newProductPrice <= 0)
+                    {
+                        window.DialogText = "Number inputted is invalid, please input a valid number!";
+                        window.Show();
+                    }
+                    else
+                    {
+                        inv.AddNewProduct(newProductName, newProductPrice, SelectedProductType.id);
 
-                    newProductName = "";
-                    newProductPrice = 0;
-                    selectedProductType = null;
+                        newProductName = "";
+                        newProductPrice = 0;
+                        selectedProductType = null;
 
-                    allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
-                    Inventory = allInventory;
-                    _errorText = "Added Item";
-                }
-                 
+                        allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
+                        Inventory = allInventory;
+                        _errorText = "Added Item";
+                    }
+                } 
             }
             catch (Exception ex)
             {
@@ -556,14 +580,22 @@ namespace PreciosoApp.ViewModels
             }
             else
             {
-                inv.UpdateProduct(name, price, typeID, id);
+                if (price <= 0)
+                {
+                    window.DialogText = "Number inputted is invalid, please input a valid number!";
+                    window.Show();
+                }
+                else
+                {
+                    inv.UpdateProduct(name, price, typeID, id);
 
-                allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
-                Inventory = allInventory;
+                    allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
+                    Inventory = allInventory;
 
-                OnPropertyChanged(nameof(SelectedProductData));
+                    OnPropertyChanged(nameof(SelectedProductData));
 
-                SelectedProductType = null;
+                    SelectedProductType = null;
+                }
             }
         }
 
