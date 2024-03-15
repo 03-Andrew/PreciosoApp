@@ -7,6 +7,7 @@
 			 xmlns:vm="using:PreciosoApp.ViewModels"
 			 x:DataType="vm:LoginWindowViewModel">
 	<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+		<Image></Image>
 		<StackPanel Margin="0 0 0 20">
 			<TextBlock Margin="0 0 0 5" Text="Username"></TextBlock>
 			<TextBox Text="{Binding Username}" Watermark="Username" Width="150"></TextBox>

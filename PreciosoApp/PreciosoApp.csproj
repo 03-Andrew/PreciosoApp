@@ -14,6 +14,11 @@
 
   <ItemGroup>
     <AvaloniaXaml Remove="Assets\Icons.axaml" />
+    <AvaloniaXaml Remove="Views\AppointmentView.axaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Views\AppointmentView.axaml.cs" />
   </ItemGroup>
 
 

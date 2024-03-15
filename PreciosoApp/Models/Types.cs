@@ -297,4 +297,48 @@ namespace PreciosoApp.Models
             }
         }
     }
+
+    public class ServiceStatus
+    {
+        public int StatusId { get; set; }
+        public string? Status { get; set; }
+        Database db = new Database();
+
+        public List<ServiceStatus> GetServicesStatus()
+        {
+            Func<MySqlDataReader, ServiceStatus> mapRow = reader => new ServiceStatus
+            {
+                StatusId = reader.GetInt32(0),
+                Status = reader.GetString(1),
+            };
+
+            string query = "select * from tbl_appointment_status";
+            return db.ExecuteQuery(query, mapRow);
+        }
+
+        public void UpdateStatusAppointment(int transactionId, int serviceId, int statusId)
+        {
+            using(MySqlConnection conn = db.GetCon())
+            {
+                string query = $"update tbl_appointment set appointment_status = {statusId} where transaction_id = {transactionId} and service_id = {serviceId}";
+                conn.Open();
+
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.ExecuteNonQuery();
+            }
+
+        }
+
+        public void UpdateStatusPromo(int transactionId, int promoId, int statusId)
+        {
+            using (MySqlConnection conn = db.GetCon())
+            {
+                string query = $"update tbl_promo_transaction set appointment_status = {statusId} where transaction_id = {transactionId} and promo_id = {promoId}";
+                conn.Open();
+
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.ExecuteNonQuery();
+            }
+        }
+    }
 }

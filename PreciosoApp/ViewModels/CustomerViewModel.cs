@@ -1,19 +1,38 @@
-﻿using Avalonia.Controls;
-using CommunityToolkit.Mvvm.Input;
-using DynamicData;
+﻿using CommunityToolkit.Mvvm.Input;
 using PreciosoApp.Models;
-using PreciosoApp.Views;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
+using System.Data;
 using System.Linq;
-using System.Net.Sockets;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace PreciosoApp.ViewModels
 {
-    public class AppointmentViewModel : ViewModelBase
+    public class CustomerViewModel : ViewModelBase
     {
+        public ICommand AddClientCommand { get; }
+        public ICommand FilterCommand { get; }
+        public ICommand UpdateServStatus { get; }
+
+        public CustomerViewModel()
+        {
+            var client = new Client();
+            allClients = new ObservableCollection<Client>(client.GetAllClients());
+            Client = allClients;
+
+            var genders = new TypesQueries();
+            Genders = new ObservableCollection<Gender>(genders.GetGenders());
+            AddClientCommand = new RelayCommand(AddClient);
+
+            FilterCommand = new RelayCommand(FilterClients);
+            ServiceStatus = new ObservableCollection<ServiceStatus>(new ServiceStatus().GetServicesStatus());
+
+            UpdateServStatus = new RelayCommand(UpdateStatus);
+        }
+
         private string _lastName;
         public string LastName
         {
@@ -115,30 +134,10 @@ namespace PreciosoApp.ViewModels
             set
             {
                 _prodTransactions = value;
-                OnPropertyChanged(nameof(ProdTransactions));   
+                OnPropertyChanged(nameof(ProdTransactions));
             }
         }
 
-
-        public ICommand AddClientCommand { get; }
-
-        public AppointmentViewModel()
-        {
-            var client = new Client();
-            allClients = new ObservableCollection<Client>(client.GetAllClients());
-            Client = allClients;
-
-            var genders = new TypesQueries();
-            Genders = new ObservableCollection<Gender>(genders.GetGenders());
-            AddClientCommand = new RelayCommand(AddClient);
-
-            FilterCommand = new RelayCommand(FilterClients);
-    
-
-
-        }
-
-        public ICommand FilterCommand { get; }
 
         private string searchText;
         public string SearchText
@@ -187,7 +186,6 @@ namespace PreciosoApp.ViewModels
         private void AddClient()
         {
             var client = new Client();
-            var window = new DialogWindow();
             // Retrieve values from bound properties
             string lastName = LastName;
             string firstName = FirstName;
@@ -196,34 +194,19 @@ namespace PreciosoApp.ViewModels
             DateTime dob = DOB.Date;
             int gender = GetSelectedGenderId();
 
-            if(lastName == null || firstName == null || dob == null || contactInfo == null || gender == null)
-            {
-                window.DialogText = "You are missing some required fields! please fill them out!";
-                window.Show();
-            }
-            else
-            {
-                if (contactInfo.Length != 11)
-                {
-                    window.DialogText = "Contact number must be exactly 11 characters long!";
-                }
-                else
-                {
-                    // Call method to add client to database
-                    client.addClient(lastName, firstName, dob, contactInfo, gender);
+            // Call method to add client to database
+            client.addClient(lastName, firstName, dob, contactInfo, gender);
 
-                    allClients = new ObservableCollection<Client>(client.GetAllClients());
-                    FilterClients();
+            allClients = new ObservableCollection<Client>(client.GetAllClients());
+            FilterClients();
 
-                    // Optionally, clear input fields after adding client
-                    LastName = "";
-                    FirstName = "";
-                    MiddleInitial = "";
-                    ContactInfo = "";
-                    DOB = DateTimeOffset.Now;
-                    SelectedGender = null;
-                }
-            }
+            // Optionally, clear input fields after adding client
+            LastName = "";
+            FirstName = "";
+            MiddleInitial = "";
+            ContactInfo = "";
+            DOB = DateTimeOffset.Now;
+            SelectedGender = null;
         }
 
         private Client _selectedClient;
@@ -239,7 +222,7 @@ namespace PreciosoApp.ViewModels
         }
 
 
-       
+
 
         private void filteredTransaction()
         {
@@ -256,10 +239,6 @@ namespace PreciosoApp.ViewModels
                     new ServicePromoHistory().GetServicePromoHistory()
                     .Where(tr => tr.Client.Contains(SelectedClient.Name))
                 );
-
-
-                Note = Note = string.Join(Environment.NewLine, SelectedPromoService.Select(item => item.Notes));
-
             }
             else
             {
@@ -267,14 +246,15 @@ namespace PreciosoApp.ViewModels
                 ServicePromoUsed = _servicePromoUsed;
                 Note = _note;
             }
-            
-        } 
+
+        }
+
+
 
         public void updateCustomer()
         {
             try
             {
-                var window = new DialogWindow();
                 var client = new Client();
                 int id = SelectedClient.Id;
                 string name = SelectedClient.Name;
@@ -282,34 +262,20 @@ namespace PreciosoApp.ViewModels
                 string contact = SelectedClient.ContactInfo;
                 int gender = SelectedGender?.Id ?? GetGenderId(SelectedClient.Gender);
 
-                if(id == null || name == null || dob == null || contact == null || gender == null)
-                {
-                    window.DialogText = "You are missing some required fields! please fill them out!";
-                    window.Show();
-                }
-                else
-                {
-                    if (contact.Length != 11)
-                    {
-                        window.DialogText = "Contact number must be exactly 11 characters long!";
-                    }
-                    else
-                    {
-                        client.updateClient(id, name, dob, contact, gender);
 
-                        Client = new ObservableCollection<Client>(client.GetAllClients());
+                client.updateClient(id, name, dob, contact, gender);
 
-                        OnPropertyChanged(nameof(SelectedClient));
+                Client = new ObservableCollection<Client>(client.GetAllClients());
 
-                        SelectedGender = null;
-                    }
-                }
-            } 
-            catch(Exception ex)
+                OnPropertyChanged(nameof(SelectedClient));
+
+                SelectedGender = null;
+            }
+            catch (Exception ex)
             {
                 Console.Write(ex.ToString());
             }
-            
+
 
         }
 
@@ -346,7 +312,7 @@ namespace PreciosoApp.ViewModels
         }
 
         private ObservableCollection<ServicePromoHistory> _servicePromoUsed;
-        public ObservableCollection<ServicePromoHistory> ServicePromoUsed 
+        public ObservableCollection<ServicePromoHistory> ServicePromoUsed
         {
             get { return _servicePromoUsed; }
             set
@@ -356,15 +322,29 @@ namespace PreciosoApp.ViewModels
             }
         }
 
-        private ObservableCollection<ServicePromoHistory> _selectedPromoService;
-        public ObservableCollection<ServicePromoHistory> SelectedPromoService
+        private ServicePromoHistory _selectedPromoService;
+        public ServicePromoHistory SelectedPromoService
         {
             get { return _selectedPromoService; }
             set
             {
                 _selectedPromoService = value;
                 OnPropertyChanged(nameof(SelectedPromoService));
-                filteredTransaction();
+                setNotes();
+            }
+        }
+
+        public void setNotes()
+        {
+            if (SelectedPromoService != null)
+            {
+                Note = SelectedPromoService.Notes;
+                IsButtonEnabled = true;
+            }
+            else
+            {
+                Note = _note;
+                IsButtonEnabled = false;
             }
         }
 
@@ -377,6 +357,60 @@ namespace PreciosoApp.ViewModels
                 _note = value;
                 OnPropertyChanged(nameof(Note));
             }
+        }
+
+        public ObservableCollection<ServiceStatus> ServiceStatus { get; }
+
+        public void UpdateStatus()
+        {
+
+            if(SelectedPromoService.Type == "promo")
+            {
+                int newStatus = GetGenderId(SelectedPromoService.Status) == 1 ? 2 : 1;
+                int promoId =GetPromoId(SelectedPromoService.Status);
+                int transactionID = SelectedPromoService.TransactionID;
+
+                new ServiceStatus().UpdateStatusPromo(transactionID, promoId, newStatus);
+            }
+            else
+            {
+                int newStatus = GetGenderId(SelectedPromoService.Status) == 1 ? 2 : 1;
+                int serviceId = GetServiceId(SelectedPromoService.Availed);
+                int transactionId = SelectedPromoService.TransactionID;
+
+                new ServiceStatus().UpdateStatusAppointment(transactionId, serviceId, newStatus);
+            }
+            
+        }
+
+        public bool IsButtonEnabled { get; set; }
+
+
+        public int GetStatusId(string status)
+        {
+            foreach (var item in ServiceStatus)
+            {
+                if (item.Status == status) return item.StatusId;
+            }
+            return -1;
+        }
+
+        public int GetServiceId(string service)
+        {
+            foreach(var item in new Services().GetServices())
+            {
+                if (item.servName == service) return item.servID;
+            }
+            return -1;
+        }
+
+        public int GetPromoId(string promo)
+        {
+            foreach(var item in new Promos().GetPromos())
+            {
+                if(item.promoName == promo) return item.promoID;
+            }
+            return -1;
         }
     }
 }
