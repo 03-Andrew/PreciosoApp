@@ -174,4 +174,67 @@ namespace PreciosoApp.Models
             return therapist;
         }
     }
+
+    public class Account
+    {
+        string username { get; set; }
+        string password { get; set; }
+        int type { get; set; }
+
+        Database db = new Database();
+
+        public List<Account> GetAccounts()
+        {
+            Func<MySqlDataReader, Account> mapRow = reader => new Account
+            {
+                username = reader.GetString(0),
+                password = reader.GetString(1),
+                type = reader.GetInt32(3),
+            };
+
+            string query = "select * from tbl_account;";
+            return db.ExecuteQuery(query, mapRow);
+        }
+
+        public bool CheckLogin(string username, string password)
+        {
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = "SELECT COUNT(*) FROM tbl_account WHERE username = @username AND password = @password;";
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@password", password);
+
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    return count > 0;
+                }
+            }
+        }
+
+        public int GetAccountType(string username, string password)
+        {
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+                string query = "SELECT type FROM tbl_account WHERE username = @username AND password = @password;";
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@password", password);
+
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        return Convert.ToInt32(result);
+                    }
+                    else
+                    {
+                        return -1; // Return -1 if no account with the provided username and password is found
+                    }
+                }
+            }
+        }
+    }
 }

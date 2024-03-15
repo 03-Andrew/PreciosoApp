@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="PreciosoApp.Views.LoginWindowView"
+			 xmlns:vm="using:PreciosoApp.ViewModels"
+			 x:DataType="vm:LoginWindowViewModel">
+	<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+		<StackPanel Margin="0 0 0 20">
+			<TextBlock Margin="0 0 0 5" Text="Username"></TextBlock>
+			<TextBox Text="{Binding Username}" Watermark="Username" Width="150"></TextBox>
+		</StackPanel>
+		<StackPanel>
+			<TextBlock Margin="0 0 0 5" Text="Password"></TextBlock>
+			<TextBox PasswordChar="*" Text="{Binding Password}" Watermark="Password" Width="150"></TextBox>
+		</StackPanel>
+		<Button Command="{Binding LoginCommand}" Margin="0 10 0 0" Width="100"  
+				HorizontalContentAlignment="Center"
+				HorizontalAlignment="Center">Login</Button>
+	</StackPanel>
+</UserControl>

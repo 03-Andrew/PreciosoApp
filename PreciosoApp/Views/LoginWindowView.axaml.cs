@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace PreciosoApp.Views
 {
-    public partial class LoginView : UserControl
+    public partial class LoginWindowView : Window
     {
-        public LoginView()
+        public LoginWindowView()
         {
             InitializeComponent();
         }

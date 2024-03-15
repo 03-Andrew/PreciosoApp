@@ -17,10 +17,17 @@ namespace PreciosoApp
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow
+                /*
+                desktop.MainWindow = new LoginWindowView
                 {
-                    DataContext = new MainWindowViewModel()
+                    DataContext = new LoginWindowViewModel()
                 };
+                */
+
+                var loginWindowView = new LoginWindowView();
+                var loginWindowViewModel = new LoginWindowViewModel(loginWindowView); // Pass the instance
+                loginWindowView.DataContext = loginWindowViewModel;
+                desktop.MainWindow = loginWindowView;
             }
 
             base.OnFrameworkInitializationCompleted();
