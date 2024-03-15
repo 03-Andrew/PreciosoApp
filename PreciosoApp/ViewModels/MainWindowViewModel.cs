@@ -98,6 +98,7 @@ public partial class MainWindowViewModel : ViewModelBase
         Items.Add(new ListItemTemplate(typeof(DashboardViewModel), "desktop_regular"));
         Items.Add(new ListItemTemplate(typeof(InventoryViewModel), "toolbox_regular"));
         Items.Add(new ListItemTemplate(typeof(AppointmentViewModel), "person_clock_regular"));
+        Items.Add(new ListItemTemplate(typeof(POSViewModel), "cart_regular"));
         Items.Add(new ListItemTemplate(typeof(ServicesViewModel), "calendar_star_regular"));
         Items.Add(new ListItemTemplate(typeof(SalesReportViewModel), "data_bar_vertical_regular"));
         Items.Add(new ListItemTemplate(typeof(HistoryViewModel), "book_regular"));
