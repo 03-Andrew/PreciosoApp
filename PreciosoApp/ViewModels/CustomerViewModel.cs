@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using PreciosoApp.Models;
+using PreciosoApp.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -339,12 +340,10 @@ namespace PreciosoApp.ViewModels
             if (SelectedPromoService != null)
             {
                 Note = SelectedPromoService.Notes;
-                IsButtonEnabled = true;
             }
             else
             {
                 Note = _note;
-                IsButtonEnabled = false;
             }
         }
 
@@ -363,27 +362,37 @@ namespace PreciosoApp.ViewModels
 
         public void UpdateStatus()
         {
-
-            if(SelectedPromoService.Type == "promo")
+            if (SelectedPromoService == null)
             {
-                int newStatus = GetGenderId(SelectedPromoService.Status) == 1 ? 2 : 1;
-                int promoId =GetPromoId(SelectedPromoService.Status);
-                int transactionID = SelectedPromoService.TransactionID;
-
-                new ServiceStatus().UpdateStatusPromo(transactionID, promoId, newStatus);
+                return;
             }
-            else
+            try
             {
-                int newStatus = GetGenderId(SelectedPromoService.Status) == 1 ? 2 : 1;
-                int serviceId = GetServiceId(SelectedPromoService.Availed);
-                int transactionId = SelectedPromoService.TransactionID;
+                if (SelectedPromoService.Type == "promo")
+                {
+                    int newStatus = SelectedPromoService.Status == "in progress" ? 2 : 1;
+                    int transactionID = SelectedPromoService.TransactionID;
 
-                new ServiceStatus().UpdateStatusAppointment(transactionId, serviceId, newStatus);
+                    new ServiceStatus().UpdateStatusPromo(transactionID, SelectedPromoService.Availed, newStatus);
+                }
+                else
+                {
+                    int newStatus = SelectedPromoService.Status == "in progress" ? 2 : 1;
+                    int serviceId = GetServiceId(SelectedPromoService.Availed);
+                    int transactionId = SelectedPromoService.TransactionID;
+
+                    new ServiceStatus().UpdateStatusAppointment(transactionId, serviceId, newStatus);
+                }
             }
-            
+            catch (Exception ex)
+            {
+                var window = new DialogWindow();
+                window.DialogText = "Error: " + ex;
+                window.Show();
+            }
+
+            filteredTransaction();
         }
-
-        public bool IsButtonEnabled { get; set; }
 
 
         public int GetStatusId(string status)
