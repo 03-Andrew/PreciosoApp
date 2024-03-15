@@ -16,7 +16,34 @@ namespace PreciosoApp.ViewModels
 {
     public class DashboardViewModel : ViewModelBase
     {
-        public ICommand FirstCommand { get; set; }
+        public DashboardViewModel()
+        {
+            loadTabel();
+        }
+
+        private ObservableCollection<StockinHistory> _stockinHis;
+        public ObservableCollection<StockinHistory> StockInHis
+        {
+            get { return _stockinHis; }
+            set
+            {
+                _stockinHis = value;
+                OnPropertyChanged(nameof(StockInHis));
+            }
+        }
+
+        private void loadTabel()
+        {
+            _stockinHis = new ObservableCollection<StockinHistory>(new StockinHistory().GetStockinHistory());
+            StockInHis = _stockinHis;
+        }
+    }
+}
+
+
+/*
+ 
+ public ICommand FirstCommand { get; set; }
         public ICommand PreviousCommand { get; set; }
         public ICommand NextCommand { get; set; }
         public ICommand LastCommand { get; set; }
@@ -77,179 +104,180 @@ namespace PreciosoApp.ViewModels
             UpdateRecordCount();
              
         }
-        */
-        private void UpdateCollection(IEnumerable<AllTransactions> enumerable)
-        {
-            TransactionList.Clear();
-            foreach (var item in enumerable)
-            {
-                TransactionList.Add(item);
-            }
-        }
+       
+private void UpdateCollection(IEnumerable<AllTransactions> enumerable)
+{
+    TransactionList.Clear();
+    foreach (var item in enumerable)
+    {
+        TransactionList.Add(item);
+    }
+}
 
-        public List<AllTransactions> ListOfTransactions = new List<AllTransactions>();
+public List<AllTransactions> ListOfTransactions = new List<AllTransactions>();
 
-        int RecordStartFrom = 0;
+int RecordStartFrom = 0;
 
-        private void PreviousPage(object obj)
-        {
-            CurrentPage--;
-            RecordStartFrom = ListOfTransactions.Count - SelectedRecord * (NumberOfPages - (CurrentPage - 1));
-            var recorsToShow = ListOfTransactions.Skip(RecordStartFrom).Take(SelectedRecord);
-            UpdateCollection(recorsToShow);
-            UpdateEnableState();
-        }
+private void PreviousPage(object obj)
+{
+    CurrentPage--;
+    RecordStartFrom = ListOfTransactions.Count - SelectedRecord * (NumberOfPages - (CurrentPage - 1));
+    var recorsToShow = ListOfTransactions.Skip(RecordStartFrom).Take(SelectedRecord);
+    UpdateCollection(recorsToShow);
+    UpdateEnableState();
+}
 
-        private void LastPage(object obj)
-        {
-            var recordsToskip = SelectedRecord * (NumberOfPages - 1);
-            UpdateCollection(ListOfTransactions.Skip(recordsToskip));
-            CurrentPage = NumberOfPages;
-            UpdateEnableState();
-        }
+private void LastPage(object obj)
+{
+    var recordsToskip = SelectedRecord * (NumberOfPages - 1);
+    UpdateCollection(ListOfTransactions.Skip(recordsToskip));
+    CurrentPage = NumberOfPages;
+    UpdateEnableState();
+}
 
-        private void FirstPage(object obj)
-        {
-            UpdateCollection(ListOfTransactions.Take(SelectedRecord));
-            CurrentPage = 1;
-            UpdateEnableState();
-        }
+private void FirstPage(object obj)
+{
+    UpdateCollection(ListOfTransactions.Take(SelectedRecord));
+    CurrentPage = 1;
+    UpdateEnableState();
+}
 
-        private void NextPage(object obj)
-        {
-            RecordStartFrom = CurrentPage * SelectedRecord;
-            var recordsToShow = ListOfTransactions.Skip(RecordStartFrom).Take(SelectedRecord);
-            UpdateCollection(recordsToShow);
-            CurrentPage++;
-            UpdateEnableState();
-        }       
-
-
-        private int _currentPage = 1;
-        public int CurrentPage
-        {
-            get { return _currentPage; }
-            set
-            {
-                _currentPage = value;
-                OnPropertyChanged(nameof(CurrentPage));
-                UpdateEnableState();
-            }
-        }
+private void NextPage(object obj)
+{
+    RecordStartFrom = CurrentPage * SelectedRecord;
+    var recordsToShow = ListOfTransactions.Skip(RecordStartFrom).Take(SelectedRecord);
+    UpdateCollection(recordsToShow);
+    CurrentPage++;
+    UpdateEnableState();
+}
 
 
-        private int _numberOfPages = 5;
-        public int NumberOfPages
-        {
-            get { return _numberOfPages; }
-            set
-            { 
-                _numberOfPages = value;
-                OnPropertyChanged(nameof(NumberOfPages));
-                UpdateEnableState();
-            }
-        }
-
-        private int _selectedRecord = 3;
-        public int SelectedRecord
-        {
-            get { return _selectedRecord; }
-            set
-            {
-                _selectedRecord = value;
-                OnPropertyChanged(nameof(SelectedRecord));
-                UpdateRecordCount();
-            }
-        }
-        public ObservableCollection<int> nums { get; private set; }
-        
-        public void UpdateRecordCount()
-        {
-            NumberOfPages = (int)Math.Ceiling((double)ListOfTransactions.Count / SelectedRecord);
-            NumberOfPages = NumberOfPages == 0 ? 1 : NumberOfPages;
-            UpdateCollection(ListOfTransactions.Take(SelectedRecord));
-            CurrentPage = 1;
-        }
+private int _currentPage = 1;
+public int CurrentPage
+{
+    get { return _currentPage; }
+    set
+    {
+        _currentPage = value;
+        OnPropertyChanged(nameof(CurrentPage));
+        UpdateEnableState();
+    }
+}
 
 
+private int _numberOfPages = 5;
+public int NumberOfPages
+{
+    get { return _numberOfPages; }
+    set
+    {
+        _numberOfPages = value;
+        OnPropertyChanged(nameof(NumberOfPages));
+        UpdateEnableState();
+    }
+}
 
-        private bool _isFirstEnabled;
-        public bool IsFirstEnabled
-        {
-            get { return _isFirstEnabled; }
-            set
-            {
-                _isFirstEnabled = value;
-                OnPropertyChanged(nameof(IsFirstEnabled));
+private int _selectedRecord = 3;
+public int SelectedRecord
+{
+    get { return _selectedRecord; }
+    set
+    {
+        _selectedRecord = value;
+        OnPropertyChanged(nameof(SelectedRecord));
+        UpdateRecordCount();
+    }
+}
+public ObservableCollection<int> nums { get; private set; }
 
-            }
-        }
+public void UpdateRecordCount()
+{
+    NumberOfPages = (int)Math.Ceiling((double)ListOfTransactions.Count / SelectedRecord);
+    NumberOfPages = NumberOfPages == 0 ? 1 : NumberOfPages;
+    UpdateCollection(ListOfTransactions.Take(SelectedRecord));
+    CurrentPage = 1;
+}
 
-        private bool _isPreviousEnabled;
-        public bool IsPreviousEnabled
-        {
-            get { return _isPreviousEnabled; }
-            set
-            {
-                _isPreviousEnabled = value;
-                OnPropertyChanged(nameof(IsPreviousEnabled));
 
-            }
-        }
 
-        private bool _isNextEnabled;
-        public bool IsNextEnabled
-        {
-            get { return _isNextEnabled; }
-            set
-            {
-                _isNextEnabled = value;
-                OnPropertyChanged(nameof(IsNextEnabled));
+private bool _isFirstEnabled;
+public bool IsFirstEnabled
+{
+    get { return _isFirstEnabled; }
+    set
+    {
+        _isFirstEnabled = value;
+        OnPropertyChanged(nameof(IsFirstEnabled));
 
-            }
-        }
+    }
+}
 
-        private bool _isLastEnabled;
-        public bool IsLastEnabled
-        {
-            get { return _isLastEnabled; }
-            set
-            {
-                _isLastEnabled = value;
-                OnPropertyChanged(nameof(IsLastEnabled));
-            }
-        }
+private bool _isPreviousEnabled;
+public bool IsPreviousEnabled
+{
+    get { return _isPreviousEnabled; }
+    set
+    {
+        _isPreviousEnabled = value;
+        OnPropertyChanged(nameof(IsPreviousEnabled));
 
-        private void UpdateEnableState()
-        {
-            IsFirstEnabled = CurrentPage > 1;
-            IsPreviousEnabled = CurrentPage > 1;
-            IsNextEnabled = CurrentPage < NumberOfPages;
-            IsLastEnabled = CurrentPage < NumberOfPages;
+    }
+}
 
-        }
+private bool _isNextEnabled;
+public bool IsNextEnabled
+{
+    get { return _isNextEnabled; }
+    set
+    {
+        _isNextEnabled = value;
+        OnPropertyChanged(nameof(IsNextEnabled));
+
+    }
+}
+
+private bool _isLastEnabled;
+public bool IsLastEnabled
+{
+    get { return _isLastEnabled; }
+    set
+    {
+        _isLastEnabled = value;
+        OnPropertyChanged(nameof(IsLastEnabled));
+    }
+}
+
+private void UpdateEnableState()
+{
+    IsFirstEnabled = CurrentPage > 1;
+    IsPreviousEnabled = CurrentPage > 1;
+    IsNextEnabled = CurrentPage < NumberOfPages;
+    IsLastEnabled = CurrentPage < NumberOfPages;
+
+}
     }
 
 
     public class Command : ICommand
+{
+    public Command(Func<object, bool> methodCanExecute, Action<object> methodExecute)
     {
-        public Command(Func<object, bool> methodCanExecute, Action<object> methodExecute)
-        {
-            MethodCanExecute = methodCanExecute;
-            MethodExecute = methodExecute;
-        }
-        Action<object> MethodExecute;
-        Func<object, bool> MethodCanExecute;
-        public event EventHandler CanExecuteChanged;
+        MethodCanExecute = methodCanExecute;
+        MethodExecute = methodExecute;
+    }
+    Action<object> MethodExecute;
+    Func<object, bool> MethodCanExecute;
+    public event EventHandler CanExecuteChanged;
 
-        public bool CanExecute(object parameter)
-        {
-            return MethodExecute != null && MethodCanExecute.Invoke(parameter);
-        }
+    public bool CanExecute(object parameter)
+    {
+        return MethodExecute != null && MethodCanExecute.Invoke(parameter);
+    }
 
-        public void Execute(object parameter)
-        {
-            MethodExecute(parameter);
-        }
+    public void Execute(object parameter)
+    {
+        MethodExecute(parameter);
     }
 }
+
+*/

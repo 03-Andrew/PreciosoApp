@@ -1,6 +1,7 @@
 ﻿using DynamicData;
 using MySql.Data.MySqlClient;
 using Mysqlx.Crud;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -197,6 +198,38 @@ namespace PreciosoApp.Models
         public static List<Inventory> SearchInventory(List<Inventory> allInv, string searchText)
         {
             return allInv.FindAll(inv => inv.prodName.ToLower().Contains(searchText.ToLower()));
+        }
+    }
+
+    public class StockinHistory
+    {
+        public int InventoryID { get; set; }
+        public string? Supplier { get; set; }
+        public DateOnly Date { get; set; }
+        public string? Therapist {  get; set; }
+        public string? Products { get; set; }
+        public string? Quantity { get; set; }
+        public string? PurchasePrice { get; set; }
+        public string? PriceEach { get; set; }
+        public double Subtotal { get; set; }
+        Database db = new Database();
+
+        public List<StockinHistory> GetStockinHistory()
+        {
+            Func<MySqlDataReader, StockinHistory> mapRow = reader => new StockinHistory
+            {
+                InventoryID = reader.GetInt32("inventory_id"),
+                Supplier = reader.GetString("supplier_name"),
+                Date = DateOnly.FromDateTime(reader.GetDateTime("date")),
+                Therapist = reader.GetString("name"),
+                Products = reader.GetString("products").Replace(",", "\n"),
+                Quantity = reader.GetString("quantity").Replace(",", "\n"),
+                PurchasePrice = reader.GetString("purchase_price").Replace(",","\n"),
+                PriceEach = reader.GetString("price_each").Replace(",","\n"),
+                Subtotal = reader.GetDouble("Subtotal")
+            };
+            string query = "SELECT i.inventory_id, sp.supplier_name, i.date, th.name,\r\n    GROUP_CONCAT(p.product_name SEPARATOR \",\") AS products,\r\n    GROUP_CONCAT(ip.quantity SEPARATOR \",\") AS quantity,\r\n    GROUP_CONCAT(ip.purchase_price SEPARATOR \",\") AS purchase_price,\r\n    GROUP_CONCAT(ip.quantity * ip.purchase_price) AS price_each,\r\n    SUM(ip.quantity * ip.purchase_price) AS subtotal\r\nFROM tbl_stockin i\r\nLEFT JOIN tbl_stockin_product ip ON i.inventory_id = ip.inventory_id\r\nLEFT JOIN tbl_supplier sp ON i.supplier_id = sp.supplier_id\r\nLEFT JOIN tbl_product p ON ip.product_id = p.product_id\r\nLEFT JOIN tbl_therapist th ON i.supplier_id = th.therapist_id\r\nGROUP BY i.inventory_id, sp.supplier_name, i.date, th.name;";
+            return db.ExecuteQuery(query, mapRow);
         }
     }
 }

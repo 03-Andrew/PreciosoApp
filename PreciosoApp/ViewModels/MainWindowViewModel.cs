@@ -52,13 +52,13 @@ public partial class MainWindowViewModel : ViewModelBase
     public ObservableCollection<ListItemTemplate> Items { get; } = new()
     {
         new ListItemTemplate(typeof(DashboardViewModel), "desktop_regular"),
-        new ListItemTemplate(typeof(InventoryViewModel), "desktop_regular"),
-        new ListItemTemplate(typeof(AppointmentViewModel), "desktop_regular"),
-        new ListItemTemplate(typeof(POSViewModel), "desktop_regular"),
-        new ListItemTemplate(typeof(ServicesViewModel), "desktop_regular"),
-        new ListItemTemplate(typeof(SalesReportViewModel), "desktop_regular"),
-        new ListItemTemplate(typeof(HistoryViewModel), "desktop_regular"),
-        new ListItemTemplate(typeof(TherapistViewModel), "desktop_regular")
+        new ListItemTemplate(typeof(InventoryViewModel), "toolbox_regular"),
+        new ListItemTemplate(typeof(AppointmentViewModel), "person_clock_regular"),
+        new ListItemTemplate(typeof(POSViewModel), "cart_regular"),
+        new ListItemTemplate(typeof(ServicesViewModel), "calendar_star_regular"),
+        new ListItemTemplate(typeof(SalesReportViewModel), "data_bar_vertical_regular"),
+        new ListItemTemplate(typeof(HistoryViewModel), "book_regular"),
+        new ListItemTemplate(typeof(TherapistViewModel), "video_person_regular")
     };
 
     public MainWindowViewModel()

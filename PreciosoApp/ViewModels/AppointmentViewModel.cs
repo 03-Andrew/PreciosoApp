@@ -105,15 +105,14 @@ namespace PreciosoApp.ViewModels
             }
         }
 
-        private ObservableCollection<ProductSoldTransactions> _transactions;
-        private ObservableCollection<ProductSoldTransactions> allTransactions;
-        public ObservableCollection<ProductSoldTransactions> Transactions
+        private ObservableCollection<DailyReport> _prodTransactions;
+        public ObservableCollection<DailyReport> ProdTransactions
         {
-            get { return _transactions; }
+            get { return _prodTransactions; }
             set
             {
-                _transactions = value;
-                OnPropertyChanged(nameof(Transactions));   
+                _prodTransactions = value;
+                OnPropertyChanged(nameof(ProdTransactions));   
             }
         }
 
@@ -226,12 +225,22 @@ namespace PreciosoApp.ViewModels
         {
             if (_selectedClient != null)
             {
-                var tran = new ProductSoldTransactions();
-                Transactions = new ObservableCollection<ProductSoldTransactions>(tran.GetPTransactions().Where(tr => tr.ClientName.Contains(SelectedClient.Name)));
+                var tran = new DailyReport();
+                ProdTransactions = new ObservableCollection<DailyReport>(
+                     tran.GetDailyReports().Where(tr =>
+                         tr.Client.Contains(SelectedClient.Name) &&
+                         tr.Type.Contains("product")
+                     )
+                 );
+                ServicePromoUsed = new ObservableCollection<ServicePromoHistory>(
+                    new ServicePromoHistory().GetServicePromoHistory()
+                    .Where(tr => tr.Client.Contains(SelectedClient.Name))
+                );
             }
             else
             {
-                Transactions = _transactions;
+                ProdTransactions = _prodTransactions;
+                ServicePromoUsed = _servicePromoUsed;
             }
             
         } 
@@ -295,5 +304,18 @@ namespace PreciosoApp.ViewModels
                 FilterClients();
             }
         }
+
+        private ObservableCollection<ServicePromoHistory> _servicePromoUsed;
+        public ObservableCollection<ServicePromoHistory> ServicePromoUsed 
+        {
+            get { return _servicePromoUsed; }
+            set
+            {
+                _servicePromoUsed = value;
+                OnPropertyChanged(nameof(ServicePromoUsed));
+            }
+        }
+
+
     }
 }
