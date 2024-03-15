@@ -16,7 +16,7 @@ namespace PreciosoApp.Models
         public float prodCost { get; set; }
         public float prodComm { get; set; }
         public string prodType { get; set; }
-        public int prodLevel { get; set; }
+        public int prodCritLevel { get; set; }
         public int prodStock { get; set; }
 
         public Inventory() { }
@@ -25,6 +25,10 @@ namespace PreciosoApp.Models
         {
             Database db = new Database();
             List<Inventory> inventory = new List<Inventory>();
+
+
+
+
 
             using (MySqlConnection conn = db.GetCon())
             {
@@ -46,7 +50,7 @@ namespace PreciosoApp.Models
                             inv.prodCost = reader.GetFloat("product_cost");
                             inv.prodComm = reader.GetFloat("commission");
                             inv.prodType = reader.GetString("type");
-                            inv.prodLevel = reader.GetInt32("critical_level");
+                            inv.prodCritLevel = reader.GetInt32("critical_level");
                             inv.prodStock = reader.GetInt32("stock_level");
                             inventory.Add(inv);
                         }
@@ -58,16 +62,18 @@ namespace PreciosoApp.Models
         }
 
 
-        public void AddStockInProduct(int prod_id, int quantity, double price)
+        public void AddStockInProduct(int invID, int prod_id, int quantity, double price)
         {
             Database db = new Database();
             using (MySqlConnection con = db.GetCon())
             {
                 con.Open();
-                string query = "INSERT INTO tbl_stockin_product (inventory_id, product_id, quantity, purchase_price) VALUES ((SELECT MAX(inventory_id) FROM tbl_stockin), @prod_id, @quan, @price);";  
+                string query = "INSERT INTO tbl_stockin_product (inventory_id, product_id, quantity, purchase_price) " +
+                               "VALUES (@invID, @prod_id, @quan, @price);";  
 
                 using (MySqlCommand cmd = new MySqlCommand(query, con))
                 {
+                    cmd.Parameters.AddWithValue("@invID", invID);
                     cmd.Parameters.AddWithValue("@prod_id", prod_id);
                     cmd.Parameters.AddWithValue("@quan", quantity);
                     cmd.Parameters.AddWithValue("@price", price);
@@ -121,13 +127,15 @@ namespace PreciosoApp.Models
             }
         }
 
-        public void StockIn(int Supplier_id, DateTime date, int Therapist_id)
+        public int StockIn(int Supplier_id, DateTime date, int Therapist_id)
         {
+            int invID = -1;
             Database db = new Database();
             using (MySqlConnection conn = db.GetCon())
             {
                 conn.Open();
-                string query = "INSERT INTO tbl_stockin (supplier_id, date, therapist_id) values (@supplier, @date, @therapist)"; 
+                string query = "INSERT INTO tbl_stockin (supplier_id, date, therapist_id) values (@supplier, @date, @therapist);" +
+                               "SELECT LAST_INSERT_ID();"; 
                 
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
@@ -135,9 +143,11 @@ namespace PreciosoApp.Models
                     cmd.Parameters.AddWithValue("@date", date);
                     cmd.Parameters.AddWithValue("@therapist", Therapist_id);
 
-                    cmd.ExecuteNonQuery();
+                    invID = Convert.ToInt32(cmd.ExecuteScalar());
                 }
             }
+
+            return invID;
         }
 
         public List<string> GetProductName()

@@ -1,6 +1,8 @@
 ﻿using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
+using Org.BouncyCastle.Pqc.Crypto.Lms;
 using PreciosoApp.Models;
 using PreciosoApp.Views;
 using System;
@@ -18,6 +20,7 @@ namespace PreciosoApp.ViewModels
     public class InventoryViewModel : ViewModelBase
     {
         private ObservableCollection<Inventory> inventory;
+        private ObservableCollection<Inventory> critInventory;
         private ObservableCollection<Inventory> allInventory;
         private ObservableCollection<Supplier> allSupplier;
         public ObservableCollection<ProductType> prodTypes;
@@ -35,8 +38,18 @@ namespace PreciosoApp.ViewModels
         private string searchSupp;
         private List<string> prodNames;
         private List<string> suppNames;
+
+        //Multiple Stock In
+        private string searchStockInProductsText;
         private int quantity;
         private double price;
+        private ObservableCollection<Inventory> stockInProducts;
+        private ObservableCollection<Inventory> stockInAllProducts;
+        public Inventory selectedStockInProducts;
+        public ObservableCollection<StockInProductItems> stockInItems;
+        private StockInProductItems selectedStockInItems;
+
+
 
 
         // Add new service
@@ -54,17 +67,25 @@ namespace PreciosoApp.ViewModels
         public ICommand UpdateProductCommand { get; }
         public ICommand AddNewSupplierCommand { get; }
         public ICommand UpdateSupplierCommand { get; }
+        public ICommand AddToStockInGrid { get; }
+        public ICommand RemoveFromStockInGrid { get; }
 
         public InventoryViewModel()
         {
             var inv = new Inventory();
             allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
+            stockInAllProducts = new ObservableCollection<Inventory>(inv.GetInventory());
             Inventory = allInventory;
+            CritInventory = allInventory;
+            StockInProducts = stockInAllProducts;
             LoadProductNames();
             LoadSupplierNames();
+            showCriticalStock();
+
 
             var Supp = new Supplier();
             allSupplier = new ObservableCollection<Supplier>(Supp.GetAllSupplier());
+            Suppliers = allSupplier;
             SupplierData = allSupplier;
 
             var ther = new Therapist();
@@ -73,10 +94,15 @@ namespace PreciosoApp.ViewModels
             var productTypes = new ProductType();
             ProdTypes = new ObservableCollection<ProductType>(productTypes.GetProductType());
 
+            StockInItems = new ObservableCollection<StockInProductItems>();
+
             AddNewProductCommand = new RelayCommand(AddProduct);
             UpdateProductCommand = new RelayCommand(UpdateProduct);
             AddNewSupplierCommand = new RelayCommand(AddSupplier);
             UpdateSupplierCommand = new RelayCommand(UpdateSupplier);
+            AddToStockInGrid = new RelayCommand(AddToStockProductDataGrid);
+            RemoveFromStockInGrid = new RelayCommand(RemoveSelectedStockInProductGrid);
+
         }
 
         public ObservableCollection<Inventory> Inventory
@@ -86,6 +112,16 @@ namespace PreciosoApp.ViewModels
             {
                 inventory = value;
                 OnPropertyChanged(nameof(Inventory));
+            }
+        }
+
+        public ObservableCollection<Inventory> CritInventory
+        {
+            get { return critInventory; }
+            set
+            {
+                critInventory = value;
+                OnPropertyChanged(nameof(CritInventory));
             }
         }
 
@@ -120,6 +156,26 @@ namespace PreciosoApp.ViewModels
             }
         }
 
+        public ObservableCollection<Inventory> StockInProducts
+        {
+            get { return stockInProducts; }
+            set
+            {
+                stockInProducts = value;
+                OnPropertyChanged(nameof(StockInProducts));
+            }
+        }
+
+        public ObservableCollection<StockInProductItems> StockInItems
+        {
+            get { return stockInItems; }
+            set
+            {
+                stockInItems = value;
+                OnPropertyChanged(nameof(StockInItems));
+            }
+        }
+
         public string SearchProd
         {
             get { return searchProd; }
@@ -139,6 +195,16 @@ namespace PreciosoApp.ViewModels
                 searchSupp = value;
                 OnPropertyChanged(nameof(SearchSupp));
                 FilterSupplier();
+            }
+        }
+
+        public string SearchStockInProductsText
+        {
+            get { return searchStockInProductsText; }
+            set
+            {
+                searchStockInProductsText = value;
+                OnPropertyChanged(nameof(SearchStockInProductsText));
             }
         }
 
@@ -237,6 +303,25 @@ namespace PreciosoApp.ViewModels
                 OnPropertyChanged(nameof(SelectedProductType));
             }
         }
+        public Inventory SelectedStockInProducts
+        {
+            get { return selectedStockInProducts; }
+            set
+            {
+                selectedStockInProducts = value;
+                OnPropertyChanged(nameof(SelectedStockInProducts));
+            }
+        }
+
+        public StockInProductItems SelectedStockInItems
+        {
+            get { return selectedStockInItems; }
+            set
+            {
+                selectedStockInItems = value;
+                OnPropertyChanged(nameof(SelectedStockInItems));
+            }
+        }
 
         public DateTimeOffset InputDate
         {
@@ -268,7 +353,6 @@ namespace PreciosoApp.ViewModels
             }
         }
 
-
         private void FilterInventory()
         {
             if (string.IsNullOrWhiteSpace(SearchProd))
@@ -297,6 +381,11 @@ namespace PreciosoApp.ViewModels
             OnPropertyChanged(nameof(SupplierData));
         }
 
+        private void showCriticalStock()
+        {
+            CritInventory = new ObservableCollection<Inventory>(allInventory.Where(i => i.prodStock <= i.prodCritLevel));
+        }
+
         public int GetProductTypeID(string type)
         {
             foreach (var item in ProdTypes)
@@ -306,31 +395,103 @@ namespace PreciosoApp.ViewModels
             return -1;
         }
 
+        public int GetSelectedStockInProductID()
+        {
+            if (SelectedStockInProducts != null)
+            {
+                return SelectedStockInProducts.invID;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
         public void AddStock()
         {
             try
             {
                 Inventory inv = new Inventory();
-                inv.StockIn(SelectedSupplier.Id, InputDate.Date, SelectedTherapist.Id);
-                inv.AddStockInProduct(SelectedProduct.invID, Quantity, Price);
+                int invID = inv.StockIn(SelectedSupplier.Id, InputDate.Date, SelectedTherapist.Id);
+                for (int i = 0; i < StockInItems.Count; i++)
+                {
+                    var item = StockInItems[i];
+                    if(item != null)
+                    {
+                        inv.AddStockInProduct(invID, item.ProductID, Quantity, Price);
+                    }
+                }
 
                 SelectedSupplier = null;
                 InputDate = DateTime.Now;
                 SelectedTherapist = null;
-                SelectedProduct = null;
+                StockInItems.Clear();
                 Quantity = 0;
                 Price = 0;
 
                 allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
                 Inventory = allInventory;
                 _errorText = "Added Item";
-
+                showCriticalStock();
             }
             catch (Exception ex) {
 
                 // Display error
                 ErrorText = ex.Message;
             }
+        }
+
+        private void AddToStockProductDataGrid()
+        {
+            var window = new DialogWindow();
+
+            if (SelectedStockInProducts == null || Quantity == null || Quantity == 0 || Price == null || Price == 0)
+            {
+                if (Quantity == 0 || Quantity == null)
+                {
+                    window.DialogText = "Quantity added is 0, please input a valid quantity number!";
+                }else if(Price == null || Price == 0)
+                {
+                    window.DialogText = "Price added is 0, please input a valid price number!";
+                }
+                else
+                {
+                    window.DialogText = "You are missing some required fields! please fill them out!";
+                }
+                window.Show();
+            }
+            else
+            {
+                string serviceName = SelectedStockInProducts.prodName;
+                int serviceID = GetSelectedStockInProductID();
+                int qty = Quantity;
+                double cost = Price;
+
+                var existingOrderItem = StockInItems.FirstOrDefault(item => item.SelectedProductName == serviceName);
+                if (existingOrderItem != null)
+                {
+                    existingOrderItem.Quantity++;
+                }
+                else
+                {
+                    StockInItems.Add(new StockInProductItems
+                    {
+                        ProductID = serviceID,
+                        SelectedProductName = serviceName,
+                        Quantity = qty,
+                        Cost = cost,
+                    });
+                }
+            }
+        }
+
+        private void RemoveSelectedStockInProductGrid()
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                var selectedItem = SelectedStockInItems;
+                StockInItems.Remove(selectedItem);
+            });
         }
 
         public void AddProduct()
@@ -428,11 +589,11 @@ namespace PreciosoApp.ViewModels
                     supp.addNewSuppler(newSupplierName, newSupplierNo);
                     newSupplierName = "";
                     newSupplierNo = "";
-
-                    allSupplier = new ObservableCollection<Supplier>(supp.GetAllSupplier());
-                    Suppliers = allSupplier;
+                    SupplierData = new ObservableCollection<Supplier>(supp.GetAllSupplier());
+                    OnPropertyChanged(nameof(SupplierData));
                 }
-            }
+
+            } 
         }
 
         private void UpdateSupplier()
@@ -459,8 +620,8 @@ namespace PreciosoApp.ViewModels
             {
                 supp.updateSupplier(name, contact, id);
 
-                allSupplier = new ObservableCollection<Supplier>(supp.GetAllSupplier());
-                Suppliers = allSupplier;
+                SupplierData = new ObservableCollection<Supplier>(supp.GetAllSupplier());
+                OnPropertyChanged(nameof(SupplierData));
 
                 OnPropertyChanged(nameof(SelectedProductData));
             }
@@ -473,6 +634,54 @@ namespace PreciosoApp.ViewModels
             {
                 _errorText = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ErrorText)));
+            }
+        }
+    }
+
+    public class StockInProductItems : ViewModelBase
+    {
+        public int productID;
+        public string selectedProductName;
+        public int quantity;
+        public double cost;
+
+        public int ProductID
+        {
+            get { return productID; }
+            set
+            {
+                productID = value;
+                OnPropertyChanged(nameof(ProductID));
+            }
+        }
+
+        public string SelectedProductName
+        {
+            get { return selectedProductName; }
+            set
+            {
+                selectedProductName = value;
+                OnPropertyChanged(nameof(SelectedProductName));
+            }
+        }
+
+        public int Quantity
+        {
+            get { return quantity; }
+            set
+            {
+                quantity = value;
+                OnPropertyChanged(nameof(Quantity));
+            }
+        }
+
+        public double Cost
+        {
+            get { return cost; }
+            set
+            {
+                cost = value;
+                OnPropertyChanged(nameof(Cost));
             }
         }
     }

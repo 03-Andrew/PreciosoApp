@@ -7,210 +7,287 @@
              xmlns:vm="using:PreciosoApp.ViewModels"
              x:DataType="vm:InventoryViewModel">
 
-	<Grid RowDefinitions="Auto,*">
-		<Border Grid.Row="0" Background="#f3f3f3f3" Margin="20 20 20 20" CornerRadius="10">
-			<Border.Effect>
-				<DropShadowEffect Opacity="0.1"/>
-			</Border.Effect>
 			<TabControl>
 				<TabItem Header="Products">
-					<StackPanel >
-						<StackPanel Orientation="Horizontal">
-							<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
-								<TextBlock Text="Search Product: " Padding="0 10 0 10"/>
-							</Grid>
-							<TextBox Text="{Binding SearchProd, Mode=TwoWay}"
-									 Margin="10 20 0 0" HorizontalAlignment="Left" Padding="10" Width="300"/>
-						</StackPanel>
+					<Grid RowDefinitions="Auto, *">
+						<Border Grid.Row="0" Background="#f3f3f3f3" Margin="20 20 20 20" CornerRadius="10">
+							<Border.Effect>
+								<DropShadowEffect Opacity="0.1"/>
+							</Border.Effect>
+							<Grid RowDefinitions="Auto, *" ColumnDefinitions="850, *">
+								<StackPanel Margin="0 0 90 0" Grid.Row="0" Grid.Column="0">
+									<StackPanel Orientation="Horizontal">
+										<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
+											<TextBlock Text="Search Product: " Padding="0 10 0 10"/>
+										</Grid>
+										<TextBox Text="{Binding SearchProd, Mode=TwoWay}"
+												 Margin="10 20 0 0" HorizontalAlignment="Left" Padding="10" Width="300"/>
+									</StackPanel>
 
-						<DataGrid Margin="20"  ItemsSource="{Binding Inventory}"
-								  AutoGenerateColumns="True" IsReadOnly="True" CanUserResizeColumns="True"
-								  GridLinesVisibility="All" Height="150" SelectedItem="{Binding SelectedProductData, Mode=TwoWay}"
-			  />
-					</StackPanel>
+									<DataGrid Margin="20"  ItemsSource="{Binding Inventory}"
+											  AutoGenerateColumns="True" IsReadOnly="True" CanUserResizeColumns="True"
+											  GridLinesVisibility="All" Height="150" SelectedItem="{Binding SelectedProductData, Mode=TwoWay}"/>
+								</StackPanel>
+								<StackPanel Grid.Row="0" Grid.Column="1">
+									
+										<TextBlock HorizontalAlignment="Center" Foreground="Red" Text="PRODUCT NEEDS STOCK IN" Margin="0 30 0 -10"/>
+									
+									<DataGrid Margin="20"  ItemsSource="{Binding CritInventory}"
+											  IsReadOnly="True" CanUserResizeColumns="True"
+											  GridLinesVisibility="All" Height="150" HeadersVisibility="None">
+										<DataGrid.Columns>
+											<DataGridTextColumn Header="Name" Binding="{Binding prodName}"></DataGridTextColumn>
+											<DataGridTextColumn Header="Stock" Binding="{Binding prodStock}"></DataGridTextColumn>
+										</DataGrid.Columns>
+									</DataGrid>
+								</StackPanel>
+							</Grid>
+
+						</Border>
+						<Border Grid.Row="1" Background="#f3f3f3f3" Margin="20 20 20 20" CornerRadius="10">
+							<Border.Effect>
+								<DropShadowEffect Opacity="0.1"/>
+							</Border.Effect>
+							<StackPanel Margin="0 0 0 0">
+								<TabControl>
+									<TabItem Header="Add Stock">
+										<Grid RowDefinitions="Auto, *" ColumnDefinitions="Auto, *">
+											<StackPanel Grid.Row="0" Grid.Column="0">
+												<StackPanel>
+													<StackPanel Orientation="Horizontal">
+														<StackPanel>
+															<StackPanel Orientation="Horizontal">
+																<StackPanel>
+																	<TextBlock Text="Date" Margin="20 0 20 5"/>
+																	<DatePicker Margin="20 0 0 0" SelectedDate="{Binding InputDate}"></DatePicker>
+																</StackPanel>
+
+																<StackPanel>
+																	<TextBlock Text="Supplier" Margin="20 0 20 5"/>
+																	<ComboBox PlaceholderText="Supplier" ItemsSource="{Binding Suppliers}"
+																			  Margin="20 0 0 0" SelectedValue="{Binding SelectedSupplier, Mode=TwoWay}">
+																		<ComboBox.ItemTemplate>
+																			<DataTemplate>
+																				<TextBlock Text="{Binding Name}" />
+																			</DataTemplate>
+																		</ComboBox.ItemTemplate>
+																	</ComboBox>
+																</StackPanel>
+															</StackPanel>
+															<StackPanel Orientation="Horizontal">
+																<StackPanel>
+																	<TextBlock Text="Therapist:" Margin="20 10 20 5"/>
+																	<ComboBox PlaceholderText="Therapists " Height="50" Width="150" Margin="20 0 0 0"
+																			  ItemsSource="{Binding Therapist}" SelectedValue="{Binding SelectedTherapist, Mode=TwoWay}">
+																		<ComboBox.ItemTemplate>
+																			<DataTemplate>
+																				<TextBlock Text="{Binding Name}" />
+																			</DataTemplate>
+																		</ComboBox.ItemTemplate>
+																	</ComboBox>
+																</StackPanel>
+																<StackPanel>
+																	<TextBlock Text="Product" Margin="20 10 20 5"/>
+																	<Expander Width="250" Margin="20 0 0 0">
+																		<Expander.Header>
+																			Products
+																		</Expander.Header>
+																		<Grid RowDefinitions="*,*" ColumnDefinitions="90,*">
+																			<StackPanel Grid.Row="0" Grid.Column="0"
+																						Orientation="Vertical">
+																				<TextBlock Text="Search" Margin="10"
+																   ></TextBlock>
+																				<TextBox  HorizontalAlignment="Left"
+																						  VerticalAlignment="Top"
+																						  Text="{Binding SearchStockInProductsText, Mode=TwoWay}" Height="10" Width="10"/>
+																				<TextBlock Text="Qty" Margin="10"
+																	   ></TextBlock>
+																				<TextBox  HorizontalAlignment="Left"
+																						  VerticalAlignment="Top"
+																						  Text="{Binding Quantity, Mode=TwoWay}" Height="10" Width="10"/>
+																				<TextBlock Text="Cost" Margin="10"
+																	   ></TextBlock>
+																				<TextBox  HorizontalAlignment="Left"
+																						  VerticalAlignment="Top"
+																						  Text="{Binding Price, Mode=TwoWay}" Height="10" Width="10"/>
+																			</StackPanel>
+																			<Button Command="{Binding AddToStockInGrid}"
+																					HorizontalAlignment="Center"
+																					HorizontalContentAlignment="Center"
+																					Width="100"
+																					VerticalAlignment="Top"
+																					Margin="0 -10 0 0"
+																					Grid.Row="0" Grid.Column="1">Add</Button>
+																			<DataGrid Height="150" ItemsSource="{Binding StockInProducts}"
+																					  SelectedItem="{Binding SelectedStockInProducts, Mode=TwoWay}"
+																					  IsReadOnly="True"
+																					  CanUserResizeColumns="True" GridLinesVisibility="All"
+																					  Grid.Row="0" Grid.Column="1">
+																				<DataGrid.Columns>
+																					<DataGridTextColumn Header="Name" Width="150" Binding="{Binding prodName}"/>
+																				</DataGrid.Columns>
+																			</DataGrid>
+																		</Grid>
+																	</Expander>
+																</StackPanel>
+															</StackPanel>
+															<Button Margin="20 10 0 0" Command="{Binding AddStock}">Add Stock</Button>
+														</StackPanel>
+													</StackPanel>
+												</StackPanel>
+											</StackPanel>
+											<StackPanel Grid.Row="0" Grid.Column="1" Margin="100 0 0 0">
+												<TextBlock Text="Products from Supplier (double click on quantity to edit)" />
+												<DataGrid  HorizontalAlignment="Left"
+														   SelectedItem="{Binding SelectedStockInItems, Mode=TwoWay}"
+														   Width="350" Height="200" ItemsSource="{Binding StockInItems}"
+														   IsReadOnly="True"
+														   CanUserResizeColumns="True" GridLinesVisibility="All">
+													<DataGrid.Columns>
+														<DataGridTextColumn Width="116.6" Header="Name" Binding="{Binding SelectedProductName}"></DataGridTextColumn>
+														<DataGridTextColumn Width="116.6" Header="Qty" Binding="{Binding Quantity}"></DataGridTextColumn>
+														<DataGridTextColumn Width="116.6" Header="Cost" Binding="{Binding Cost}"></DataGridTextColumn>
+													</DataGrid.Columns>
+												</DataGrid>
+												<Button Command="{Binding RemoveFromStockInGrid}" Margin="20 5 0 0">Remove</Button>
+											</StackPanel>
+										</Grid>
+										
+									</TabItem>
+									<TabItem Header="Add New Product">
+										<StackPanel>
+											<StackPanel Orientation="Horizontal" Margin="20 0 20 5">
+												<StackPanel>
+													<TextBlock Text="Product Name"/>
+													<TextBox Text="{Binding newProductName}" Width="150"></TextBox>
+												</StackPanel>
+												<StackPanel Margin="20 0 0 0">
+													<TextBlock Text="Price"/>
+													<TextBox Text="{Binding newProductPrice}" Width="100"></TextBox>
+												</StackPanel>
+											</StackPanel>
+											<StackPanel Orientation="Horizontal">
+												<StackPanel Margin="20 0 0 0">
+													<TextBlock Text="Product Type"/>
+													<ComboBox ItemsSource="{Binding ProdTypes}"
+															  SelectedValue="{Binding SelectedProductType, Mode=TwoWay}">
+														<ComboBox.ItemTemplate>
+															<DataTemplate>
+																<TextBlock Text="{Binding productType}"/>
+															</DataTemplate>
+														</ComboBox.ItemTemplate>
+													</ComboBox>
+												</StackPanel>
+											</StackPanel>
+											<Button Command="{Binding AddNewProductCommand}" Margin="20 20 20 5">Add Product</Button>
+										</StackPanel>
+									</TabItem>
+									<TabItem Header="Update Product">
+										<StackPanel>
+											<StackPanel Orientation="Horizontal" Margin="20 0 20 5">
+												<StackPanel>
+													<TextBlock Text="Product Name"/>
+													<TextBox Text="{Binding SelectedProductData.prodName}" Width="150"></TextBox>
+												</StackPanel>
+												<StackPanel Margin="20 0 0 0">
+													<TextBlock Text="Price"/>
+													<TextBox Text="{Binding SelectedProductData.prodCost}" Width="100"></TextBox>
+												</StackPanel>
+											</StackPanel>
+											<StackPanel Orientation="Horizontal">
+												<StackPanel Margin="20 0 0 0">
+													<TextBlock Text="Product Type"/>
+													<ComboBox PlaceholderText="{Binding SelectedProductData.prodType}"
+															  ItemsSource="{Binding ProdTypes}"
+															  SelectedValue="{Binding SelectedProductType, Mode=TwoWay}">
+														<ComboBox.ItemTemplate>
+															<DataTemplate>
+																<TextBlock Text="{Binding productType}"/>
+															</DataTemplate>
+														</ComboBox.ItemTemplate>
+													</ComboBox>
+												</StackPanel>
+											</StackPanel>
+											<Button Command="{Binding UpdateProductCommand}" Margin="20 20 20 5">Update Product</Button>
+										</StackPanel>
+									</TabItem>
+								</TabControl>
+							</StackPanel>
+						</Border>
+					</Grid>
 				</TabItem>
 				<TabItem Header="Supplier">
-					<StackPanel >
-						<StackPanel Orientation="Horizontal">
-							<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
-								<TextBlock Text="Search Supplier: " Padding="0 10 0 10"/>
-							</Grid>
-							<TextBox Text="{Binding SearchSupp, Mode=TwoWay}"
-									 Margin="10 20 0 0" HorizontalAlignment="Left" Padding="10" Width="300"/>
-						</StackPanel>
+					<Grid RowDefinitions="Auto, *">
+						<Border Grid.Row="0" Background="#f3f3f3f3" Margin="20 20 20 20" CornerRadius="10">
+							<Border.Effect>
+								<DropShadowEffect Opacity="0.1"/>
+							</Border.Effect>
+							<StackPanel >
+								<StackPanel Orientation="Horizontal">
+									<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
+										<TextBlock Text="Search Supplier: " Padding="0 10 0 10"/>
+									</Grid>
+									<TextBox Text="{Binding SearchSupp, Mode=TwoWay}"
+											 Margin="10 20 0 0" HorizontalAlignment="Left" Padding="10" Width="300"/>
+								</StackPanel>
 
-						<DataGrid Margin="20"  ItemsSource="{Binding SupplierData}"
-								  AutoGenerateColumns="True" IsReadOnly="True" CanUserResizeColumns="True"
-								  GridLinesVisibility="All" Height="150" SelectedItem="{Binding SelectedSupplierData, Mode=TwoWay}"/>
-					</StackPanel>
+								<DataGrid Margin="20"  ItemsSource="{Binding SupplierData}"
+										  AutoGenerateColumns="True" IsReadOnly="True" CanUserResizeColumns="True"
+										  GridLinesVisibility="All" Height="150" SelectedItem="{Binding SelectedSupplierData, Mode=TwoWay}"/>
+								</StackPanel>
+						</Border>
+						<Border Grid.Row="1" Background="#f3f3f3f3" Margin="20 20 20 20" CornerRadius="10">
+							<Border.Effect>
+								<DropShadowEffect Opacity="0.1"/>
+							</Border.Effect>
+							<StackPanel Margin="0 0 0 0">
+								<TabControl>
+									<TabItem Header="Add Supplier">
+										<StackPanel>
+											<StackPanel Orientation="Horizontal">
+												<StackPanel Margin="20 10 20 5">
+													<TextBlock Text="Supplier Name"  />
+													<TextBox Text="{Binding newSupplierName}"
+															 Margin="0 10 0 0"
+															 Watermark="Enter Supplier Name"
+															 Width="180"></TextBox>
+												</StackPanel>
+												<StackPanel Margin="20 10 20 5">
+													<TextBlock Text="Supplier Contact"  />
+													<TextBox Text="{Binding newSupplierNo}"
+															 Margin="0 10 0 0"
+															 Watermark="Enter Contact Number"
+															 Width="180"></TextBox>
+												</StackPanel>
+											</StackPanel>
+											<Button Command="{Binding AddNewSupplierCommand}" Margin="20 10 20 5">Add Supplier</Button>
+										</StackPanel>
+									</TabItem>
+									<TabItem Header="Update Supplier">
+										<StackPanel>
+											<StackPanel Orientation="Horizontal">
+												<StackPanel Margin="20 10 20 5">
+													<TextBlock Text="Supplier Name"  />
+													<TextBox Text="{Binding SelectedSupplierData.Name}"
+															 Margin="0 10 0 0"
+															 Watermark="Enter Supplier Name"
+															 Width="180"></TextBox>
+												</StackPanel>
+												<StackPanel Margin="20 10 20 5">
+													<TextBlock Text="Supplier Contact"  />
+													<TextBox Text="{Binding SelectedSupplierData.Contact}"
+															 Margin="0 10 0 0"
+															 Watermark="Enter Contact Number"
+															 Width="180"></TextBox>
+												</StackPanel>
+											</StackPanel>
+											<Button Command="{Binding UpdateSupplierCommand}" Margin="20 10 20 5">Update Supplier</Button>
+										</StackPanel>
+									</TabItem>
+								</TabControl>
+							</StackPanel>
+						</Border>
+					</Grid>
 				</TabItem>
 			</TabControl>
-			
-		</Border>
-
-		<Border Grid.Row="1" Background="#efefef" Margin="20 0 20 20" CornerRadius="10">
-			<Border.Effect>
-				<DropShadowEffect Opacity="0.1"/>
-			</Border.Effect>
-			<TabControl>
-				<TabItem Header="Products">
-					<TabControl>
-						<TabItem Header="Add Stock">
-							<StackPanel>
-								<StackPanel Orientation="Horizontal">
-									<StackPanel>
-										<TextBlock Text="Date" Margin="20 0 20 5"/>
-										<DatePicker Margin="20 0 0 0" SelectedDate="{Binding InputDate}"></DatePicker>
-									</StackPanel>
-									<StackPanel>
-										<TextBlock Text="Supplier" Margin="20 0 20 5"/>
-										<ComboBox PlaceholderText="Supplier" ItemsSource="{Binding Suppliers}"
-												  Margin="20 0 0 0" SelectedValue="{Binding SelectedSupplier, Mode=TwoWay}">
-											<ComboBox.ItemTemplate>
-												<DataTemplate>
-													<TextBlock Text="{Binding Name}" />
-												</DataTemplate>
-											</ComboBox.ItemTemplate>
-										</ComboBox>
-									</StackPanel>
-									<StackPanel>
-										<TextBlock Text="Product" Margin="20 0 20 5"/>
-										<ComboBox PlaceholderText="Products" Width="150" Margin="20 0 0 0"
-												  ItemsSource="{Binding Inventory}" SelectedValue="{Binding SelectedProduct, Mode=TwoWay}">
-											<ComboBox.ItemTemplate>
-												<DataTemplate>
-													<TextBlock Text="{Binding prodName}" />
-												</DataTemplate>
-											</ComboBox.ItemTemplate>
-										</ComboBox>
-										<TextBlock Text="Product" Margin="20 0 20 5"/>
-										<ComboBox PlaceholderText="Therapist: " Width="150" Margin="20 0 0 0"
-												  ItemsSource="{Binding Therapist}" SelectedValue="{Binding SelectedTherapist, Mode=TwoWay}">
-											<ComboBox.ItemTemplate>
-												<DataTemplate>
-													<TextBlock Text="{Binding Name}" />
-												</DataTemplate>
-											</ComboBox.ItemTemplate>
-										</ComboBox>
-									</StackPanel>
-									<StackPanel>
-										<TextBlock Text="Qty" Margin="20 0 20 5"/>
-										<TextBox Margin="20 0 0 0" Text="{Binding Quantity}" ></TextBox>
-									</StackPanel>
-									<StackPanel>
-										<TextBlock Text="Cost" Margin="20 0 20 5"/>
-										<TextBox Margin="20 0 0 0" Text="{Binding Price}"></TextBox>
-									</StackPanel>
-								</StackPanel>
-								<Button Command="{Binding AddStock}">Add Stock</Button>
-							</StackPanel>
-						</TabItem>
-						<TabItem Header="Add New Product">
-							<StackPanel>
-								<StackPanel Orientation="Horizontal" Margin="20 0 20 5">
-									<StackPanel>
-										<TextBlock Text="Product Name"/>
-										<TextBox Text="{Binding newProductName}" Width="150"></TextBox>
-									</StackPanel>
-									<StackPanel Margin="20 0 0 0">
-										<TextBlock Text="Price"/>
-										<TextBox Text="{Binding newProductPrice}" Width="100"></TextBox>
-									</StackPanel>
-								</StackPanel>
-								<StackPanel Orientation="Horizontal">
-									<StackPanel Margin="20 0 0 0">
-										<TextBlock Text="Product Type"/>
-										<ComboBox ItemsSource="{Binding ProdTypes}"
-												  SelectedValue="{Binding SelectedProductType, Mode=TwoWay}">
-											<ComboBox.ItemTemplate>
-												<DataTemplate>
-													<TextBlock Text="{Binding productType}"/>
-												</DataTemplate>
-											</ComboBox.ItemTemplate>
-										</ComboBox>
-									</StackPanel>
-								</StackPanel>
-								<Button Command="{Binding AddNewProductCommand}" Margin="20 20 20 5">Add Product</Button>
-							</StackPanel>
-						</TabItem>
-						<TabItem Header="Update Product">
-							<StackPanel>
-								<StackPanel Orientation="Horizontal" Margin="20 0 20 5">
-									<StackPanel>
-										<TextBlock Text="Product Name"/>
-										<TextBox Text="{Binding SelectedProductData.prodName}" Width="150"></TextBox>
-									</StackPanel>
-									<StackPanel Margin="20 0 0 0">
-										<TextBlock Text="Price"/>
-										<TextBox Text="{Binding SelectedProductData.prodCost}" Width="100"></TextBox>
-									</StackPanel>
-								</StackPanel>
-								<StackPanel Orientation="Horizontal">
-									<StackPanel Margin="20 0 0 0">
-										<TextBlock Text="Product Type"/>
-										<ComboBox PlaceholderText="{Binding SelectedProductData.prodType}"
-												  ItemsSource="{Binding ProdTypes}"
-												  SelectedValue="{Binding SelectedProductType, Mode=TwoWay}">
-											<ComboBox.ItemTemplate>
-												<DataTemplate>
-													<TextBlock Text="{Binding productType}"/>
-												</DataTemplate>
-											</ComboBox.ItemTemplate>
-										</ComboBox>
-									</StackPanel>
-								</StackPanel>
-								<Button Command="{Binding UpdateProductCommand}" Margin="20 20 20 5">Update Product</Button>
-							</StackPanel>
-						</TabItem>
-					</TabControl>
-				</TabItem>
-				<TabItem Header="Supplier">
-					<TabControl>
-						<TabItem Header="Add Supplier">
-							<StackPanel>
-								<StackPanel Orientation="Horizontal">
-									<StackPanel Margin="20 10 20 5">
-										<TextBlock Text="Supplier Name"  />
-										<TextBox Text="{Binding newSupplierName}"
-												 Margin="0 10 0 0"
-												 Watermark="Enter Supplier Name"
-												 Width="180"></TextBox>
-									</StackPanel>
-									<StackPanel Margin="20 10 20 5">
-										<TextBlock Text="Supplier Contact"  />
-										<TextBox Text="{Binding newSupplierNo}" 
-												 Margin="0 10 0 0"
-												 Watermark="Enter Contact Number"
-												 Width="180"></TextBox>
-									</StackPanel>
-								</StackPanel>
-								<Button Command="{Binding AddNewSupplierCommand}" Margin="20 10 20 5">Add Supplier</Button>
-							</StackPanel>
-						</TabItem>
-						<TabItem Header="Update Supplier">
-							<StackPanel>
-								<StackPanel Orientation="Horizontal">
-									<StackPanel Margin="20 10 20 5">
-										<TextBlock Text="Supplier Name"  />
-										<TextBox Text="{Binding SelectedSupplierData.Name}"
-												 Margin="0 10 0 0"
-												 Watermark="Enter Supplier Name"
-												 Width="180"></TextBox>
-									</StackPanel>
-									<StackPanel Margin="20 10 20 5">
-										<TextBlock Text="Supplier Contact"  />
-										<TextBox Text="{Binding SelectedSupplierData.Contact}"
-												 Margin="0 10 0 0"
-												 Watermark="Enter Contact Number"
-												 Width="180"></TextBox>
-									</StackPanel>
-								</StackPanel>
-								<Button Command="{Binding UpdateSupplierCommand}" Margin="20 10 20 5">Update Supplier</Button>
-							</StackPanel>
-						</TabItem>
-					</TabControl>
-				</TabItem>
-			</TabControl>
-		</Border>
-	</Grid>
 </UserControl>

@@ -40,7 +40,7 @@ namespace PreciosoApp.ViewModels
 
 
         // Add Promos and Add Services Related Variables
-        // Add Services
+            // Add Services
         public ObservableCollection<CommissionRate> commissionRates;
         public ObservableCollection<ServiceType> serviceTypes;
         
@@ -85,6 +85,7 @@ namespace PreciosoApp.ViewModels
             promoAllServices = new ObservableCollection<Services>(serv.GetServices());
             Promos = allPromos;
             PromoServices = promoAllServices;
+
             CommissionRates = new ObservableCollection<CommissionRate>(cRate.GetComissionRate());
             PromoCommissionRates = new ObservableCollection<CommissionRate>(cRate.GetComissionRate());
             ServiceTypes = new ObservableCollection<ServiceType>(sType.GetServiceType());

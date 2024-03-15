@@ -20,26 +20,14 @@ namespace PreciosoApp.Models
             Database db = new Database();
             List<Supplier> supp = new List<Supplier>();
 
-            using (MySqlConnection conn = db.GetCon())
+            Func<MySqlDataReader, Supplier> mapRow = reader => new Supplier
             {
-                conn.Open();
-                string query = "Select * from tbl_supplier";
-                using (MySqlCommand cmd = new MySqlCommand(query, conn))
-                {
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Supplier supplier = new Supplier();
-                            supplier.Id = reader.GetInt32(0);
-                            supplier.Name = reader.GetString(1);
-                            supplier.Contact = reader.GetString(2);
-                            supp.Add(supplier);
-                        }
-                    }
-                }
-            }
-            return supp;
+                Id = reader.GetInt32(0),
+                Name = reader.GetString(1),
+                Contact = reader.GetString(2),
+            };
+            string query = "Select * from tbl_supplier";
+            return db.ExecuteQuery(query, mapRow);
         }
 
         public void addNewSuppler(string suppName, string suppNo)
