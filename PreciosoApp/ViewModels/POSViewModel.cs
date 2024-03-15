@@ -305,6 +305,7 @@ namespace PreciosoApp.ViewModels
                 {
                     itemName = product.prodName;
                     itemType = "Product";
+
                 } else if (selectedItem is Services service)
                 {
                     itemName = service.servName;
@@ -359,6 +360,7 @@ namespace PreciosoApp.ViewModels
         private float itemPrice;
         private int quantity;
         private string itemType;
+        public Inventory Inventory { get; set; }
 
         public int ItemID
         {

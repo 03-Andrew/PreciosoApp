@@ -303,7 +303,7 @@ namespace PreciosoApp.Models
             {
                 conn.Open();
                 string query = @"INSERT INTO `tbl_promo_transaction` (`transaction_id`, `promo_id`, `status`) 
-                                 VALUES (@trnscID, @promoID, 2) ";
+                                 VALUES (@trnscID, @promoID, 1) ";
                 MySqlCommand cmd = new MySqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@trnscID", trnscID);
                 cmd.Parameters.AddWithValue("@promoID", promoID);

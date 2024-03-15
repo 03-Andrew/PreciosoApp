@@ -258,7 +258,7 @@ namespace PreciosoApp.ViewModels
                 );
 
 
-                Note = Note = string.Join(Environment.NewLine, SelectedPromoService.Select(item => item.Notes));
+                //Note = Note = string.Join(Environment.NewLine, SelectedPromoService.Select(item => item.Notes));
 
             }
             else

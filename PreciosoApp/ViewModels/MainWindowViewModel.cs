@@ -137,12 +137,25 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             window.DialogText = "An order has a negative quantity! Please change the value to a valid number!";
             window.Show();
+            return;
         }
-        else
+
+        foreach (var orderItem in OrderItems)
         {
-            var checkoutViewModel = new CheckoutViewModel(OrderItems, this);
-            CurrentPage = checkoutViewModel;
+            if(orderItem.ItemType == "Product")
+            {
+                int currentStock = new Inventory().GetProductStock(orderItem.ItemName);
+                if ((currentStock - orderItem.Quantity) <= 0)
+                {
+                    window.DialogText = $"Insufficient stock for {orderItem.ItemName}! Please restock before proceeding.";
+                    window.Show();
+                    return;
+                }
+            }
         }
+
+        var checkoutViewModel = new CheckoutViewModel(OrderItems, this);
+        CurrentPage = checkoutViewModel;
     }
 
     public void MoveToPOSView()

@@ -27,10 +27,6 @@ namespace PreciosoApp.Models
             Database db = new Database();
             List<Inventory> inventory = new List<Inventory>();
 
-
-
-
-
             using (MySqlConnection conn = db.GetCon())
             {
                 conn.Open();
@@ -60,6 +56,45 @@ namespace PreciosoApp.Models
 
             }
             return inventory;
+        }
+
+        public int GetProductStock(string prodName)
+        {
+            int stock = 0; // Initialize stock variable
+
+            // Create a list to hold inventory data
+            List<Inventory> inventory = new List<Inventory>();
+
+            // Instantiate the database connection
+            Database db = new Database();
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+
+                string query = "SELECT (SELECT COALESCE(SUM(quantity), 0) FROM tbl_stockin_product t1 " +
+                               "WHERE t1.product_id = p.product_id) - (SELECT COALESCE(SUM(quantity), 0) " +
+                               "FROM tbl_products_sold t2 WHERE t2.product_id = p.product_id) " +
+                               "AS stock_level FROM tbl_product p " +
+                               "JOIN tbl_product_type t ON p.product_type = t.type_id " +
+                               "WHERE p.product_name = @productName;"; // Use parameterized query
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    // Add parameter for product name
+                    cmd.Parameters.AddWithValue("@productName", prodName);
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            // Read stock level from the reader
+                            stock = reader.GetInt32("stock_level");
+                        }
+                    }
+                }
+            }
+            return stock;
         }
 
 
