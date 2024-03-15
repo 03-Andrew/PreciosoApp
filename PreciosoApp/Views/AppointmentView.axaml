@@ -51,7 +51,7 @@
 			</Border.Effect>
 			<StackPanel>
 				<TabControl>
-					<TabItem Header="Add Customer">
+					<TabItem Header="Add Customer" FontSize="20">
 						<StackPanel>
 							<StackPanel Orientation="Horizontal">
 								<StackPanel>
@@ -88,7 +88,7 @@
 							</StackPanel>
 						</StackPanel>
 					</TabItem>
-					<TabItem Header="Update Customer Info">
+					<TabItem Header="Update Customer Info" FontSize="20">
 						<StackPanel>
 							<StackPanel Orientation="Horizontal" Height="30"  Margin="20 0 0 40">
 								<StackPanel Margin="0 0 10 0">
@@ -123,9 +123,36 @@
 							</StackPanel>
 						</StackPanel>
 					</TabItem>
-					<TabItem Header="Customer History">
-						<DataGrid ItemsSource="{Binding Transactions}" AutoGenerateColumns="True" Height="300">
-							
+					<TabItem Header="Products sold History" FontSize="20">
+							<DataGrid Grid.Row="0" ItemsSource="{Binding ProdTransactions}" AutoGenerateColumns="False">
+								<DataGrid.Columns>
+									<DataGridTextColumn Header="Date" Binding="{Binding DateTime}"/>
+									<DataGridTextColumn Header="Therapist" Binding="{Binding Therapist}"/>
+									<DataGridTextColumn Header="MOP" Binding="{Binding MOP}"/>
+									<DataGridTemplateColumn Header="Availed"  Width="auto">
+										<DataTemplate>
+											<TextBox Text="{Binding Availed}" BorderThickness="0" LineHeight="20"/>
+										</DataTemplate>
+									</DataGridTemplateColumn>
+									<DataGridTemplateColumn Header="Price"  Width="auto">
+										<DataTemplate>
+											<TextBox Text="{Binding Price}" BorderThickness="0" LineHeight="20"/>
+										</DataTemplate>
+									</DataGridTemplateColumn>
+								</DataGrid.Columns>
+							</DataGrid>
+					</TabItem>
+					<TabItem Header="Services/Promo History" FontSize="20">
+						<DataGrid Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding ServicePromoUsed}">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Date" Binding="{Binding DateTime}"/>
+								<DataGridTextColumn Header="Therapist" Binding="{Binding Therapist}"/>
+								<DataGridTextColumn Header="MOP" Binding="{Binding MOP}"/>
+								<DataGridTextColumn Header="Availed" Binding="{Binding Availed}"/>
+								<DataGridTextColumn Header="Type" Binding="{Binding Type}"/>
+								<DataGridTextColumn Header="Payment" Binding="{Binding Payment}"/>
+								<DataGridTextColumn Header="Status" Binding="{Binding Status}"/>
+							</DataGrid.Columns>
 						</DataGrid>
 					</TabItem>
 				</TabControl>	

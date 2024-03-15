@@ -42,6 +42,8 @@
 							</Grid>
 						</Expander>
 					</StackPanel>
+					
+					
 					<StackPanel>
 						<TextBlock Text="Date" Margin="250 0 20 5"/>
 						<DatePicker SelectedDate="{Binding SelectedDateTime, Mode = TwoWay}" Margin="250 0 0 35"></DatePicker>

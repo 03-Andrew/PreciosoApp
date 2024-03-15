@@ -8,6 +8,7 @@ using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI;
 using ZstdSharp.Unsafe;
 using PreciosoApp.Models;
+using System.ComponentModel;
 
 namespace PreciosoApp.Models
 {
@@ -435,6 +436,39 @@ namespace PreciosoApp.Models
 
             string query = "select * from promo_service_availed2";
 
+            return db.ExecuteQuery(query, mapRow);
+        }
+    }
+
+
+   public class ServicePromoHistory
+    {
+        public int TransactionID { get; set; }
+        public DateTime DateTime { get; set; } 
+        public string? Therapist { get; set; }
+        public string? Client { get; set; }
+        public string? MOP { get; set; }
+        public string? Availed { get; set; }
+        public string? Type { get; set; }
+        public double Payment { get; set; }
+        public string? Status { get; set; }
+        Database db = new Database();
+
+        public List<ServicePromoHistory> GetServicePromoHistory()
+        {
+            Func<MySqlDataReader, ServicePromoHistory> mapRow = reader => new ServicePromoHistory
+            {
+                TransactionID = reader.GetInt32("transaction_id"),
+                Client = reader.GetString("Client"),
+                DateTime = reader.GetDateTime("transaction_datetime"),
+                Therapist = reader.GetString("therapist"),
+                MOP = reader.GetString("mode"),
+                Availed = reader.GetString("service_promo"),
+                Type =  reader.GetString("type"),
+                Payment = reader.GetDouble("service_price"),
+                Status = reader.GetString("status"),
+            };
+            string query = "select psa.transaction_id, psh.transaction_datetime, psh.client ,psh.therapist, psh.mode, \r\npsa.service_promo, psa.type, psa.service_price, psa.status\r\nfrom promo_service_availed2 psa\r\nleft join promo_service_history psh on psa.transaction_id = psh.transaction_id\r\norder by psa.transaction_id;\r\n";
             return db.ExecuteQuery(query, mapRow);
         }
     }
