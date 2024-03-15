@@ -94,10 +94,8 @@ public partial class MainWindowViewModel : ViewModelBase
     private void Items2()
     {
         Items.Clear(); // Clear existing items
-
-        Items.Add(new ListItemTemplate(typeof(DashboardViewModel), "desktop_regular"));
         Items.Add(new ListItemTemplate(typeof(InventoryViewModel), "toolbox_regular"));
-        Items.Add(new ListItemTemplate(typeof(AppointmentViewModel), "person_clock_regular"));
+        Items.Add(new ListItemTemplate(typeof(CustomerViewModel), "person_clock_regular"));
         Items.Add(new ListItemTemplate(typeof(POSViewModel), "cart_regular"));
         Items.Add(new ListItemTemplate(typeof(ServicesViewModel), "calendar_star_regular"));
         Items.Add(new ListItemTemplate(typeof(SalesReportViewModel), "data_bar_vertical_regular"));
@@ -146,14 +144,14 @@ public partial class MainWindowViewModel : ViewModelBase
         var posViewModel = new POSViewModel();
         CurrentPage = posViewModel;
     }
-
+    
     public void Logout()
     {
-        var loginWindowView = new LoginWindowView();
-        var loginWindowViewModel = new LoginWindowViewModel(loginWindowView);
-        loginWindowView.DataContext = loginWindowViewModel;
-        loginWindowView.Show();
-        mainwindow.Close();
+        //var loginWindowView = new LoginWindowView();
+        //var loginWindowViewModel = new LoginWindowViewModel(loginWindowView);
+        //loginWindowView.DataContext = loginWindowViewModel;
+        //loginWindowView.Show();
+        //mainwindow.Close();
     }
 }
 
