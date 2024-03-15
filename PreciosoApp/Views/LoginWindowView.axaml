@@ -2,22 +2,35 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="350"
+			 Width="500" Height="350"
              x:Class="PreciosoApp.Views.LoginWindowView"
 			 xmlns:vm="using:PreciosoApp.ViewModels"
-			 x:DataType="vm:LoginWindowViewModel">
-	<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-		<Image></Image>
-		<StackPanel Margin="0 0 0 20">
-			<TextBlock Margin="0 0 0 5" Text="Username"></TextBlock>
-			<TextBox Text="{Binding Username}" Watermark="Username" Width="150"></TextBox>
-		</StackPanel>
-		<StackPanel>
-			<TextBlock Margin="0 0 0 5" Text="Password"></TextBlock>
-			<TextBox PasswordChar="*" Text="{Binding Password}" Watermark="Password" Width="150"></TextBox>
-		</StackPanel>
-		<Button Command="{Binding LoginCommand}" Margin="0 10 0 0" Width="100"  
-				HorizontalContentAlignment="Center"
-				HorizontalAlignment="Center">Login</Button>
-	</StackPanel>
+			 x:DataType="vm:LoginWindowViewModel"
+			 Background="Transparent"
+			 WindowStartupLocation="CenterScreen">
+	<Border Background="White" CornerRadius="0 0 20 20">
+		<Border Background="#FBF6F2" Width="450" Height="300" CornerRadius="20">
+			<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 -20 0 0">
+				<TextBlock Height="" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black"
+					   FontFamily="Arial" FontSize="24" FontWeight="Bold"
+					   Text="Welcome to Precioso spa" Margin="20"/>
+				<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="">
+					<StackPanel Margin="0 0 0 10" Orientation="Horizontal">
+						<TextBlock Margin="0 0 10 0" Text="Username:" VerticalAlignment="Center"></TextBlock>
+						<TextBox Text="{Binding Username}" Watermark="Username" Width="150"></TextBox>
+					</StackPanel>
+					<StackPanel Margin="0 0 0 10" Orientation="Horizontal">
+						<TextBlock Margin="0 0 13 0" Text="Password:" VerticalAlignment="Center"></TextBlock>
+						<TextBox PasswordChar="*" Text="{Binding Password}" Watermark="Password" Width="150"></TextBox>
+					</StackPanel>
+					<Button Command="{Binding LoginCommand}" Margin="0 0 0 0" HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Center"
+						>Login</Button>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+		
+	</Border>
+	
 </UserControl>

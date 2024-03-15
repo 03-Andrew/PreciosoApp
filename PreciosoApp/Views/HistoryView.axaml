@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1080" d:DesignHeight="720"
              x:Class="PreciosoApp.Views.HistoryView"
 			 xmlns:vm="using:PreciosoApp.ViewModels"
 			 x:DataType="vm:HistoryViewModel"
@@ -13,37 +13,32 @@
 			<TabControl Background="#efefef">
 				<TabItem Header="Product Sold"  FontSize="16">
 					<Grid RowDefinitions="*,*,*">
-						<StackPanel Grid.Row="0" Orientation="Horizontal">
-							<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
-								<TextBlock Text="Start Date" Padding="0 10 0 10"/>
-							</Grid>
-							<CalendarDatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}"></CalendarDatePicker>
-							<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
-								<TextBlock Text="End Date: " Padding="0 10 0 10"/>
-							</Grid>
-							<CalendarDatePicker SelectedDate="{Binding EndDate, Mode=TwoWay}"></CalendarDatePicker>
-						<Button Content="Filter" Command="{Binding FilterCommand}" />
-
+						<StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0 10 0 10">
+							<TextBlock Text="Start Date" VerticalAlignment="Center" Margin="5"/>
+							<CalendarDatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}" Margin="5"/>
+							<TextBlock Text="End Date " VerticalAlignment="Center" Margin="15 0 0 0"/>
+							<CalendarDatePicker SelectedDate="{Binding EndDate, Mode=TwoWay}" Margin="5"/>
+							<Button Content="Filter" Command="{Binding FilterCommand}" Margin="5"/>
 						</StackPanel>
 						<DataGrid Grid.Row="1" ItemsSource="{Binding PTransactions}" IsReadOnly="True" Height="300"
 								  SelectedItem="{Binding SelectedRow, Mode=TwoWay}" GridLinesVisibility="Horizontal">
 							<DataGrid.Columns>
-								<DataGridTextColumn Header="ID" Width="Auto" Binding="{Binding Id}"/>
-								<DataGridTextColumn Header="Date" Width="Auto" Binding="{Binding Date_Time}"/>
-								<DataGridTextColumn Header="Client" Width="Auto" Binding="{Binding ClientName}"/>
-								<DataGridTextColumn Header="Therapist" Width="Auto" Binding="{Binding TherapistName}"/>
-								<DataGridTextColumn Header="MOP"  Binding="{Binding MOP}"/>
-								<DataGridTextColumn Header="Total"  Binding="{Binding Total} StringFormat={}{0:C2}}"/>
-								<DataGridTextColumn Header="Comm"  Binding="{Binding Comm} StringFormat={}{0:C2}}"/>
+								<DataGridTextColumn Header="ID" Width="auto" Binding="{Binding Id}"/>
+								<DataGridTextColumn Header="Date" Width="auto" Binding="{Binding Date_Time}"/>
+								<DataGridTextColumn Header="Client" Width="*" Binding="{Binding ClientName}"/>
+								<DataGridTextColumn Header="Therapist" Width="*" Binding="{Binding TherapistName}"/>
+								<DataGridTextColumn Header="MOP" Width="*" Binding="{Binding MOP}"/>
+								<DataGridTextColumn Header="Total" Width="*"  Binding="{Binding Total} StringFormat={}{0:C2}}"/>
+								<DataGridTextColumn Header="Comm"  Width="*" Binding="{Binding Comm} StringFormat={}{0:C2}}"/>
 							</DataGrid.Columns>
 						</DataGrid>
 					
 						<DataGrid Grid.Row="2" ItemsSource="{Binding PSold}" Height="300" BorderBrush="Aqua" GridLinesVisibility="Horizontal">
 							<DataGrid.Columns>
-								<DataGridTextColumn Header="Product Name" Binding="{Binding ProdName}" />
-								<DataGridTextColumn Header="Product Cost" Binding="{Binding ProductCost}" />
-								<DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" />
-								<DataGridTextColumn Header="Commission" Binding="{Binding Commission}" />
+								<DataGridTextColumn Width="*" Header="Product Name" Binding="{Binding ProdName}" />
+								<DataGridTextColumn Width="*" Header="Product Cost" Binding="{Binding ProductCost}" />
+								<DataGridTextColumn Width="*" Header="Quantity" Binding="{Binding Quantity}" />
+								<DataGridTextColumn Width="*" Header="Commission" Binding="{Binding Commission}" />
 							</DataGrid.Columns>
 						</DataGrid>
 				
@@ -51,42 +46,82 @@
 					</Grid>
 				</TabItem>
 				<TabItem Header="Services" FontSize="16">
-					<Grid RowDefinitions="*,*">
-						<DataGrid Grid.Row="0" ItemsSource="{Binding ServicesPromosTransactions}" Height="300" AutoGenerateColumns="True" 
+					<Grid RowDefinitions="*,*,*">
+						<StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0 10 0 10">
+							<TextBlock Text="Start Date" VerticalAlignment="Center" Margin="5"/>
+							<CalendarDatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}" Margin="5"/>
+							<TextBlock Text="End Date " VerticalAlignment="Center" Margin="15 0 0 0"/>
+							<CalendarDatePicker SelectedDate="{Binding EndDate, Mode=TwoWay}" Margin="5"/>
+							<Button Content="Filter" Command="{Binding FilterCommand}" Margin="5"/>
+						</StackPanel>
+						<DataGrid Grid.Row="1" ItemsSource="{Binding ServicesPromosTransactions}" Height="400" AutoGenerateColumns="False" 
 								  SelectedItem="{Binding SelectedRowSP, Mode=TwoWay}">
+							<DataGrid.Columns>
+								<DataGridTextColumn Binding="{Binding ID}" Width="auto" Header="ID"/>
+								<DataGridTextColumn Binding="{Binding Date}" Width="auto" Header="Date"/>
+								<DataGridTextColumn Binding="{Binding ClientName}" Header="Client" Width="auto"/>
+								<DataGridTextColumn Binding="{Binding TherapistName}" Header="Therapist" Width="auto"/>
+								<DataGridTextColumn Binding="{Binding MOP}" Header="MOP" Width="*"/>
+								<DataGridTextColumn Binding="{Binding Notes}" Header="Notes" Width="auto"/>
+								<DataGridTextColumn Binding="{Binding Total}" Header="Total" Width="*"/>
+								<DataGridTextColumn Binding="{Binding Comm}" Header="Comm" Width="*"/>
+							</DataGrid.Columns>
 						
 						</DataGrid>
-						<DataGrid Grid.Row="1" ItemsSource="{Binding ServicesPromosUsed}" Height="300" AutoGenerateColumns="True">
-							
+						<DataGrid Grid.Row="2" ItemsSource="{Binding ServicesPromosUsed}" Height="300" AutoGenerateColumns="False">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="auto"/>
+								<DataGridTextColumn Header="Availed" Binding="{Binding Service_Promo}" Width="*"/>
+								<DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*"/>
+								<DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
+								<DataGridTextColumn Header="Price" Binding="{Binding Price}" Width="*"/>
+								<DataGridTextColumn Header="Comm" Binding="{Binding Comm}" Width="*"/>
+							</DataGrid.Columns>
 						</DataGrid>
 					</Grid>
 					
 				</TabItem>
 				<TabItem Header="All Transactions" FontSize="16">
-					<Grid RowDefinitions="*,*">
-						<DataGrid Grid.Row="0" ItemsSource="{Binding AllTransactions}" Height="300" AutoGenerateColumns="True"
-								  SelectedItem="{Binding SelectedRowT, Mode=TwoWay}">
-
+					<StackPanel>
+						<StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0 10 0 10">
+							<TextBlock Text="Start Date" VerticalAlignment="Center" Margin="5"/>
+							<CalendarDatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}" Margin="5"/>
+							<TextBlock Text="End Date " VerticalAlignment="Center" Margin="15 0 0 0"/>
+							<CalendarDatePicker SelectedDate="{Binding EndDate, Mode=TwoWay}" Margin="5"/>
+							<Button Content="Filter" Command="{Binding FilterCommand}" Margin="5"/>
+						</StackPanel>
+						<DataGrid ItemsSource="{Binding AllTransactions}" Height="600" AutoGenerateColumns="False"
+						SelectedItem="{Binding SelectedRowT, Mode=TwoWay}">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="ID" Binding="{Binding TransactionID}"/>
+								<DataGridTextColumn Header="DateTime"  Binding="{Binding DateTime}"/>
+								<DataGridTextColumn Header="Client"  Binding="{Binding Client}"/>
+								<DataGridTextColumn Header="Therapist" Binding="{Binding Therapist}"/>
+								<DataGridTextColumn Header="MOP"  Binding="{Binding MOP}"/>
+								<DataGridTemplateColumn Header="Availed">
+									<DataTemplate>
+										<TextBox Text="{Binding Availed}" BorderThickness="0" LineHeight="20"/>
+									</DataTemplate>
+								</DataGridTemplateColumn>
+								<DataGridTemplateColumn Header="Type">
+									<DataTemplate>
+										<TextBox Text="{Binding Type}" BorderThickness="0" LineHeight="20"/>
+									</DataTemplate>
+								</DataGridTemplateColumn>
+								<DataGridTemplateColumn Header="Sales" >
+									<DataTemplate>
+										<TextBox Text="{Binding Price}" BorderThickness="0" LineHeight="20"/>
+									</DataTemplate>
+								</DataGridTemplateColumn>
+								<DataGridTemplateColumn Header="Commission">
+									<DataTemplate>
+										<TextBox Text="{Binding Commission}" BorderThickness="0" LineHeight="20"/>
+									</DataTemplate>
+								</DataGridTemplateColumn>
+							</DataGrid.Columns>
 						</DataGrid>
-						<Grid Grid.Row="1" ColumnDefinitions="*, *">
-							<StackPanel Grid.Column="0" Margin="10" >
-								<TextBlock>Products Sold</TextBlock>
-								<DataGrid ItemsSource="{Binding PSold}" Height="300" AutoGenerateColumns="True">
-
-								</DataGrid>
-							</StackPanel>
-							
-							<StackPanel Grid.Column="1" Margin="10" >
-								<TextBlock>Services availed</TextBlock>
-								<DataGrid ItemsSource="{Binding ServicesUsed}" Height="300" AutoGenerateColumns="True">
-
-								</DataGrid>
-							</StackPanel>
-
-							
-						</Grid>
-
-					</Grid>
+					</StackPanel>
+					
 				</TabItem>
 			</TabControl>
 

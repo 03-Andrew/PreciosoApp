@@ -14,27 +14,29 @@
 							<Border.Effect>
 								<DropShadowEffect Opacity="0.1"/>
 							</Border.Effect>
-							<Grid RowDefinitions="Auto, *" ColumnDefinitions="850, *">
-								<StackPanel Margin="0 0 90 0" Grid.Row="0" Grid.Column="0">
+							<Grid RowDefinitions="*, *" ColumnDefinitions="700, *">
+								<StackPanel Margin="0 0 90 0"  Grid.Column="0">
 									<StackPanel Orientation="Horizontal">
 										<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
 											<TextBlock Text="Search Product: " Padding="0 10 0 10"/>
 										</Grid>
 										<TextBox Text="{Binding SearchProd, Mode=TwoWay}"
-												 Margin="10 20 0 0" HorizontalAlignment="Left" Padding="10" Width="300"/>
+												 Margin="10 20 0 0" HorizontalAlignment="Left" Width="300"/>
 									</StackPanel>
 
-									<DataGrid Margin="20"  ItemsSource="{Binding Inventory}"
+									<DataGrid Margin="20" ItemsSource="{Binding Inventory}"
 											  AutoGenerateColumns="True" IsReadOnly="True" CanUserResizeColumns="True"
+									  BorderBrush="Gray" BorderThickness="2"
 											  GridLinesVisibility="All" Height="150" SelectedItem="{Binding SelectedProductData, Mode=TwoWay}"/>
 								</StackPanel>
-								<StackPanel Grid.Row="0" Grid.Column="1">
+								<StackPanel Grid.Column="1">
 									
 										<TextBlock HorizontalAlignment="Center" Foreground="Red" Text="PRODUCT NEEDS STOCK IN" Margin="0 30 0 -10"/>
 									
 									<DataGrid Margin="20"  ItemsSource="{Binding CritInventory}"
 											  IsReadOnly="True" CanUserResizeColumns="True"
-											  GridLinesVisibility="All" Height="150" HeadersVisibility="None">
+											  GridLinesVisibility="All" Height="150" HeadersVisibility="None"
+											  BorderBrush="Gray" BorderThickness="2">
 										<DataGrid.Columns>
 											<DataGridTextColumn Header="Name" Binding="{Binding prodName}"></DataGridTextColumn>
 											<DataGridTextColumn Header="Stock" Binding="{Binding prodStock}"></DataGridTextColumn>

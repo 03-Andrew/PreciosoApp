@@ -59,9 +59,9 @@ namespace PreciosoApp.ViewModels
             }
         }
 
-        private ObservableCollection<AllTransactions> allT;
-        private ObservableCollection<AllTransactions> _allTs;
-        public ObservableCollection<AllTransactions> AllTransactions
+        private ObservableCollection<DailyReport> allT;
+        private ObservableCollection<DailyReport> _allTs;
+        public ObservableCollection<DailyReport> AllTransactions
         {
             get { return _allTs; }
             set
@@ -101,23 +101,12 @@ namespace PreciosoApp.ViewModels
             pTransactions = allPTransactions;
             allPSold = new ObservableCollection<ProductSold>(new ProductSold().GetProductsSold());
 
-            //allSUsed = new ObservableCollection<ServicesUsed>(new ServicesUsed().GetServicesUsed());
-
-            //_serviceTransactions = new ObservableCollection<Service_Transaction>(new Service_Transaction().GetService_Transactions());
-            //ServiceTransactions = _serviceTransactions;
-
-
-            allT = new ObservableCollection<AllTransactions>(new AllTransactions().GetTransactions());
+            allT = new ObservableCollection<DailyReport>(new DailyReport().GetDailyReports());
             AllTransactions = allT;
-
-
 
             servicesPromosTransactions = new ObservableCollection<ServicePromoTransactions>(new ServicePromoTransactions().GetTransactions());
             ServicesPromosTransactions = servicesPromosTransactions;
             allSPUsed = new ObservableCollection<ServicePromoUsed>(new ServicePromoUsed().GetServicePromoUsed());
-
-
-
 
             FilterCommand = new RelayCommand(FilterRowsByDate);
 
@@ -254,6 +243,12 @@ namespace PreciosoApp.ViewModels
 
 
 /*
+ * 
+ * 
+            //allSUsed = new ObservableCollection<ServicesUsed>(new ServicesUsed().GetServicesUsed());
+
+            //_serviceTransactions = new ObservableCollection<Service_Transaction>(new Service_Transaction().GetService_Transactions());
+            //ServiceTransactions = _serviceTransactions;
 private string searchText; 
 public string SearchText
 {
