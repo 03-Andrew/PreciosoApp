@@ -226,13 +226,15 @@ namespace PreciosoApp.ViewModels
             var allRows = allPTransactions.AsQueryable();
             if (_startDate != DateTime.MinValue)
             {
-                allRows = allRows.Where(c => c.Date_Time >= _startDate);
+                PTransactions = new ObservableCollection<ProductSoldTransactions>(allRows.Where(c => c.Date_Time >= _startDate));
             }
 
             if (_endDate != DateTime.MinValue)
             {
-                allRows = allRows.Where(c => c.Date_Time <= _endDate);
+                PTransactions = new ObservableCollection<ProductSoldTransactions>(allRows.Where(c => c.Date_Time <= _endDate));
             }
+
+                    OnPropertyChanged(nameof(PTransactions));
         }
 
         public ICommand FilterCommand { get; }
