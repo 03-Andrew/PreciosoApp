@@ -24,10 +24,10 @@
 												 Margin="10 20 0 0" HorizontalAlignment="Left" Width="300"/>
 									</StackPanel>
 
-									<DataGrid Margin="20" ItemsSource="{Binding Inventory}"
+									<DataGrid Margin="10 10 0 0" ItemsSource="{Binding Inventory}"
 											  AutoGenerateColumns="True" IsReadOnly="True" CanUserResizeColumns="True"
-									  BorderBrush="Gray" BorderThickness="2"
-											  GridLinesVisibility="All" Height="150" SelectedItem="{Binding SelectedProductData, Mode=TwoWay}"/>
+									  BorderBrush="Gray" BorderThickness="2" GridLinesVisibility="All" 
+											  Height="150" SelectedItem="{Binding SelectedProductData, Mode=TwoWay}"/>
 								</StackPanel>
 								<StackPanel Grid.Column="1">
 									
@@ -35,11 +35,11 @@
 									
 									<DataGrid Margin="20"  ItemsSource="{Binding CritInventory}"
 											  IsReadOnly="True" CanUserResizeColumns="True"
-											  GridLinesVisibility="All" Height="150" HeadersVisibility="None"
+											  GridLinesVisibility="All" Height="160" HeadersVisibility="None"
 											  BorderBrush="Gray" BorderThickness="2">
 										<DataGrid.Columns>
-											<DataGridTextColumn Header="Name" Binding="{Binding prodName}"></DataGridTextColumn>
-											<DataGridTextColumn Header="Stock" Binding="{Binding prodStock}"></DataGridTextColumn>
+											<DataGridTextColumn Width="auto" Header="Name" Binding="{Binding prodName}"></DataGridTextColumn>
+											<DataGridTextColumn Width="auto" Header="Stock" Binding="{Binding prodStock}"></DataGridTextColumn>
 										</DataGrid.Columns>
 									</DataGrid>
 								</StackPanel>

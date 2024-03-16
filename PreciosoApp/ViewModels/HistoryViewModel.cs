@@ -197,7 +197,7 @@ namespace PreciosoApp.ViewModels
 
         }
 
-        private DateTime _startDate = DateTime.Today.AddYears(-100);
+        private DateTime _startDate = DateTime.Today.AddYears(-1);
         public DateTime StartDate
         {
             get { return _startDate; }
@@ -223,18 +223,22 @@ namespace PreciosoApp.ViewModels
         public void FilterRowsByDate()
         {
 
-            var allRows = allPTransactions.AsQueryable();
+            var allRows = new ProductSoldTransactions().GetPTransactions().AsQueryable(); //allPTransactions.AsQueryable();
+            var allRows2 = new ServicePromoTransactions().GetTransactions().AsQueryable();
+            var allRows3 = new DailyReport().GetDailyReports().AsQueryable();
             if (_startDate != DateTime.MinValue)
             {
-                PTransactions = new ObservableCollection<ProductSoldTransactions>(allRows.Where(c => c.Date_Time >= _startDate));
+
+                allRows = allRows.Where(c=>c.Date_Time >= _startDate);
+                allRows2 = allRows2.Where(c => c.Date >= _startDate);
+                allRows3 = allRows3.Where(c => c.DateTime >= _startDate);
+               
             }
 
             if (_endDate != DateTime.MinValue)
             {
-                PTransactions = new ObservableCollection<ProductSoldTransactions>(allRows.Where(c => c.Date_Time <= _endDate));
+                allRows = allRows.Where(c => c.Date_Time <= _endDate);
             }
-
-                    OnPropertyChanged(nameof(PTransactions));
         }
 
         public ICommand FilterCommand { get; }

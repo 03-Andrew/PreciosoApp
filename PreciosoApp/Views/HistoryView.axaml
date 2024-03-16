@@ -15,12 +15,12 @@
 					<Grid RowDefinitions="*,*,*">
 						<StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0 10 0 10">
 							<TextBlock Text="Start Date" VerticalAlignment="Center" Margin="5"/>
-							<CalendarDatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}" Margin="5"/>
+							<CalendarDatePicker SelectedDate="{Binding StartDate}" Margin="5"/>
 							<TextBlock Text="End Date " VerticalAlignment="Center" Margin="15 0 0 0"/>
-							<CalendarDatePicker SelectedDate="{Binding EndDate, Mode=TwoWay}" Margin="5"/>
-							<Button Content="Filter" Command="{Binding FilterCommand}" Margin="5"/>
+							<CalendarDatePicker SelectedDate="{Binding EndDate}" Margin="5"/>
+							<Button Content="Filter" Command="{Binding FilterRowsByDate}" Margin="5"/>
 						</StackPanel>
-						<DataGrid Grid.Row="1" ItemsSource="{Binding PTransactions}" IsReadOnly="True" Height="300"
+						<DataGrid Grid.Row="1" ItemsSource="{Binding PTransactions}" IsReadOnly="True" Height="350"
 								  SelectedItem="{Binding SelectedRow, Mode=TwoWay}" GridLinesVisibility="Horizontal">
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="ID" Width="auto" Binding="{Binding Id}"/>
@@ -47,7 +47,7 @@
 				</TabItem>
 				<TabItem Header="Services" FontSize="16">
 					<Grid RowDefinitions="*,*,*">
-						<StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0 10 0 10">
+						<StackPanel Grid.Row="0"  Orientation="Horizontal" Margin="0 10 0 10">
 							<TextBlock Text="Start Date" VerticalAlignment="Center" Margin="5"/>
 							<CalendarDatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}" Margin="5"/>
 							<TextBlock Text="End Date " VerticalAlignment="Center" Margin="15 0 0 0"/>
@@ -90,7 +90,7 @@
 							<CalendarDatePicker SelectedDate="{Binding EndDate, Mode=TwoWay}" Margin="5"/>
 							<Button Content="Filter" Command="{Binding FilterCommand}" Margin="5"/>
 						</StackPanel>
-						<DataGrid ItemsSource="{Binding AllTransactions}" Height="600" AutoGenerateColumns="False"
+						<DataGrid ItemsSource="{Binding AllTransactions}" Height="500" AutoGenerateColumns="False"
 						SelectedItem="{Binding SelectedRowT, Mode=TwoWay}">
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="ID" Binding="{Binding TransactionID}"/>
