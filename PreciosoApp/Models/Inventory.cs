@@ -32,9 +32,11 @@ namespace PreciosoApp.Models
                 conn.Open();
 
                 string query = "SELECT p.product_id, p.product_name, p.product_cost, p.commission, t.type, p.critical_level, " +
-                    "( SELECT COALESCE(SUM(quantity), 0) FROM tbl_stockin_product t1 WHERE t1.product_id = p.product_id ) - " +
-                    "( SELECT COALESCE(SUM(quantity), 0) FROM tbl_products_sold t2 WHERE t2.product_id = p.product_id ) " +
+                    "((SELECT COALESCE(SUM(quantity), 0) FROM tbl_stockin_product t1 WHERE t1.product_id = p.product_id) - " +
+                    "(SELECT COALESCE(SUM(quantity), 0) FROM tbl_products_sold t2 WHERE t2.product_id = p.product_id) - " +
+                    "(SELECT COALESCE(SUM(quantity), 0) FROM tbl_defect t3 WHERE t3.product_id = p.product_id)) " +
                     "AS stock_level FROM tbl_product p JOIN tbl_product_type t ON p.product_type = t.type_id;";
+
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
                     using (MySqlDataReader reader = cmd.ExecuteReader())
@@ -275,6 +277,88 @@ namespace PreciosoApp.Models
             };
             string query = "SELECT i.inventory_id, sp.supplier_name, i.date, th.name,\r\n    GROUP_CONCAT(p.product_name SEPARATOR \",\") AS products,\r\n    GROUP_CONCAT(ip.quantity SEPARATOR \",\") AS quantity,\r\n    GROUP_CONCAT(ip.purchase_price SEPARATOR \",\") AS purchase_price,\r\n    GROUP_CONCAT(ip.quantity * ip.purchase_price) AS price_each,\r\n    SUM(ip.quantity * ip.purchase_price) AS subtotal\r\nFROM tbl_stockin i\r\nLEFT JOIN tbl_stockin_product ip ON i.inventory_id = ip.inventory_id\r\nLEFT JOIN tbl_supplier sp ON i.supplier_id = sp.supplier_id\r\nLEFT JOIN tbl_product p ON ip.product_id = p.product_id\r\nLEFT JOIN tbl_therapist th ON i.supplier_id = th.therapist_id\r\nGROUP BY i.inventory_id, sp.supplier_name, i.date, th.name;";
             return db.ExecuteQuery(query, mapRow);
+        }
+    }
+
+    public class Defect()
+    {
+        public int defectID { get; set; }
+        public string productName { get; set; }
+        public string therapistName { get; set; }
+        public int quantity { get; set; }
+        Database db = new Database();
+
+        public List<Defect> GetDefects()
+        {
+            Func<MySqlDataReader, Defect> mapRow = reader => new Defect
+            {
+                defectID = reader.GetInt32("defective_id"),
+                productName = reader.GetString("product_name"),
+                therapistName = reader.GetString("name"),
+                quantity = reader.GetInt32("quantity"),
+            };
+            string query = "SELECT d.defective_id, p.product_name, t.name, d.quantity, d.date " +
+                           "from tbl_defect d " +
+                           "LEFT JOIN tbl_product p ON d.product_id = p.product_id " +
+                           "LEFT JOIN tbl_therapist t ON d.therapist_id = t.therapist_id;;";
+            return db.ExecuteQuery(query, mapRow);
+        }
+
+        /*
+         public List<Defect> GetDefects()
+        {
+
+            Database db = new Database();
+            List<Defect> defect = new List<Defect>();
+
+            using (MySqlConnection conn = db.GetCon())
+            {
+                conn.Open();
+
+                string query = "SELECT * from tbl_defect;";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Defect def = new Defect();
+                            def.defectID = reader.GetInt32("defective_id");
+                            def.productID = reader.GetInt32("product_id");
+                            def.thereapistID = reader.GetInt32("product_id");
+                            def.quantity = reader.GetInt32("quantity");
+                            defect.Add(def);
+                        }
+                    }
+                }
+            }
+            return defect;
+        }
+        */
+
+        public void AddDefect(int invID, int therapist_id, int quantity)
+        {
+            DateTime date = DateTime.Now;
+            Database db = new Database();
+            using (MySqlConnection con = db.GetCon())
+            {
+                con.Open();
+                string query = "INSERT INTO `tbl_defect` (`product_id`, `therapist_id`, `quantity`, `date`) " +
+                               "VALUES (@invID, @therapistID, @quantity, @date);";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@invID", invID);
+                    cmd.Parameters.AddWithValue("@therapistID", therapist_id);
+                    cmd.Parameters.AddWithValue("@quantity", quantity);
+                    cmd.Parameters.AddWithValue("@date", date);
+
+                    cmd.ExecuteNonQuery();
+                }
+
+            }
+
         }
     }
 }

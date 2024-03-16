@@ -24,6 +24,8 @@ namespace PreciosoApp.ViewModels
         private ObservableCollection<Inventory> allInventory;
         private ObservableCollection<Supplier> allSupplier;
         public ObservableCollection<ProductType> prodTypes;
+        public ObservableCollection<Defect> defect;
+        public ObservableCollection<Defect> allDefect;
         public ObservableCollection<Therapist> Therapist { get; }
         public ObservableCollection<Supplier> suppliers;
         public ObservableCollection<Supplier> supplierData;
@@ -31,6 +33,7 @@ namespace PreciosoApp.ViewModels
         private Supplier _selectedsupplier;
         private Therapist _selectedTherapist;
         private Inventory _selectedProduct;
+        private Defect selectedDefectData;
         private Inventory selectedProductData;
         private Supplier selectedSupplierData;
         private DateTimeOffset inputDate = DateTimeOffset.Now;
@@ -56,6 +59,10 @@ namespace PreciosoApp.ViewModels
         public string newProductName { get; set; }
         public float newProductPrice { get; set; }
 
+        // Add Defect
+        public float defectProductQuantity { get; set; }
+        public int defectQuantity { get; set; }
+
         // Add new Supplier
         public string newSupplierName { get; set; }
         public string newSupplierNo { get; set; }
@@ -69,12 +76,17 @@ namespace PreciosoApp.ViewModels
         public ICommand UpdateSupplierCommand { get; }
         public ICommand AddToStockInGrid { get; }
         public ICommand RemoveFromStockInGrid { get; }
+        public ICommand AddToDefect { get; }
 
         public InventoryViewModel()
         {
             var inv = new Inventory();
+            var defect = new Defect();
+
+            allDefect = new ObservableCollection<Defect>(defect.GetDefects());
             allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
             stockInAllProducts = new ObservableCollection<Inventory>(inv.GetInventory());
+            Defect = allDefect;
             Inventory = allInventory;
             CritInventory = allInventory;
             StockInProducts = stockInAllProducts;
@@ -101,6 +113,7 @@ namespace PreciosoApp.ViewModels
             UpdateProductCommand = new RelayCommand(UpdateProduct);
             AddNewSupplierCommand = new RelayCommand(AddSupplier);
             UpdateSupplierCommand = new RelayCommand(UpdateSupplier);
+            AddToDefect = new RelayCommand(AddDefect);
             AddToStockInGrid = new RelayCommand(AddToStockProductDataGrid);
             RemoveFromStockInGrid = new RelayCommand(RemoveSelectedStockInProductGrid);
 
@@ -174,6 +187,16 @@ namespace PreciosoApp.ViewModels
             {
                 stockInItems = value;
                 OnPropertyChanged(nameof(StockInItems));
+            }
+        }
+
+        public ObservableCollection<Defect> Defect 
+        { 
+            get { return defect; }
+            set
+            {
+                defect = value;
+                OnPropertyChanged(nameof(Defect));
             }
         }
 
@@ -292,6 +315,16 @@ namespace PreciosoApp.ViewModels
             {
                 selectedProductData = value;
                 OnPropertyChanged(nameof(SelectedProductData));
+            }
+        }
+
+        public Defect SelectedDefectData
+        {
+            get { return selectedDefectData; }
+            set
+            {
+                selectedDefectData = value;
+                OnPropertyChanged(nameof(SelectedDefectData));
             }
         }
 
@@ -551,6 +584,60 @@ namespace PreciosoApp.ViewModels
                         _errorText = "Added Item";
                     }
                 } 
+            }
+            catch (Exception ex)
+            {
+                ErrorText = ex.Message;
+            }
+        }
+
+        public void AddDefect()
+        {
+            try
+            {
+                var window = new DialogWindow();
+
+                Defect def = new Defect();
+                Inventory inv = new Inventory();
+
+                if (SelectedProductData == null || SelectedTherapist == null || defectQuantity == null || defectQuantity == 0 || defectQuantity == null)
+                {
+                    if (defectQuantity == 0 || defectQuantity == null)
+                    {
+                        window.DialogText = "Quantity added is 0, please input a valid quantity number!";
+                    }
+                    else
+                    {
+                        window.DialogText = "You are missing some required fields! please fill them out!";
+                    }
+                    window.Show();
+                }
+                else
+                {
+                    if (defectQuantity <= 0)
+                    {
+                        window.DialogText = "Number inputted is invalid, please input a valid number!";
+                        window.Show();
+                    }
+                    else
+                    {
+                        def.AddDefect(SelectedProductData.invID, SelectedTherapist.Id, defectQuantity);
+
+                        SelectedProductData = null;
+                        SelectedTherapist = null;
+
+                        allDefect = new ObservableCollection<Defect>(def.GetDefects());
+                        Defect = allDefect;
+
+                        allInventory = new ObservableCollection<Inventory>(inv.GetInventory());
+                        Inventory = allInventory;
+
+                        OnPropertyChanged(nameof(Defect));
+                        OnPropertyChanged(nameof(Inventory));
+                        showCriticalStock();
+                        _errorText = "Added Item";
+                    }
+                }
             }
             catch (Exception ex)
             {

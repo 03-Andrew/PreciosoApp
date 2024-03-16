@@ -213,6 +213,32 @@
 											<Button Command="{Binding UpdateProductCommand}" Margin="20 20 20 5">Update Product</Button>
 										</StackPanel>
 									</TabItem>
+									<TabItem Header="Add Defect">
+										<StackPanel>
+											<StackPanel Orientation="Horizontal" Margin="20 0 20 5">
+												<StackPanel>
+													<TextBlock Text="Product Name"/>
+													<TextBox Text="{Binding SelectedProductData.prodName}" Width="150"></TextBox>
+												</StackPanel>
+												<StackPanel Margin="20 0 0 0">
+													<TextBlock Text="Quantity"/>
+													<TextBox Text="{Binding defectQuantity}" Width="100"></TextBox>
+												</StackPanel>
+											</StackPanel>
+											<StackPanel>
+												<TextBlock Text="Therapist:" Margin="20 10 20 5"/>
+												<ComboBox PlaceholderText="Therapists " Height="50" Width="150" Margin="20 0 0 0"
+														  ItemsSource="{Binding Therapist}" SelectedValue="{Binding SelectedTherapist, Mode=TwoWay}">
+													<ComboBox.ItemTemplate>
+														<DataTemplate>
+															<TextBlock Text="{Binding Name}" />
+														</DataTemplate>
+													</ComboBox.ItemTemplate>
+												</ComboBox>
+											</StackPanel>
+											<Button Command="{Binding AddToDefect}" Margin="20 20 20 5">Add Defect</Button>
+										</StackPanel>
+									</TabItem>
 									<TabItem Header="Stock in history">
 										<Grid RowDefinitions="*">
 											<DataGrid Height="200" AutoGenerateColumns="True" ItemsSource="{Binding StockInHis}" Margin="10">
@@ -296,6 +322,35 @@
 									</TabItem>
 								</TabControl>
 							</StackPanel>
+						</Border>
+					</Grid>
+				</TabItem>
+				<TabItem Header="Defect">
+					<Grid RowDefinitions="Auto, *">
+						<Border Grid.Row="0" Background="#f3f3f3f3" Margin="20 20 20 20" CornerRadius="10">
+							<Border.Effect>
+								<DropShadowEffect Opacity="0.1"/>
+							</Border.Effect>
+							<Grid RowDefinitions="*, *" ColumnDefinitions="700, *">
+								<StackPanel Margin="0 0 90 0"  Grid.Column="0">
+									<StackPanel Orientation="Horizontal">
+										<Grid HorizontalAlignment="Center" Margin="20 20 0 0">
+											<TextBlock Text="Search Product: " Padding="0 10 0 10"/>
+										</Grid>
+									</StackPanel>
+
+									<DataGrid Margin="10 10 0 0" ItemsSource="{Binding Defect}"
+											  AutoGenerateColumns="True" IsReadOnly="True" CanUserResizeColumns="True"
+									  BorderBrush="Gray" BorderThickness="2" GridLinesVisibility="All"
+											  Height="150" SelectedItem="{Binding SelectedDefectData, Mode=TwoWay}"/>
+								</StackPanel>
+							</Grid>
+
+						</Border>
+						<Border Grid.Row="1" Background="#f3f3f3f3" Margin="20 20 20 20" CornerRadius="10">
+							<Border.Effect>
+								<DropShadowEffect Opacity="0.1"/>
+							</Border.Effect>
 						</Border>
 					</Grid>
 				</TabItem>

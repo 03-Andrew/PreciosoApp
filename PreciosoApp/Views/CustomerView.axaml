@@ -124,17 +124,17 @@
 					<TabItem Header="Products sold History" FontSize="20">
 						<DataGrid Grid.Row="0" ItemsSource="{Binding ProdTransactions}" AutoGenerateColumns="False">
 							<DataGrid.Columns>
-								<DataGridTextColumn Header="Date" Binding="{Binding DateTime}"/>
-								<DataGridTextColumn Header="Therapist" Binding="{Binding Therapist}"/>
-								<DataGridTextColumn Header="MOP" Binding="{Binding MOP}"/>
-								<DataGridTemplateColumn Header="Availed"  Width="auto">
+								<DataGridTextColumn Header="Date" Binding="{Binding DateTime}" Width="*"/>
+								<DataGridTextColumn Header="Therapist" Binding="{Binding Therapist}" Width="*"/>
+								<DataGridTextColumn Header="MOP" Binding="{Binding MOP}" Width="*"/>
+								<DataGridTemplateColumn Header="Availed"  Width="*">
 									<DataTemplate>
 										<TextBox Text="{Binding Availed}" BorderThickness="0" LineHeight="20"/>
 									</DataTemplate>
 								</DataGridTemplateColumn>
-								<DataGridTemplateColumn Header="Price"  Width="auto">
+								<DataGridTemplateColumn Header="Price"  Width="*">
 									<DataTemplate>
-										<TextBox Text="{Binding Price}" BorderThickness="0" LineHeight="20"/>
+										<TextBox Text="{Binding Price}" BorderThickness="0" LineHeight="20" />
 									</DataTemplate>
 								</DataGridTemplateColumn>
 							</DataGrid.Columns>
