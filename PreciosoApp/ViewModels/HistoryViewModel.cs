@@ -36,7 +36,7 @@ namespace PreciosoApp.ViewModels
             }
         }
 
-        private ObservableCollection<Service_Transaction> _serviceTransactions; 
+        private ObservableCollection<Service_Transaction> _serviceTransactions;
         public ObservableCollection<Service_Transaction> ServiceTransactions
         {
             get { return _serviceTransactions; }
@@ -122,7 +122,7 @@ namespace PreciosoApp.ViewModels
                 _selectedRow = value;
                 OnPropertyChanged(nameof(SelectedRow));
                 FilterPSold();
-                
+
             }
         }
 
@@ -166,7 +166,7 @@ namespace PreciosoApp.ViewModels
 
         private void FilterTransactions()
         {
-            if(SelectedRowT != null)
+            if (SelectedRowT != null)
             {
                 PSold = new ObservableCollection<ProductSold>(allPSold.Where(ps => ps.TransactionId == SelectedRowT.ID));
                 ServicesUsed = new ObservableCollection<ServicesUsed>(allSUsed.Where(su => su.TransactionId == SelectedRowT.ID));
@@ -205,7 +205,7 @@ namespace PreciosoApp.ViewModels
             {
                 _startDate = value;
                 OnPropertyChanged(nameof(StartDate));
-                
+
             }
         }
         private DateTime _endDate = DateTime.Now;
@@ -216,7 +216,7 @@ namespace PreciosoApp.ViewModels
             {
                 _endDate = value;
                 OnPropertyChanged(nameof(EndDate));
-                
+
             }
         }
 
@@ -229,16 +229,22 @@ namespace PreciosoApp.ViewModels
             if (_startDate != DateTime.MinValue)
             {
 
-                allRows = allRows.Where(c=>c.Date_Time >= _startDate);
+                allRows = allRows.Where(c => c.Date_Time >= _startDate);
                 allRows2 = allRows2.Where(c => c.Date >= _startDate);
                 allRows3 = allRows3.Where(c => c.DateTime >= _startDate);
-               
+
             }
 
             if (_endDate != DateTime.MinValue)
             {
                 allRows = allRows.Where(c => c.Date_Time <= _endDate);
+                allRows2 = allRows2.Where(c => c.Date <= _endDate);
+                allRows3 = allRows3.Where(c => c.DateTime <= _endDate);
             }
+
+            PTransactions = new ObservableCollection<ProductSoldTransactions>(allRows.ToList());
+            ServicesPromosTransactions = new ObservableCollection<ServicePromoTransactions>(allRows2.ToList());
+            AllTransactions = new ObservableCollection<DailyReport>(allRows3.ToList());
         }
 
         public ICommand FilterCommand { get; }
