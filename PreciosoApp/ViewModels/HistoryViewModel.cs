@@ -224,14 +224,20 @@ namespace PreciosoApp.ViewModels
         {
 
             var allRows = allPTransactions.AsQueryable();
+            var allRows2 = ServicesPromosTransactions.AsQueryable();
+            var allRows3 = AllTransactions.AsQueryable();
             if (_startDate != DateTime.MinValue)
             {
                 allRows = allRows.Where(c => c.Date_Time >= _startDate);
+                allRows2 = allRows2.Where(c => c.Date >= _startDate);
+                allRows3 = allRows3.Where(c => c.DateTime >= _startDate);
             }
 
             if (_endDate != DateTime.MinValue)
             {
                 allRows = allRows.Where(c => c.Date_Time <= _endDate);
+                allRows2 = allRows2.Where(c => c.Date <= _endDate);
+                allRows3 = allRows3.Where(c => c.DateTime <= _endDate);
             }
         }
 

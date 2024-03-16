@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1080" d:DesignHeight="720"
              x:Class="PreciosoApp.Views.SalesReportView"
 			 xmlns:vm="using:PreciosoApp.ViewModels"
 			 x:DataType="vm:SalesReportViewModel">
@@ -23,30 +23,35 @@
 							<Button Margin="5" VerticalAlignment="Bottom" Content="Filter" Command="{Binding FilterCommand}">
 						</Button>
 
-						<StackPanel>
-							<TextBlock Text="Sales By Products: " VerticalAlignment="Center" Margin="5"/>
-							<TextBlock Text="{Binding TotalProdSales}" VerticalAlignment="Center" Margin="5 0"/>
-						</StackPanel>
+						<Border Background="#FBF6F2" Padding="5" Margin="10 10 0 5" CornerRadius="20" BoxShadow="5 5 30 0 lightgray">
+							<StackPanel Orientation="Horizontal">
+								<StackPanel>
+									<TextBlock Text="Sales By Products: " VerticalAlignment="Center" Margin="5"/>
+									<TextBlock Text="{Binding TotalProdSales}" VerticalAlignment="Center" Margin="5 0"/>
+								</StackPanel>
 
-						<StackPanel>
-							<TextBlock Text="Sales By Service and Promo: " VerticalAlignment="Center" Margin="5"/>
-							<TextBlock Text="{Binding TotalServPromoSales}" VerticalAlignment="Center" Margin="5 0"/>
-							
-						</StackPanel>
+								<StackPanel>
+									<TextBlock Text="Sales By Service and Promo: " VerticalAlignment="Center" Margin="5"/>
+									<TextBlock Text="{Binding TotalServPromoSales}" VerticalAlignment="Center" Margin="5 0"/>
+
+								</StackPanel>
+
+								<StackPanel>
+									<TextBlock Text="Total Sales: " VerticalAlignment="Center" Margin="5"/>
+									<TextBlock Text="{Binding TotalSales}" VerticalAlignment="Center" Margin="5 0"/>
+								</StackPanel>
+							</StackPanel>
+						</Border>
 						
-						<StackPanel>
-							<TextBlock Text="Total Sales: " VerticalAlignment="Center" Margin="5"/>
-							<TextBlock Text="{Binding TotalSales}" VerticalAlignment="Center" Margin="5 0"/>
-						</StackPanel>
 					</StackPanel>
 					<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding DailyGross}" 
 							  BorderBrush="Beige" BorderThickness="1" GridLinesVisibility="All"
 							  Height="300">
 						<DataGrid.Columns>
-							<DataGridTextColumn Header="Date" Binding="{Binding DateOnly}"/>
-							<DataGridTextColumn Header="Product Sales" Binding="{Binding ProdSales}"/>
-							<DataGridTextColumn Header="Service/Promo Sales" Binding="{Binding ServPromoSales}"/>
-							<DataGridTextColumn Header="Total Sales" Binding="{Binding TotalSales}"/>
+							<DataGridTextColumn Header="Date" Width="*" Binding="{Binding DateOnly}"/>
+							<DataGridTextColumn Header="Product Sales" Width="*" Binding="{Binding ProdSales}"/>
+							<DataGridTextColumn Header="Service/Promo Sales" Width="*"  Binding="{Binding ServPromoSales}"/>
+							<DataGridTextColumn Header="Total Sales" Width="*" Binding="{Binding TotalSales}"/>
 						</DataGrid.Columns>
 					</DataGrid>
 				</StackPanel>
@@ -70,9 +75,9 @@
 							<DataGrid.Columns>
 								<DataGridTextColumn Header="Time" Width="auto" Binding="{Binding Time}"/>
 								<DataGridTextColumn Header="Client" Width="auto" Binding="{Binding Client}"/>
-								<DataGridTextColumn Header="Therapist" Width="auto" Binding="{Binding Therapist}"/>
-								<DataGridTextColumn Header="MOP" Width="auto" Binding="{Binding MOP}"/>
-								<DataGridTemplateColumn Header="Availed"  Width="auto">
+								<DataGridTextColumn Header="Therapist" Width="*" Binding="{Binding Therapist}"/>
+								<DataGridTextColumn Header="MOP" Width="*" Binding="{Binding MOP}"/>
+								<DataGridTemplateColumn Header="Availed"  Width="*">
 									<DataTemplate>
 										<TextBox Text="{Binding Availed}" BorderThickness="0" LineHeight="20"/>
 									</DataTemplate>
@@ -87,7 +92,7 @@
 										<TextBox Text="{Binding Price}" BorderThickness="0" LineHeight="20"/>
 									</DataTemplate>
 								</DataGridTemplateColumn>
-								<DataGridTemplateColumn Header="Commission"  Width="auto">
+								<DataGridTemplateColumn Header="Commission"  Width="*">
 									<DataTemplate>
 										<TextBox Text="{Binding Commission}" BorderThickness="0" LineHeight="20"/>
 									</DataTemplate>
