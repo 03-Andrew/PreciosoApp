@@ -1,2 +1,3 @@
 # PreciosoApp
-hi Po
+Source Code for Salon POS and Management System
+
